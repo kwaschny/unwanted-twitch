@@ -1,0 +1,38 @@
+﻿#blacklist {
+	padding-bottom: 96px;
+}
+
+	#blacklist .category {
+		display: inline-block;
+		margin-bottom: 64px;
+		vertical-align: top;
+		width: 48%;
+	}
+		#blacklist .category.left {
+			margin-right: 1%;
+		}
+		#blacklist .category.right {
+			margin-left: 1%;
+		}
+
+		#blacklist .category td:nth-child(1) {
+			width: 99%;
+		}
+		#blacklist .category td:nth-child(2) {
+			width: 1%;
+		}
+
+		#blacklist .category button {
+			width: 96px;
+		}
+
+	#blacklist .actions {
+		background-color: #DAD8DE;
+		border-top: 2px solid #C0BDC7;
+		bottom: 0px;
+		left: 0px;
+		padding: 16px 32px;
+		position: fixed;
+		text-align: center;
+		width: 100%;
+	}

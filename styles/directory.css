@@ -1,0 +1,20 @@
+﻿.uttv-hide {
+	background-color: #00000099;
+	border-radius: 2px;
+	color: #FFFFFF;
+	cursor: pointer;
+	font-size: 90%;
+	left: 10px;
+	padding: 2px 8px;
+	position: absolute;
+	top: 10px;
+	user-select: none;
+	z-index: 1;
+}
+	.uttv-hide.channel {
+		top: 36px;
+	}
+	.uttv-hide:hover {
+		background-color: #4B367C;
+		color: #FFFFFF;
+	}
