@@ -1,6 +1,6 @@
 ﻿{
 	"name": "Unwanted Twitch",
-	"version": "18.8.5",
+	"version": "18.8.10",
 	"description": "Hide unwanted games, channels and communities on: twitch.tv",
 	"permissions": [ "https://www.twitch.tv/", "storage" ],
 	"background": {

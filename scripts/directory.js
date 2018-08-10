@@ -288,6 +288,66 @@ function putBlacklistedItems(blacklistedItems, callback) {
 }
 
 /**
+ * Removes the node from the DOM based on the current item type.
+ */
+function removeItem(node) {
+
+	if (currentItemType === 'channels') {
+
+		let topNode = node;
+
+		// find parent with class .stream-thumbnail or attribute [data-target] + [style^="order:"]
+		while (true) {
+
+			if (topNode === undefined) { break; }
+
+			if (
+				(topNode.classList.contains('stream-thumbnail') === true) ||
+				(
+					(topNode.getAttribute('data-target') !== null) &&
+					(
+						(typeof topNode.getAttribute('style') === 'string') &&
+						(topNode.getAttribute('style').indexOf('order:') === 0)
+					)
+				)
+			) {
+
+				topNode.remove();
+				return true;
+			}
+
+			topNode = topNode.parentNode;
+		}
+
+	} else {
+
+		let topNode = node;
+
+		// find parent with attribute [data-target] + [style^="order:"]
+		while (true) {
+
+			if (topNode === undefined) { break; }
+
+			if (
+				(topNode.getAttribute('data-target') !== null) &&
+				(
+					(typeof topNode.getAttribute('style') === 'string') &&
+					(topNode.getAttribute('style').indexOf('order:') === 0)
+				)
+			) {
+
+				topNode.remove();
+				return true;
+			}
+
+			topNode = topNode.parentNode;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Filters directory by removing blacklisted items. Returns the remaining items.
  */
 function filterDirectory() {
@@ -373,7 +433,7 @@ function getItems() {
 
 		for (let i = 0; i < itemContainersLength; i++) {
 
-			const itemName = itemContainers[i].title;
+			const itemName = itemContainers[i].getAttribute('aria-label');
 			if ((typeof itemName === 'string') && (itemName.length > 0)) {
 
 				items.push({
@@ -419,32 +479,10 @@ function filterItems(blacklisted, present) {
 				)
 			 ) {
 
-				let topNode = entry.node.parentNode;
+				if (removeItem(entry.node) === true) {
 
-				// find parent with class .stream-thumbnail or attribute [data-target] + [style^="order:"]
-				while (true) {
-
-					if (topNode === undefined) { break; }
-
-					if (
-						(topNode.classList.contains('stream-thumbnail') === true) ||
-						(
-							(topNode.getAttribute('data-target') !== null) &&
-							(
-								(typeof topNode.getAttribute('style') === 'string') &&
-								(topNode.getAttribute('style').indexOf('order:') === 0)
-							)
-						)
-					) {
-
-						topNode.remove();
-						break;
-					}
-
-					topNode = topNode.parentNode;
+					logInfo('Blacklisted:', entry.item);
 				}
-
-				logInfo('Blacklisted:', entry.item);
 
 			} else {
 
@@ -461,18 +499,16 @@ function filterItems(blacklisted, present) {
 
 			if (blacklisted[currentItemType][entry.item] !== undefined) {
 
-				// there's no indicator for the parent, so we have to go with parent nodes count for now
-				const topNode = entry.node.parentNode.parentNode.parentNode;
-				topNode.remove();
+				if (removeItem(entry.node) === true) {
 
-				logInfo('Blacklisted:', entry.item);
+					logInfo('Blacklisted:', entry.item);
+				}
 
 			} else {
 
 				remainingItems.push(entry);
 			}
 		}
-
 	}
 
 	currentItemsCount = remainingItems.length;
@@ -559,41 +595,10 @@ function onHideItem() {
 	// update storage
 	putBlacklistedItems(storedBlacklistedItems);
 
-	// remove item container
-	if (currentItemType === 'channels') {
+	// remove item
+	if (removeItem(this) === true) {
 
-		let topNode = this.parentNode;
-
-		// find parent with class .stream-thumbnail or attribute [data-target] + [style^="order:"]
-		while (true) {
-
-			if (topNode === undefined) { break; }
-
-			if (
-				(topNode.classList.contains('stream-thumbnail') === true) ||
-				(
-					(topNode.getAttribute('data-target') !== null) &&
-					(
-						(typeof topNode.getAttribute('style') === 'string') &&
-						(topNode.getAttribute('style').indexOf('order:') === 0)
-					)
-				)
-			) {
-
-				logVerbose('Node removed due to item being blacklisted:', topNode);
-				topNode.remove();
-				break;
-			}
-
-			topNode = topNode.parentNode;
-		}
-
-	} else {
-
-		let topNode = this.parentNode.parentNode.parentNode;
-
-		logVerbose('Node removed due to item being blacklisted:', topNode);
-		topNode.remove();
+		logVerbose('Node removed due to item being blacklisted:', this);
 	}
 }
 
@@ -625,7 +630,7 @@ function listenToScroll() {
 		if ((itemsInDOM > 0) && (itemsInDOM !== currentItemsCount)) {
 
 			// number of items changed, thus assuming that slots were added
-			logVerbose('Scrolling detected!');
+			logVerbose('Scrolling detected!', '[in DOM: ' + itemsInDOM + ']', '[in MEM: ' + currentItemsCount + ']');
 			onScroll();
 		}
 
