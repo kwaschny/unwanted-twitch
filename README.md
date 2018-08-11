@@ -1,5 +1,8 @@
 # Hide unwanted games, channels and communities on: twitch.tv
 
+## Download
+[Chrome Web Store](https://chrome.google.com/webstore/detail/unwanted-twitch/egbpddkgpjmliolmpjenjomflclekjld)
+
 ## Features
 - hide unwanted games
 - hide unwanted channels
