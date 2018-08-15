@@ -1,8 +1,10 @@
 ﻿{
 	"name": "Unwanted Twitch",
-	"version": "18.8.10",
-	"description": "Hide unwanted games, channels and communities on: twitch.tv",
+	"short_name": "Unwanted TTV",
+	"version": "18.8.15",
+	"description": "__MSG_app_Desc__",
 	"permissions": [ "https://www.twitch.tv/", "storage" ],
+	"default_locale": "en",
 	"background": {
 		"scripts": 		[ "scripts/background.js" ],
 		"persistent": 	false

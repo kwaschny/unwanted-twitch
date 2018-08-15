@@ -1,0 +1,53 @@
+﻿{
+	"app_Desc": {
+		"message": "Hide unwanted games, channels and communities on: twitch.tv"
+	},
+
+	"label_HideGame": {
+		"message": "Hide Game"
+	},
+	"label_HideCommunity": {
+		"message": "Hide Community"
+	},
+	"label_HideChannel": {
+		"message": "Hide Channel"
+	},
+
+	"popup_ManageBlacklist": {
+		"message": "Manage Blacklist"
+	},
+	"popup_EnableExtension": {
+		"message": "Enable Extension"
+	},
+	"popup_DisableExtension": {
+		"message": "Disable Extension"
+	},
+
+	"blacklist_Games": {
+		"message": "Blacklisted Games"
+	},
+	"blacklist_Channels": {
+		"message": "Blacklisted Channels"
+	},
+	"blacklist_Communities": {
+		"message": "Blacklisted Communities"
+	},
+	"blacklist_Creative": {
+		"message": "Blacklisted Creative"
+	},
+	"blacklist_Empty": {
+		"message": "Nothing blacklisted yet."
+	},
+	"blacklist_Remove": {
+		"message": "Remove"
+	},
+	"blacklist_Save": {
+		"message": "Save"
+	},
+	"blacklist_Cancel": {
+		"message": "Cancel"
+	},
+	"blacklist_ReloadNote": {
+		"message": "You have to reload your current tabs for the changes to take effect."
+	}
+}

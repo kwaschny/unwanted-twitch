@@ -69,6 +69,9 @@ function getItemType(page, log) {
 
 	let result = null;
 
+	// remove trailing slash
+	page = page.replace(/\/$/, '');
+
 	switch (page) {
 
 		case '/directory':
@@ -88,11 +91,11 @@ function getItemType(page, log) {
 			break;
 
 		default:
-			if (RegExp('^/directory/(all|game)/[^/]+(/[a-z]{2})?/?$').test(page) === true) {
+			if (RegExp('^/directory/(all|game)/[^/]+(/[a-z]{2})?$').test(page) === true) {
 
 				result = 'channels';
 
-			} else if (RegExp('^/communities/[^/]+(/[a-z]{2})?/?$').test(page) === true) {
+			} else if (RegExp('^/communities/[^/]+(/[a-z]{2})?$').test(page) === true) {
 
 				result = 'channels';
 			}
@@ -241,6 +244,37 @@ function onPageChange(page) {
 		}
 
 	}, pageLoadMonitorInterval);
+}
+
+/**
+ * Initializes the blacklisted items collection by setting up the default item types in the provided object.
+ */
+function initBlacklistedItems(collection) {
+
+	const itemTypes = [
+		'games',
+		'communities',
+		'creative',
+		'channels'
+	];
+
+	if (typeof collection !== 'object') {
+
+		collection = {};
+	}
+
+	const itemTypesLength = itemTypes.length;
+	for (let i = 0; i < itemTypesLength; i++) {
+
+		let itemType = itemTypes[i];
+
+		if (collection[itemType] === undefined) {
+
+			collection[itemType] = {};
+		}
+	}
+
+	return collection;
 }
 
 /**
@@ -406,7 +440,7 @@ function getItems() {
 					subNode = subNode.querySelector('[data-a-target="preview-card-game-link"]');
 					if (subNode !== null) {
 
-						subItem = subNode.innerText;
+						subItem = subNode.textContent;
 					}
 				}
 
@@ -457,10 +491,13 @@ function getItems() {
 function filterItems(blacklisted, present) {
 	logTrace('invoking filterItems($, $)', blacklisted, present);
 
-	if (blacklisted[currentItemType] === undefined) {
+	if (typeof currentItemType !== 'string') {
 
-		blacklisted[currentItemType] = {};
+		throw new Error('UnwantedTwitch: Current item type is invalid. Cannot proceed with: filterItems()');
 	}
+
+	// initialize defaults in blacklisted items collection
+	initBlacklistedItems(blacklisted);
 
 	let remainingItems = [];
 
@@ -534,18 +571,18 @@ function attachHideButtons(items) {
 
 		case 'games':
 			hideNode.className 		= 'uttv-hide game';
-			hideNode.innerHTML 		= 'Hide Game';
+			hideNode.innerHTML 		= chrome.i18n.getMessage('label_HideGame');
 			break;
 
 		case 'communities':
 		case 'creative':
 			hideNode.className 		= 'uttv-hide community';
-			hideNode.innerHTML 		= 'Hide Community';
+			hideNode.innerHTML 		= chrome.i18n.getMessage('label_HideCommunity');
 			break;
 
 		case 'channels':
 			hideNode.className 		= 'uttv-hide channel';
-			hideNode.innerHTML 		= 'Hide Channel';
+			hideNode.innerHTML 		= chrome.i18n.getMessage('label_HideChannel');
 			break;
 
 		default:
@@ -729,7 +766,7 @@ window.setInterval(function monitorPages() {
 
 	if (window.location.pathname !== currentPage) {
 
-		currentPage = window.location.pathname;
+		currentPage 	= window.location.pathname;
 		currentItemType = getItemType(currentPage);
 
 		logWarn('Page changed to:', currentPage);

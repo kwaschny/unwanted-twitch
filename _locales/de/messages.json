@@ -1,0 +1,53 @@
+﻿{
+	"app_Desc": {
+		"message": "Ausblenden von Spielen, Kanälen und Communities auf: twitch.tv"
+	},
+
+	"label_HideGame": {
+		"message": "Spiel ausblenden"
+	},
+	"label_HideCommunity": {
+		"message": "Community ausblenden"
+	},
+	"label_HideChannel": {
+		"message": "Kanal ausblenden"
+	},
+
+	"popup_ManageBlacklist": {
+		"message": "Ausschlüsse bearbeiten"
+	},
+	"popup_EnableExtension": {
+		"message": "Erweiterung aktivieren"
+	},
+	"popup_DisableExtension": {
+		"message": "Erweiterung deaktivieren"
+	},
+
+	"blacklist_Games": {
+		"message": "Ausgeschlossene Spiele"
+	},
+	"blacklist_Channels": {
+		"message": "Ausgeschlossene Kanäle"
+	},
+	"blacklist_Communities": {
+		"message": "Ausgeschlossene Communities"
+	},
+	"blacklist_Creative": {
+		"message": "Ausgeschlossene Kreativ-Communities"
+	},
+	"blacklist_Empty": {
+		"message": "Bisher noch keine Ausschlüsse."
+	},
+	"blacklist_Remove": {
+		"message": "Entfernen"
+	},
+	"blacklist_Save": {
+		"message": "Speichern"
+	},
+	"blacklist_Cancel": {
+		"message": "Abbrechen"
+	},
+	"blacklist_ReloadNote": {
+		"message": "Damit die Änderungen sichtbar werden,\nmüssen bereits geöffnete Tabs neu geladen werden."
+	}
+}

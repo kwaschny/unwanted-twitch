@@ -48,11 +48,11 @@ function toggleExtension() {
 	window.close();
 }
 
-const blacklistManager 	= document.getElementById('open_blacklist');
-const stateToggle 		= document.getElementById('toggle_extension');
+const blacklistManagerButton 	= document.getElementById('open_blacklist');
+const stateToggleButton 		= document.getElementById('toggle_extension');
 
-stateToggle.addEventListener('click', toggleExtension);
-blacklistManager.addEventListener('click', openBlacklist);
+blacklistManagerButton.addEventListener('click', openBlacklist);
+stateToggleButton.addEventListener('click', toggleExtension);
 
 getEnabledState(function onEnabledState(state) {
 
@@ -60,16 +60,20 @@ getEnabledState(function onEnabledState(state) {
 
 		document.getElementById('icon').classList.remove('disabled');
 
-		stateToggle.classList.remove('disabled');
-		stateToggle.classList.add('enabled');
-		stateToggle.innerText = 'Disable Extension';
+		stateToggleButton.classList.remove('disabled');
+		stateToggleButton.classList.add('enabled');
+		stateToggleButton.textContent = chrome.i18n.getMessage('popup_DisableExtension');
 
 	} else {
 
 		document.getElementById('icon').classList.add('disabled');
 
-		stateToggle.classList.remove('enabled');
-		stateToggle.classList.add('disabled');
-		stateToggle.innerText = 'Enable Extension';
+		stateToggleButton.classList.remove('enabled');
+		stateToggleButton.classList.add('disabled');
+		stateToggleButton.textContent = chrome.i18n.getMessage('popup_EnableExtension');
 	}
 });
+
+// localize
+blacklistManagerButton.textContent 	= chrome.i18n.getMessage('popup_ManageBlacklist');
+stateToggleButton.textContent 		= chrome.i18n.getMessage('popup_DisableExtension');

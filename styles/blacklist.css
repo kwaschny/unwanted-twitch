@@ -36,3 +36,10 @@
 		text-align: center;
 		width: 100%;
 	}
+
+		#blacklist .actions button {
+			margin-right: 16px;
+		}
+			#blacklist .actions button:last-child {
+				margin-right: 0px;
+			}

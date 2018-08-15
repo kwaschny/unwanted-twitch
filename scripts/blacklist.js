@@ -11,12 +11,12 @@ function addItems(table, items) {
 		let row = document.createElement('tr');
 
 		let cell1 = document.createElement('td');
-		cell1.innerText = key;
+		cell1.textContent = key;
 
 		let cell2 = document.createElement('td');
 
 		let button = document.createElement('button');
-		button.innerText = 'Remove';
+		button.textContent = chrome.i18n.getMessage('blacklist_Remove');
 		button.setAttribute('data-key', key);
 		button.addEventListener('click', onRemoveItem);
 
@@ -35,7 +35,7 @@ function addItems(table, items) {
 
 		let cell = document.createElement('td');
 		cell.setAttribute('colspan', 2);
-		cell.innerText = 'Nothing blacklisted yet.';
+		cell.textContent = chrome.i18n.getMessage('blacklist_Empty');
 
 		row.appendChild(cell);
 
@@ -48,6 +48,7 @@ function addItems(table, items) {
 function onRemoveItem() {
 
 	this.parentNode.parentNode.remove();
+	flashSaveButton();
 }
 
 function gatherKeys(table) {
@@ -79,7 +80,11 @@ function onSave() {
 		{ "blacklistedItems": result }
 	);
 
-	alert('You might have to reload current tabs for the changes to take effect.');
+	if (isModified === true) {
+
+		alert( chrome.i18n.getMessage('blacklist_ReloadNote') );
+	}
+
 	onCancel();
 }
 
@@ -91,10 +96,27 @@ function onCancel() {
 	});
 }
 
+function flashSaveButton() {
+
+	if (isModified === true) { return; }
+	isModified = true;
+
+	setInterval(function() {
+
+		saveButton.classList.toggle('flashed');
+
+	}, 1000);
+}
+
+let isModified = false;
+
 const games 		= document.getElementById('table_games');
 const channels 		= document.getElementById('table_channels');
 const communities 	= document.getElementById('table_communities');
 const creative 		= document.getElementById('table_creative');
+
+const saveButton 	= document.getElementById('save');
+const cancelButton 	= document.getElementById('cancel');
 
 chrome.storage.sync.get([ 'blacklistedItems' ], function(result) {
 
@@ -104,5 +126,13 @@ chrome.storage.sync.get([ 'blacklistedItems' ], function(result) {
 	addItems(creative, 		result.blacklistedItems.creative);
 });
 
-document.getElementById('save').addEventListener('click', onSave);
-document.getElementById('cancel').addEventListener('click', onCancel);
+saveButton.addEventListener('click', onSave);
+cancelButton.addEventListener('click', onCancel);
+
+// localize
+document.getElementById('column_Games').textContent 		= chrome.i18n.getMessage('blacklist_Games');
+document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
+document.getElementById('column_Communities').textContent 	= chrome.i18n.getMessage('blacklist_Communities');
+document.getElementById('column_Creative').textContent 		= chrome.i18n.getMessage('blacklist_Creative');
+saveButton.textContent 										= chrome.i18n.getMessage('blacklist_Save');
+cancelButton.textContent 									= chrome.i18n.getMessage('blacklist_Cancel');
