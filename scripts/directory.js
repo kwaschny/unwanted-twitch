@@ -250,6 +250,7 @@ function onPageChange(page) {
  * Initializes the blacklisted items collection by setting up the default item types in the provided object.
  */
 function initBlacklistedItems(collection) {
+	logTrace('invoking initBlacklistedItems($)', collection);
 
 	const itemTypes = [
 		'games',
@@ -402,6 +403,12 @@ function filterDirectory() {
 		remainingItems = filterItems(storedBlacklistedItems, currentItems);
 	}
 	filterRunning = false;
+
+	if (remainingItems.length < currentItems.length) {
+
+		logVerbose('Attempting to re-populate items.');
+		triggerScroll();
+	}
 
 	return remainingItems;
 }
@@ -691,6 +698,25 @@ function onScroll() {
 
 	// attach hide buttons to the remaining items
 	attachHideButtons(remainingItems);
+}
+
+/**
+ * Trigger scroll event to load more items.
+ */
+function triggerScroll() {
+	logTrace('invoking triggerScroll()');
+
+	const scrollbarNodeSelector = '.simplebar-content.root-scrollable__content';
+	const scrollbarNode 		= document.querySelector(scrollbarNodeSelector);
+
+	if (scrollbarNode !== null) {
+
+		scrollbarNode.dispatchEvent( new Event('scroll') );
+
+	} else {
+
+		logError('Scrollbar not found. Expected:', scrollbarNodeSelector);
+	}
 }
 
 /* BEGIN: utility */
