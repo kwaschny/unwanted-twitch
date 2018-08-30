@@ -347,7 +347,8 @@ function removeItem(node) {
 				)
 			) {
 
-				topNode.remove();
+				node.setAttribute('data-uttv-hidden', '');
+				topNode.style.display = 'none';
 				return true;
 			}
 
@@ -371,7 +372,8 @@ function removeItem(node) {
 				)
 			) {
 
-				topNode.remove();
+				node.setAttribute('data-uttv-hidden', '');
+				topNode.style.display = 'none';
 				return true;
 			}
 
@@ -424,7 +426,7 @@ function getItems() {
 	if (currentItemType === 'channels') {
 
 		// items
-		const itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]';
+		const itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
 		const itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
 		const itemContainersLength 		= itemContainers.length;
 
@@ -462,7 +464,7 @@ function getItems() {
 	} else {
 
 		// items
-		const itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]';
+		const itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
 		const itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
 		const itemContainersLength 		= itemContainers.length;
 
@@ -664,11 +666,11 @@ function listenToScroll() {
 
 		if (currentItemType === 'channels') {
 
-			itemsInDOM = rootNode.querySelectorAll('div.stream-thumbnail, div[data-target="directory-container"] div[data-target][style^="order:"]').length;
+			itemsInDOM = rootNode.querySelectorAll('div.stream-thumbnail:not([style*="display"]), div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
 
 		} else {
 
-			itemsInDOM = rootNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]').length;
+			itemsInDOM = rootNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
 		}
 
 		if ((itemsInDOM > 0) && (itemsInDOM !== currentItemsCount)) {
@@ -706,20 +708,45 @@ function onScroll() {
 function triggerScroll() {
 	logTrace('invoking triggerScroll()');
 
+	if (isFFZ() === true) {
+
+		logWarn('FFZ detected. Scroll trigger aborted.');
+		return false;
+	}
+
 	const scrollbarNodeSelector = '.simplebar-content.root-scrollable__content';
 	const scrollbarNode 		= document.querySelector(scrollbarNodeSelector);
 
 	if (scrollbarNode !== null) {
 
 		scrollbarNode.dispatchEvent( new Event('scroll') );
+		return true;
 
 	} else {
 
 		logError('Scrollbar not found. Expected:', scrollbarNodeSelector);
 	}
+
+	return false;
 }
 
 /* BEGIN: utility */
+
+	/**
+	 * Returns if the FrankerFaceZ extension is loaded.
+	 */
+	function isFFZ() {
+
+		return (document.getElementById('ffz-script') !== null);
+	}
+
+	/**
+	 * Returns if the BetterTTV extension is loaded.
+	 */
+	function isBTTV() {
+
+		return (document.querySelector('img.bttv-logo') !== null);
+	}
 
 	function logTrace() {
 
