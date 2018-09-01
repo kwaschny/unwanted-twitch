@@ -3,7 +3,7 @@
 	"short_name": "Unwanted TTV",
 	"version": "18.9.1",
 	"description": "__MSG_app_Desc__",
-	"permissions": [ "https://www.twitch.tv/", "tabs", "storage" ],
+	"permissions": [ "https://www.twitch.tv/", "storage" ],
 	"default_locale": "en",
 	"background": {
 		"scripts": 		[ "scripts/background.js" ],
