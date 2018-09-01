@@ -2,9 +2,12 @@
 
 function addItems(table, items) {
 
-	// sort items
-	const sortedKeys 		= Object.keys(items).sort();
-	const sortedKeysLength 	= sortedKeys.length;
+	// sort items (case insensitive)
+	const sortedKeys = Object.keys(items).sort(function (a, b) {
+
+		return a.toLowerCase().localeCompare( b.toLowerCase() );
+	});
+	const sortedKeysLength = sortedKeys.length;
 
 	let fragment = document.createDocumentFragment();
 	let count = 0;
