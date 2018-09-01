@@ -2,10 +2,17 @@
 
 function addItems(table, items) {
 
+	// sort items
+	const sortedKeys 		= Object.keys(items).sort();
+	const sortedKeysLength 	= sortedKeys.length;
+
 	let fragment = document.createDocumentFragment();
 	let count = 0;
 
-	for (let key in items) {
+	for (let i = 0; i < sortedKeysLength; i++) {
+
+		let key = sortedKeys[i];
+
 		if (!items.hasOwnProperty(key)) { continue; }
 
 		let row = document.createElement('tr');
