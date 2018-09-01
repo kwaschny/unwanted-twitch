@@ -580,23 +580,23 @@ function attachHideButtons(items) {
 
 		case 'games':
 			hideNode.className 		= 'uttv-hide game';
-			hideNode.innerHTML 		= chrome.i18n.getMessage('label_HideGame');
+			hideNode.textContent 	= chrome.i18n.getMessage('label_HideGame');
 			break;
 
 		case 'communities':
 		case 'creative':
 			hideNode.className 		= 'uttv-hide community';
-			hideNode.innerHTML 		= chrome.i18n.getMessage('label_HideCommunity');
+			hideNode.textContent 	= chrome.i18n.getMessage('label_HideCommunity');
 			break;
 
 		case 'channels':
 			hideNode.className 		= 'uttv-hide channel';
-			hideNode.innerHTML 		= chrome.i18n.getMessage('label_HideChannel');
+			hideNode.textContent 	= chrome.i18n.getMessage('label_HideChannel');
 			break;
 
 		default:
 			hideNode.className 		= 'uttv-hide';
-			hideNode.innerHTML 		= 'Hide Item';
+			hideNode.textContent 	= 'Hide Item';
 			break;
 	}
 
