@@ -10,7 +10,7 @@ function checkForSupportedURL(tabID, changeInfo, tab) {
 		chrome.pageAction.show(tabID);
 	}
 }
-chrome.tabs.onUpdated.addListener(checkForSupportedURL);
+chrome.tabs.onUpdated.addListener(checkForSupportedURL); // Chrome does not support page_action.show_matches in manifest
 
 // forward all messages to content script
 function forwardMessageToTabs(request, tabs, isGlobal) {
@@ -20,6 +20,7 @@ function forwardMessageToTabs(request, tabs, isGlobal) {
 	let tabsLength = tabs.length;
 	for (let i = 0; i < tabsLength; i++) {
 
+		// tabs where "url" is provided are on twitch.tv (implicit permission)
 		if (typeof tabs[i].url === 'string') {
 
 			relevantTabs.push(tabs[i]);
@@ -38,6 +39,7 @@ chrome.runtime.onMessage.addListener(function(request) {
 
 	const isGlobal = (request && (typeof request.blacklistedItems === 'object'));
 
+	// does not require "tabs" permission (implicit permission on twitch.tv)
 	chrome.tabs.query({ url: (twitchUrl + '*') }, function(tabs) {
 
 		forwardMessageToTabs(request, tabs, isGlobal);
