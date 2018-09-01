@@ -2,7 +2,7 @@
 
 ## Download
 - [Chrome Web Store](https://chrome.google.com/webstore/detail/unwanted-twitch/egbpddkgpjmliolmpjenjomflclekjld)
-- [Firefox Add-ons](https://addons.mozilla.org/de/firefox/addon/unwanted-twitch/)
+- [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/unwanted-twitch/)
 
 ## Features
 - hide unwanted games
