@@ -2,14 +2,15 @@
 
 ## Download
 [Chrome Web Store](https://chrome.google.com/webstore/detail/unwanted-twitch/egbpddkgpjmliolmpjenjomflclekjld)
+[Firefox Add-ons](https://addons.mozilla.org/de/firefox/addon/unwanted-twitch/)
 
 ## Features
 - hide unwanted games
 - hide unwanted channels
 - hide unwanted communities
 - hide unwanted creative communities
-- blacklist is automatically synced between devices (requires Google account to be linked with Chrome)
-- supports one-click-toggle to disable/enable extension
+- blacklist automatically synced between devices
+- one-click-toggle to disable/enable extension
 - compatible with BetterTTV (BTTV) and FrankerFaceZ (FFZ)
 
 ## Notice
