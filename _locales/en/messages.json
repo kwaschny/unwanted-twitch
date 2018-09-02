@@ -1,6 +1,6 @@
 ﻿{
 	"app_Desc": {
-		"message": "Hide unwanted games, channels and communities on: twitch.tv"
+		"message": "Hide unwanted streams, games, channels and communities on: twitch.tv"
 	},
 
 	"label_HideGame": {
@@ -11,6 +11,9 @@
 	},
 	"label_HideChannel": {
 		"message": "Hide Channel"
+	},
+	"alert_StorageQuota": {
+		"message": "Unwanted Twitch:\nThe blacklist is full.\nYou cannot add more items."
 	},
 
 	"popup_ManageBlacklist": {
@@ -41,13 +44,16 @@
 	"blacklist_Remove": {
 		"message": "Remove"
 	},
+	"blacklist_RemoveAll": {
+		"message": "Clear"
+	},
 	"blacklist_Save": {
 		"message": "Save"
 	},
 	"blacklist_Cancel": {
 		"message": "Cancel"
 	},
-	"blacklist_ReloadNote": {
-		"message": "You have to reload your current tabs for the changes to take effect."
+	"alert_ReloadNote": {
+		"message": "Unwanted Twitch:\nYou have to reload your current tabs for the changes to take effect."
 	}
 }

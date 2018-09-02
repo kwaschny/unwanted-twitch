@@ -31,6 +31,9 @@ const debug = 4;
 	// indicates that the storage is currently in use
 	let storageLocked = false;
 
+	// maximum size of the blacklist (length of serialized string)
+	const storageSyncMaxSize = 8000;
+
 	// collection of blacklisted items, serves as local cache
 	let storedBlacklistedItems = {};
 
@@ -108,7 +111,7 @@ function getItemType(page, log) {
 /**
  * Retrieves the enabled state from the storage.
  */
-function getEnabledState() {
+function getEnabledState(callback) {
 	logTrace('invoking getEnabledState()');
 
 	storageLocked = true;
@@ -128,6 +131,11 @@ function getEnabledState() {
 		} else {
 
 			logWarn('Extension\'s enabled state unknown, assuming:', true);
+		}
+
+		if (typeof callback === 'function') {
+
+			callback(enabled);
 		}
 	});
 }
@@ -290,13 +298,18 @@ function getBlacklistedItems(callback) {
 	}
 
 	storageLocked = true;
-	chrome.storage.sync.get([ 'blacklistedItems' ], function(result) {
+	chrome.storage.sync.get(null, function(result) {
 		storageLocked = false;
 
 		let blacklistedItems = {};
 		if (typeof result.blacklistedItems === 'object') {
 
 			blacklistedItems = result.blacklistedItems;
+
+		} else if (typeof result['blItemsFragment0'] === 'object') {
+
+			blacklistedItems = mergeBlacklistFragments(result);
+			logVerbose('Successfully merged fragments to blacklist:', result, blacklistedItems);
 		}
 
 		if (typeof callback === 'function') {
@@ -315,17 +328,157 @@ function putBlacklistedItems(blacklistedItems, callback) {
 	storedBlacklistedItems = blacklistedItems;
 
 	storageLocked = true;
-	chrome.storage.sync.set({ 'blacklistedItems': blacklistedItems }, function() {
-		storageLocked = false;
 
-		logInfo('Successfully added to blacklist:', item);
+	let dataToStore 	= { 'blacklistedItems': blacklistedItems };
+	const requiredSize 	= measureStoredSize(dataToStore);
+
+	if (requiredSize > storageSyncMaxSize) {
+
+		logWarn('Blacklist to store (' + requiredSize + ') exceeds the maximum storage size per item (' + storageSyncMaxSize + '). Splitting required...');
+		dataToStore = splitBlacklistItems(blacklistedItems);
+		logWarn('Splitting of blacklist completed:', dataToStore);
+	}
+
+	const keysToRemove = [ 'blacklistedItems' ];
+	for (let i = 0; i < 100; i++) {
+
+		keysToRemove.push('blItemsFragment' + i);
+	}
+
+	chrome.storage.sync.remove(keysToRemove, function() {
+
+		chrome.storage.sync.set(dataToStore, function() {
+			storageLocked = false;
+
+			// handle storage quota
+			if (
+				(chrome.runtime.lastError !== undefined) &&
+				(chrome.runtime.lastError.message !== undefined) &&
+				(typeof chrome.runtime.lastError.message === 'string') &&
+				(chrome.runtime.lastError.message.indexOf('QUOTA_BYTES') >= 0)
+			) {
+
+				logError(chrome.runtime.lastError);
+				alert( chrome.i18n.getMessage('alert_StorageQuota') );
+
+			} else {
+
+				logInfo('Successfully added to blacklist:', blacklistedItems);
+			}
+
+			if (typeof callback === 'function') {
+
+				callback(blacklistedItems);
+			}
+		});
 	});
+}
+
+/**
+ * Splits the provided blacklist items into fragments in order to utilize the storage more efficient.
+ */
+function splitBlacklistItems(items) {
+	logTrace('invoking splitBlacklistItems($)', items);
+
+	let fragments 			= {};
+	const maxItemsPerType 	= 100;
+
+	for (let type in items) {
+		if (!items.hasOwnProperty(type)) { continue; }
+
+		if (fragments[type] === undefined) {
+
+			fragments[type] = [];
+		}
+
+		let values 		= Object.keys(items[type]);
+		let valuesCount = values.length;
+		let sliceOffset = 0;
+
+		do {
+
+			fragments[type].push(
+				values.slice(sliceOffset, sliceOffset + maxItemsPerType)
+			);
+
+			sliceOffset += maxItemsPerType;
+			valuesCount -= maxItemsPerType;
+
+		} while (valuesCount > maxItemsPerType);
+
+		// remaining entries
+		if (valuesCount > 0) {
+
+			fragments[type].push(
+				values.slice(sliceOffset)
+			);
+		}
+	}
+
+	// assign fragments
+	let result = {};
+	for (let type in fragments) {
+		if (!items.hasOwnProperty(type)) { continue; }
+
+		const fragmentsLength = fragments[type].length;
+		for (let i = 0; i < fragmentsLength; i++) {
+
+			let fragmentKey = ('blItemsFragment' + i);
+
+			if (result[fragmentKey] === undefined) {
+
+				result[fragmentKey] = {};
+			}
+
+			result[fragmentKey][type] = fragments[type][i];
+		}
+	}
+
+	return result;
+}
+
+/**
+ * Merges the provided blacklist fragments back into blacklist items.
+ */
+function mergeBlacklistFragments(fragments) {
+	logTrace('invoking mergeBlacklistFragments($)', fragments);
+
+	let result 			= {};
+	const maxFragments 	= 100;
+
+	for (let i = 0; i < maxFragments; i++) {
+
+		let fragmentKey = ('blItemsFragment' + i);
+
+		let fragment = fragments[fragmentKey];
+		if (fragment === undefined) { break; }
+
+		for (let type in fragment) {
+			if (!fragment.hasOwnProperty(type)) { continue; }
+
+			if (result[type] === undefined) {
+
+				result[type] = {};
+			}
+
+			const itemList 			= fragment[type];
+			const itemListLength 	= itemList.length;
+			for (let n = 0; n < itemListLength; n++) {
+
+				result[type][itemList[n]] = true;
+			}
+		}
+
+	}
+
+	return result;
 }
 
 /**
  * Removes the node from the DOM based on the current item type.
  */
 function removeItem(node) {
+	logTrace('invoking removeItem($)', node);
 
 	if (currentItemType === 'channels') {
 
@@ -656,7 +809,6 @@ function listenToScroll() {
 
 	const scrollChangeMonitoringInterval = 1000;
 	window.setInterval(function checkSlots() {
-		//logTrace('invoking checkSlots()');
 
 		if (enabled === false) { return; }
 
@@ -736,6 +888,7 @@ function triggerScroll() {
 	 * Returns if the FrankerFaceZ extension is loaded.
 	 */
 	function isFFZ() {
+		logTrace('invoking isFFZ()');
 
 		return (document.getElementById('ffz-script') !== null);
 	}
@@ -744,6 +897,7 @@ function triggerScroll() {
 	 * Returns if the BetterTTV extension is loaded.
 	 */
 	function isBTTV() {
+		logTrace('invoking isBTTV()');
 
 		return (document.querySelector('img.bttv-logo') !== null);
 	}
@@ -794,12 +948,37 @@ function triggerScroll() {
 		console.error.apply(console, args);
 	}
 
+	/**
+	 * Returns the approx. size to store the provided data in the storage.
+	 */
+	function measureStoredSize(o) {
+		logTrace('invoking measureStoredSize($)', o);
+
+		let serialized;
+		if (typeof o !== 'string') {
+
+			serialized = JSON.stringify(o);
+
+		} else {
+
+			serialized = o;
+		}
+
+		return serialized.length;
+	}
+
 /* END: utility */
 
 window.addEventListener('load', function() {
 
-	logWarn('Page initialization for:', currentPage);
-	init();
+	// init extension's enabled state
+	getEnabledState(function(state) {
+
+		if (state === false) { return; }
+
+		logWarn('Page initialization for:', currentPage);
+		init();
+	});
 });
 
 window.addEventListener('popstate', function() {
@@ -813,7 +992,6 @@ window.addEventListener('popstate', function() {
  */
 const pageChangeMonitorInterval = 333;
 window.setInterval(function monitorPages() {
-	//logTrace('invoking monitorPages()');
 
 	if (enabled === false) { return; }
 
@@ -827,9 +1005,6 @@ window.setInterval(function monitorPages() {
 	}
 
 }, pageChangeMonitorInterval);
-
-// init extension's enabled state
-getEnabledState();
 
 // listen to chrome extension messages
 chrome.runtime.onMessage.addListener(function(request) {

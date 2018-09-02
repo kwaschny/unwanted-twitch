@@ -37,6 +37,7 @@ function forwardMessageToTabs(request, tabs, isGlobal) {
 }
 chrome.runtime.onMessage.addListener(function(request) {
 
+	// prevent forwarding a locking state multiple times
 	const isGlobal = (request && (typeof request.blacklistedItems === 'object'));
 
 	// does not require "tabs" permission (implicit permission on twitch.tv)

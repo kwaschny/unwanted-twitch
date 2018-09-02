@@ -1,5 +1,41 @@
 ﻿// jshint esversion: 6
 
+/**
+ * Merges the provided blacklist fragments back into blacklist items.
+ */
+function mergeBlacklistFragments(fragments) {
+
+	let result 			= {};
+	const maxFragments 	= 100;
+
+	for (let i = 0; i < maxFragments; i++) {
+
+		let fragmentKey = ('blItemsFragment' + i);
+
+		let fragment = fragments[fragmentKey];
+		if (fragment === undefined) { break; }
+
+		for (let type in fragment) {
+			if (!fragment.hasOwnProperty(type)) { continue; }
+
+			if (result[type] === undefined) {
+
+				result[type] = {};
+			}
+
+			const itemList 			= fragment[type];
+			const itemListLength 	= itemList.length;
+			for (let n = 0; n < itemListLength; n++) {
+
+				result[type][itemList[n]] = true;
+			}
+		}
+
+	}
+
+	return result;
+}
+
 function addItems(table, items) {
 
 	// sort items (case insensitive)
@@ -39,6 +75,42 @@ function addItems(table, items) {
 		count++;
 	}
 
+	table.appendChild(fragment);
+	handleItemCount(table, sortedKeysLength);
+}
+
+function clearItems(table) {
+
+	while (table.firstChild) {
+
+		table.removeChild(table.firstChild);
+	}
+	handleItemCount(table);
+
+	flashSaveButton();
+}
+
+function onRemoveItem() {
+
+	const row 	= this.parentNode.parentNode;
+	const table = row.parentNode;
+
+	row.remove();
+	handleItemCount(table);
+
+	flashSaveButton();
+}
+
+function handleItemCount(table, count) {
+
+	if (count === undefined) {
+
+		count = table.children.length;
+	}
+
+	table.parentNode.querySelector('.count').textContent = ('(' + count + ')');
+
+	// append row with a note about having no items
 	if (count === 0) {
 
 		let row = document.createElement('tr');
@@ -48,17 +120,10 @@ function addItems(table, items) {
 		cell.textContent = chrome.i18n.getMessage('blacklist_Empty');
 
 		row.appendChild(cell);
+		table.appendChild(row);
 
-		fragment.appendChild(row);
+		table.parentNode.querySelector('button.clear').style.display = 'none';
 	}
-
-	table.appendChild(fragment);
-}
-
-function onRemoveItem() {
-
-	this.parentNode.parentNode.remove();
-	flashSaveButton();
 }
 
 function gatherKeys(table) {
@@ -92,7 +157,7 @@ function onSave() {
 
 	if (isModified === true) {
 
-		alert( chrome.i18n.getMessage('blacklist_ReloadNote') );
+		alert( chrome.i18n.getMessage('alert_ReloadNote') );
 	}
 
 	onCancel();
@@ -106,7 +171,12 @@ function onCancel() {
 	});
 }
 
-function flashSaveButton() {
+function flashSaveButton(interval) {
+
+	if (typeof interval !== 'number') {
+
+		interval = 400;
+	}
 
 	if (isModified === true) { return; }
 	isModified = true;
@@ -115,7 +185,7 @@ function flashSaveButton() {
 
 		saveButton.classList.toggle('flashed');
 
-	}, 1000);
+	}, interval);
 }
 
 let isModified = false;
@@ -128,21 +198,49 @@ const creative 		= document.getElementById('table_creative');
 const saveButton 	= document.getElementById('save');
 const cancelButton 	= document.getElementById('cancel');
 
-chrome.storage.sync.get([ 'blacklistedItems' ], function(result) {
+chrome.storage.sync.get(null, function(result) {
 
-	addItems(games, 		result.blacklistedItems.games);
-	addItems(channels, 		result.blacklistedItems.channels);
-	addItems(communities, 	result.blacklistedItems.communities);
-	addItems(creative, 		result.blacklistedItems.creative);
+	let blacklistedItems = {};
+	if (typeof result.blacklistedItems === 'object') {
+
+		blacklistedItems = result.blacklistedItems;
+
+	} else if (typeof result['blItemsFragment0'] === 'object') {
+
+		blacklistedItems = mergeBlacklistFragments(result);
+	}
+
+	addItems(games, 		blacklistedItems.games);
+	addItems(channels, 		blacklistedItems.channels);
+	addItems(communities, 	blacklistedItems.communities);
+	addItems(creative, 		blacklistedItems.creative);
+});
+
+document.querySelectorAll('button.clear').forEach(function(e) {
+
+	e.addEventListener('click', function() {
+
+		const table = e.parentNode.parentNode.parentNode.parentNode.querySelector('tbody');
+		clearItems(table);
+	});
 });
 
 saveButton.addEventListener('click', onSave);
 cancelButton.addEventListener('click', onCancel);
 
-// localize
-document.getElementById('column_Games').textContent 		= chrome.i18n.getMessage('blacklist_Games');
-document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
-document.getElementById('column_Communities').textContent 	= chrome.i18n.getMessage('blacklist_Communities');
-document.getElementById('column_Creative').textContent 		= chrome.i18n.getMessage('blacklist_Creative');
-saveButton.textContent 										= chrome.i18n.getMessage('blacklist_Save');
-cancelButton.textContent 									= chrome.i18n.getMessage('blacklist_Cancel');
+/* BEGIN: localize */
+
+	document.getElementById('column_Games').textContent 		= chrome.i18n.getMessage('blacklist_Games');
+	document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
+	document.getElementById('column_Communities').textContent 	= chrome.i18n.getMessage('blacklist_Communities');
+	document.getElementById('column_Creative').textContent 		= chrome.i18n.getMessage('blacklist_Creative');
+
+	document.querySelectorAll('button.clear').forEach(function(e) {
+
+		e.textContent = chrome.i18n.getMessage('blacklist_RemoveAll');
+	});
+
+	saveButton.textContent 		= chrome.i18n.getMessage('blacklist_Save');
+	cancelButton.textContent 	= chrome.i18n.getMessage('blacklist_Cancel');
+
+/* END: localize */

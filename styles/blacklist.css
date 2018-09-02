@@ -15,6 +15,10 @@
 			margin-left: 1%;
 		}
 
+		#blacklist .category th {
+			position: relative;
+		}
+
 		#blacklist .category td:nth-child(1) {
 			width: 99%;
 		}
@@ -25,6 +29,13 @@
 		#blacklist .category button {
 			width: 96px;
 		}
+			#blacklist .category button.clear {
+				border-color: #FFFFFF;
+				padding: 4px 8px;
+				position: absolute;
+				right: 8px;
+				top: 6px;
+			}
 
 	#blacklist .actions {
 		background-color: #DAD8DE;

@@ -1,6 +1,6 @@
 ﻿{
 	"app_Desc": {
-		"message": "Ausblenden von Spielen, Kanälen und Communities auf: twitch.tv"
+		"message": "Ausblenden von Streams, Spielen, Kanälen und Communities auf: twitch.tv"
 	},
 
 	"label_HideGame": {
@@ -12,9 +12,12 @@
 	"label_HideChannel": {
 		"message": "Kanal ausblenden"
 	},
+	"alert_StorageQuota": {
+		"message": "Unwanted Twitch:\nDie Sperrliste ist voll.\nEs können keine weiteren Einträge hinzugefügt werden."
+	},
 
 	"popup_ManageBlacklist": {
-		"message": "Ausschlüsse bearbeiten"
+		"message": "Sperrliste verwalten"
 	},
 	"popup_EnableExtension": {
 		"message": "Erweiterung aktivieren"
@@ -24,22 +27,25 @@
 	},
 
 	"blacklist_Games": {
-		"message": "Ausgeschlossene Spiele"
+		"message": "Ausgeblendete Spiele"
 	},
 	"blacklist_Channels": {
-		"message": "Ausgeschlossene Kanäle"
+		"message": "Ausgeblendete Kanäle"
 	},
 	"blacklist_Communities": {
-		"message": "Ausgeschlossene Communities"
+		"message": "Ausgeblendete Communities"
 	},
 	"blacklist_Creative": {
-		"message": "Ausgeschlossene Kreativ-Communities"
+		"message": "Ausgeblendete Kreativ-Communities"
 	},
 	"blacklist_Empty": {
-		"message": "Bisher noch keine Ausschlüsse."
+		"message": "Noch kein Eintrag vorhanden."
 	},
 	"blacklist_Remove": {
 		"message": "Entfernen"
+	},
+	"blacklist_RemoveAll": {
+		"message": "Leeren"
 	},
 	"blacklist_Save": {
 		"message": "Speichern"
@@ -47,7 +53,7 @@
 	"blacklist_Cancel": {
 		"message": "Abbrechen"
 	},
-	"blacklist_ReloadNote": {
-		"message": "Damit die Änderungen sichtbar werden,\nmüssen bereits geöffnete Tabs neu geladen werden."
+	"alert_ReloadNote": {
+		"message": "Unwanted Twitch:\nDamit die Änderungen sichtbar werden,\nmüssen bereits geöffnete Tabs neu geladen werden."
 	}
 }
