@@ -31,8 +31,13 @@ const debug = 4;
 	// indicates that the storage is currently in use
 	let storageLocked = false;
 
-	// maximum size of the blacklist (length of serialized string)
+	// maximum size of data that can be stored in the sync storage (in Bytes)
+	// chrome.storage.sync.QUOTA_BYTES_PER_ITEM - 192 (wiggle room)
 	const storageSyncMaxSize = 8000;
+
+	// maximum number of keys that can be stored in the sync storage
+	// chrome.storage.sync.MAX_ITEMS - 12 (wiggle room)
+	const storageSyncMaxKeys = 500;
 
 	// collection of blacklisted items, serves as local cache
 	let storedBlacklistedItems = {};
@@ -68,7 +73,7 @@ function isSupportedPage(page) {
  * Returns the item type based on the current page.
  */
 function getItemType(page, log) {
-	if (log !== false) { logTrace('invoking getItemType("' + page + '")'); };
+	if (log !== false) { logTrace('invoking getItemType("' + page + '")'); }
 
 	let result = null;
 
@@ -380,61 +385,60 @@ function putBlacklistedItems(blacklistedItems, callback) {
 function splitBlacklistItems(items) {
 	logTrace('invoking splitBlacklistItems($)', items);
 
-	let fragments 			= {};
-	const maxItemsPerType 	= 100;
+	const maxValuesPerFragment = 250;
+
+	let fragments 		= {};
+	let fragmentIndex 	= 0;
+
+	let remainingSpace 	= maxValuesPerFragment;
 
 	for (let type in items) {
 		if (!items.hasOwnProperty(type)) { continue; }
 
-		if (fragments[type] === undefined) {
+		// max. fragments reached?
+		if (fragmentIndex >= storageSyncMaxKeys) { break; }
 
-			fragments[type] = [];
-		}
+		let key = ('blItemsFragment' + fragmentIndex);
+		if (fragments[key] === undefined) { fragments[key] = {}; }
 
-		let values 		= Object.keys(items[type]);
-		let valuesCount = values.length;
-		let sliceOffset = 0;
+		let values 			= Object.keys(items[type]);
+		let valuesLength 	= values.length;
 
-		do {
+		let sliceOffset 	= 0;
+		let remainingValues = valuesLength;
 
-			fragments[type].push(
-				values.slice(sliceOffset, sliceOffset + maxItemsPerType)
-			);
+		if (remainingValues === 0) { continue; }
 
-			sliceOffset += maxItemsPerType;
-			valuesCount -= maxItemsPerType;
+		while (true) {
 
-		} while (valuesCount > maxItemsPerType);
+			// no more space, start new fragment
+			if (remainingSpace === 0) {
 
-		// remaining entries
-		if (valuesCount > 0) {
-
-			fragments[type].push(
-				values.slice(sliceOffset)
-			);
-		}
-	}
-
-	// assign fragments
-	let result = {};
-	for (let type in fragments) {
-		if (!items.hasOwnProperty(type)) { continue; }
-
-		const fragmentsLength = fragments[type].length;
-		for (let i = 0; i < fragmentsLength; i++) {
-
-			let fragmentKey = ('blItemsFragment' + i);
-
-			if (result[fragmentKey] === undefined) {
-
-				result[fragmentKey] = {};
+				fragmentIndex 			+= 1;
+				key 					 = ('blItemsFragment' + fragmentIndex);
+				fragments[key] 			 = {};
+				fragments[key][type] 	 = [];
+				remainingSpace 			 = maxValuesPerFragment;
 			}
 
-			result[fragmentKey][type] = fragments[type][i];
+			// max. fragments reached?
+			if (fragmentIndex >= storageSyncMaxKeys) { break; }
+
+			let slice 		= values.slice(sliceOffset, (sliceOffset + Math.min(remainingSpace, maxValuesPerFragment)));
+			let sliceLength = slice.length;
+
+			sliceOffset 	+= sliceLength;
+			remainingSpace 	-= sliceLength;
+			remainingValues -= sliceLength;
+
+			fragments[key][type] = slice;
+
+			// no more values to add, go to next entry type
+			if (remainingValues === 0) { break; }
 		}
 	}
 
-	return result;
+	return fragments;
 }
 
 /**
@@ -443,10 +447,9 @@ function splitBlacklistItems(items) {
 function mergeBlacklistFragments(fragments) {
 	logTrace('invoking mergeBlacklistFragments($)', fragments);
 
-	let result 			= {};
-	const maxFragments 	= 100;
+	let result = {};
 
-	for (let i = 0; i < maxFragments; i++) {
+	for (let i = 0; i < storageSyncMaxKeys; i++) {
 
 		let fragmentKey = ('blItemsFragment' + i);
 
@@ -465,7 +468,7 @@ function mergeBlacklistFragments(fragments) {
 			const itemListLength 	= itemList.length;
 			for (let n = 0; n < itemListLength; n++) {
 
-				result[type][itemList[n]] = true;
+				result[type][itemList[n]] = 1;
 			}
 		}
 
@@ -789,7 +792,7 @@ function onHideItem() {
 
 		storedBlacklistedItems[currentItemType] = {};
 	}
-	storedBlacklistedItems[currentItemType][item] = true;
+	storedBlacklistedItems[currentItemType][item] = 1;
 
 	// update storage
 	putBlacklistedItems(storedBlacklistedItems);
@@ -949,7 +952,7 @@ function triggerScroll() {
 	}
 
 	/**
-	 * Returns the approx. size to store the provided data in the storage.
+	 * Returns the approx. size required to store the provided data in the storage.
 	 */
 	function measureStoredSize(o) {
 		logTrace('invoking measureStoredSize($)', o);

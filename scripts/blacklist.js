@@ -1,14 +1,17 @@
 ﻿// jshint esversion: 6
 
+// maximum number of keys that can be stored in the sync storage
+// chrome.storage.sync.MAX_ITEMS - 12 (wiggle room)
+const storageSyncMaxKeys = 500;
+
 /**
  * Merges the provided blacklist fragments back into blacklist items.
  */
 function mergeBlacklistFragments(fragments) {
 
-	let result 			= {};
-	const maxFragments 	= 100;
+	let result = {};
 
-	for (let i = 0; i < maxFragments; i++) {
+	for (let i = 0; i < storageSyncMaxKeys; i++) {
 
 		let fragmentKey = ('blItemsFragment' + i);
 
@@ -27,7 +30,7 @@ function mergeBlacklistFragments(fragments) {
 			const itemListLength 	= itemList.length;
 			for (let n = 0; n < itemListLength; n++) {
 
-				result[type][itemList[n]] = true;
+				result[type][itemList[n]] = 1;
 			}
 		}
 
@@ -38,6 +41,11 @@ function mergeBlacklistFragments(fragments) {
 
 function addItems(table, items) {
 
+	if (typeof items !== 'object') {
+
+		return handleItemCount(table);
+	}
+
 	// sort items (case insensitive)
 	const sortedKeys = Object.keys(items).sort(function (a, b) {
 
@@ -46,7 +54,6 @@ function addItems(table, items) {
 	const sortedKeysLength = sortedKeys.length;
 
 	let fragment = document.createDocumentFragment();
-	let count = 0;
 
 	for (let i = 0; i < sortedKeysLength; i++) {
 
@@ -72,7 +79,6 @@ function addItems(table, items) {
 		row.appendChild(cell2);
 
 		fragment.appendChild(row);
-		count++;
 	}
 
 	table.appendChild(fragment);
