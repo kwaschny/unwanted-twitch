@@ -984,12 +984,6 @@ window.addEventListener('load', function() {
 	});
 });
 
-window.addEventListener('popstate', function() {
-
-	logWarn('Page changed to:', page);
-	onPageChange(currentPage);
-});
-
 /**
  * Constantly monitor path to notice change of page.
  */
