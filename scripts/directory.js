@@ -25,7 +25,7 @@ const debug = 4;
 	// interval handle for page load detection
 	let waitingForPageLoad;
 
-	// currently detected slot type, one of: 'games', 'communities', 'creative', 'channels' or null
+	// currently detected slot type, one of: 'overview', 'games', 'communities', 'creative', 'channels' or null
 	let currentItemType = getItemType(currentPage, false);
 
 	// indicates that the storage is currently in use
@@ -82,21 +82,25 @@ function getItemType(page, log) {
 
 	switch (page) {
 
+		case '': // root
+			result = 'overview';
+		break;
+
 		case '/directory':
 			result = 'games';
-			break;
+		break;
 
 		case '/directory/communities':
 			result = 'communities';
-			break;
+		break;
 
 		case '/directory/creative':
 			result = 'creative';
-			break;
+		break;
 
 		case '/directory/all':
 			result = 'channels';
-			break;
+		break;
 
 		default:
 			if (RegExp('^/directory/(all|game)/[^/]+(/[a-z]{2})?$').test(page) === true) {
@@ -107,6 +111,7 @@ function getItemType(page, log) {
 
 				result = 'channels';
 			}
+		break;
 	}
 
 	if (log !== false) { logTrace('getItemType("' + page + '") returned:', result); }
@@ -242,18 +247,45 @@ function onPageChange(page) {
 
 		if (enabled === false) { return; }
 
-		const indicator = rootNode.querySelector('div[data-target][style^="order:"]');
-		if (indicator !== null) {
+		let indicator;
 
-			window.clearInterval(waitingForPageLoad);
-			pageLoads = false;
-			logTrace('polling stopped in onPageChange(): page loaded');
+		switch (currentItemType) {
 
-			// invoke directory filter
-			const remainingItems = filterDirectory();
+			case 'overview':
 
-			// attach hide buttons to the remaining items
-			attachHideButtons(remainingItems);
+				indicator = document.querySelector('div.preview-card');
+				if (indicator !== null) {
+
+					window.clearInterval(waitingForPageLoad);
+					pageLoads = false;
+					logTrace('polling stopped in onPageChange(): page loaded');
+
+					// invoke directory filter
+					filterDirectory();
+				}
+
+				break;
+
+			case 'channels':
+			case 'games':
+			case 'communities':
+			case 'creative':
+
+				indicator = rootNode.querySelector('div[data-target][style^="order:"]');
+				if (indicator !== null) {
+
+					window.clearInterval(waitingForPageLoad);
+					pageLoads = false;
+					logTrace('polling stopped in onPageChange(): page loaded');
+
+					// invoke directory filter
+					const remainingItems = filterDirectory();
+
+					// attach hide buttons to the remaining items
+					attachHideButtons(remainingItems);
+				}
+
+			break;
 		}
 
 	}, pageLoadMonitorInterval);
@@ -478,69 +510,6 @@ function mergeBlacklistFragments(fragments) {
 }
 
 /**
- * Removes the node from the DOM based on the current item type.
- */
-function removeItem(node) {
-	logTrace('invoking removeItem($)', node);
-
-	if (currentItemType === 'channels') {
-
-		let topNode = node;
-
-		// find parent with class .stream-thumbnail or attribute [data-target] + [style^="order:"]
-		while (true) {
-
-			if (topNode === undefined) { break; }
-
-			if (
-				(topNode.classList.contains('stream-thumbnail') === true) ||
-				(
-					(topNode.getAttribute('data-target') !== null) &&
-					(
-						(typeof topNode.getAttribute('style') === 'string') &&
-						(topNode.getAttribute('style').indexOf('order:') === 0)
-					)
-				)
-			) {
-
-				node.setAttribute('data-uttv-hidden', '');
-				topNode.style.display = 'none';
-				return true;
-			}
-
-			topNode = topNode.parentNode;
-		}
-
-	} else {
-
-		let topNode = node;
-
-		// find parent with attribute [data-target] + [style^="order:"]
-		while (true) {
-
-			if (topNode === undefined) { break; }
-
-			if (
-				(topNode.getAttribute('data-target') !== null) &&
-				(
-					(typeof topNode.getAttribute('style') === 'string') &&
-					(topNode.getAttribute('style').indexOf('order:') === 0)
-				)
-			) {
-
-				node.setAttribute('data-uttv-hidden', '');
-				topNode.style.display = 'none';
-				return true;
-			}
-
-			topNode = topNode.parentNode;
-		}
-	}
-
-	return false;
-}
-
-/**
  * Filters directory by removing blacklisted items. Returns the remaining items.
  */
 function filterDirectory() {
@@ -562,10 +531,20 @@ function filterDirectory() {
 	}
 	filterRunning = false;
 
-	if (remainingItems.length < currentItems.length) {
+	switch (currentItemType) {
 
-		logVerbose('Attempting to re-populate items.');
-		triggerScroll();
+		case 'channels':
+		case 'games':
+		case 'communities':
+		case 'creative':
+
+			if (remainingItems.length < currentItems.length) {
+
+				logVerbose('Attempting to re-populate items.');
+				triggerScroll();
+			}
+
+		break;
 	}
 
 	return remainingItems;
@@ -579,69 +558,160 @@ function getItems() {
 
 	let items = [];
 
-	if (currentItemType === 'channels') {
+	// items
+	let itemContainersSelector;
+	let itemContainers;
+	let itemContainersLength;
 
-		// items
-		const itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
-		const itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
-		const itemContainersLength 		= itemContainers.length;
+	switch (currentItemType) {
 
-		if (itemContainersLength === 0) {
+		case 'overview':
 
-			logError('Item containers not found in directory container. Expected:', itemContainersSelector);
-			return [];
-		}
+			// channels, clips, videos
+			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
+			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainersLength 	= itemContainers.length;
 
-		for (let i = 0; i < itemContainersLength; i++) {
+			if (itemContainersLength > 0) {
 
-			const itemName = itemContainers[i].getAttribute('href');
-			if ((typeof itemName === 'string') && (itemName.length > 0)) {
+				for (let i = 0; i < itemContainersLength; i++) {
 
-				// try to find game
-				let subItem = null;
-				let subNode = itemContainers[i].parentNode.parentNode;
-				if (subNode.classList.contains('preview-card')) {
+					const itemSibling = itemContainers[i].parentNode.nextSibling;
+					if (itemSibling === null) { continue; }
 
-					subNode = subNode.querySelector('[data-a-target="preview-card-game-link"]');
-					if (subNode !== null) {
+					const wrapper = itemSibling.querySelector('div.preview-card-titles__subtitle-wrapper');
 
-						subItem = subNode.textContent;
+					if (
+						(wrapper === null) ||
+						(wrapper.children.length === 0)
+					) {
+							continue;
 					}
+
+					let itemName = wrapper.children[0].querySelector('a[data-a-target]');
+					if ((itemName === null) || !itemName.textContent) { continue; }
+
+					// game might not be set
+					let subItem = 'unknown';
+					if (wrapper.children.length >= 2) {
+
+						subItem = wrapper.children[1].querySelector('a[data-a-target]');
+						if ((subItem !== null) && subItem.textContent) {
+
+							subItem = subItem.textContent;
+						}
+					}
+
+					items.push({
+						item: 		itemName.textContent,
+						subItem: 	subItem,
+						node: 		itemContainers[i]
+					});
 				}
 
-				items.push({
-					item: 		itemName.replace('/', ''),
-					subItem: 	subItem,
-					node: 		itemContainers[i]
-				});
+			} else {
+
+				logWarn('Item containers (channels, clips, videos) not found in overview container. Expected:', itemContainersSelector);
 			}
-		}
 
-	} else {
+			// games
+			itemContainersSelector 	= 'div[data-a-target^="card-"]:not([data-uttv-hidden])';
+			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainersLength 	= itemContainers.length;
 
-		// items
-		const itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
-		const itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
-		const itemContainersLength 		= itemContainers.length;
+			if (itemContainersLength > 0) {
 
-		if (itemContainersLength === 0) {
+				for (let i = 0; i < itemContainersLength; i++) {
 
-			logError('Item containers not found in directory container. Expected:', itemContainersSelector);
-			return [];
-		}
+					const headline = itemContainers[i].querySelector('h3[title]');
+					if (headline === null) { continue; }
 
-		for (let i = 0; i < itemContainersLength; i++) {
+					itemName = headline.textContent;
+					if (!itemName) { continue; }
 
-			const itemName = itemContainers[i].getAttribute('aria-label');
-			if ((typeof itemName === 'string') && (itemName.length > 0)) {
+					items.push({
+						item: 		itemName,
+						subItem: 	null,
+						node: 		itemContainers[i]
+					});
+				}
 
-				items.push({
-					item: 		itemName,
-					subItem: 	null,
-					node: 		itemContainers[i]
-				});
+			} else {
+
+				logWarn('Item containers (games) not found in overview container. Expected:', itemContainersSelector);
 			}
-		}
+
+		break;
+
+		case 'channels':
+
+			// items
+			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
+			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainersLength 	= itemContainers.length;
+
+			if (itemContainersLength === 0) {
+
+				logError('Item containers not found in directory container. Expected:', itemContainersSelector);
+				return [];
+			}
+
+			for (let i = 0; i < itemContainersLength; i++) {
+
+				const itemName = itemContainers[i].getAttribute('href');
+				if ((typeof itemName === 'string') && (itemName.length > 0)) {
+
+					// try to find game
+					let subItem = null;
+					let subNode = itemContainers[i].parentNode.parentNode;
+					if (subNode.classList.contains('preview-card')) {
+
+						subNode = subNode.querySelector('[data-a-target="preview-card-game-link"]');
+						if (subNode !== null) {
+
+							subItem = subNode.textContent;
+						}
+					}
+
+					items.push({
+						item: 		itemName.replace('/', ''),
+						subItem: 	subItem,
+						node: 		itemContainers[i]
+					});
+				}
+			}
+
+		break;
+
+		case 'games':
+		case 'communities':
+		case 'creative':
+
+			// items
+			itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
+			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainersLength 	= itemContainers.length;
+
+			if (itemContainersLength === 0) {
+
+				logError('Item containers not found in directory container. Expected:', itemContainersSelector);
+				return [];
+			}
+
+			for (let i = 0; i < itemContainersLength; i++) {
+
+				const itemName = itemContainers[i].getAttribute('aria-label');
+				if ((typeof itemName === 'string') && (itemName.length > 0)) {
+
+					items.push({
+						item: 		itemName,
+						subItem: 	null,
+						node: 		itemContainers[i]
+					});
+				}
+			}
+
+		break;
 	}
 
 	currentItemsCount = items.length;
@@ -664,53 +734,103 @@ function filterItems(blacklisted, present) {
 	// initialize defaults in blacklisted items collection
 	initBlacklistedItems(blacklisted);
 
-	let remainingItems = [];
+	let remainingItems 	= [];
+	const presentLength = present.length;
 
-	if (currentItemType === 'channels') {
+	switch (currentItemType) {
 
-		const presentLength = present.length;
-		for (let i = 0; i < presentLength; i++) {
+		case 'overview':
 
-			const entry = present[i];
+			for (let i = 0; i < presentLength; i++) {
 
-			if (
-				(blacklisted.channels[entry.item] !== undefined) ||
-				(
-					(entry.subItem !== null) &&
-					(blacklisted.games[entry.subItem] !== undefined)
-				)
-			 ) {
+				const entry = present[i];
 
-				if (removeItem(entry.node) === true) {
+				// game
+				if (entry.subItem === null) {
 
-					logInfo('Blacklisted:', entry.item);
+					if (blacklisted.games[entry.item] !== undefined) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted:', entry.item);
+						}
+
+					} else {
+
+						remainingItems.push(entry);
+					}
+
+				// channel, clip, video
+				} else {
+
+					if (
+						(blacklisted.channels[entry.item] !== undefined) ||
+						(blacklisted.games[entry.subItem] !== undefined)
+					) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted:', entry.item);
+						}
+
+					} else {
+
+						remainingItems.push(entry);
+					}
 				}
-
-			} else {
-
-				remainingItems.push(entry);
 			}
-		}
 
-	} else {
+		break;
 
-		const presentLength = present.length;
-		for (let i = 0; i < presentLength; i++) {
+		case 'channels':
 
-			const entry = present[i];
+			for (let i = 0; i < presentLength; i++) {
 
-			if (blacklisted[currentItemType][entry.item] !== undefined) {
+				const entry = present[i];
 
-				if (removeItem(entry.node) === true) {
+				if (
+					(blacklisted.channels[entry.item] !== undefined) ||
+					(
+						(entry.subItem !== null) &&
+						(blacklisted.games[entry.subItem] !== undefined)
+					)
+				) {
 
-					logInfo('Blacklisted:', entry.item);
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted:', entry.item);
+					}
+
+				} else {
+
+					remainingItems.push(entry);
 				}
-
-			} else {
-
-				remainingItems.push(entry);
 			}
-		}
+
+		break;
+
+		case 'games':
+		case 'communities':
+		case 'creative':
+
+			for (let i = 0; i < presentLength; i++) {
+
+				const entry = present[i];
+
+				if (blacklisted[currentItemType][entry.item] !== undefined) {
+
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted:', entry.item);
+					}
+
+				} else {
+
+					remainingItems.push(entry);
+				}
+			}
+
+		break;
 	}
 
 	currentItemsCount = remainingItems.length;
@@ -734,26 +854,27 @@ function attachHideButtons(items) {
 
 	switch (currentItemType) {
 
+		case 'overview':
+			return;
+
 		case 'games':
 			hideNode.className 		= 'uttv-hide game';
 			hideNode.textContent 	= chrome.i18n.getMessage('label_HideGame');
-			break;
+		break;
 
 		case 'communities':
 		case 'creative':
 			hideNode.className 		= 'uttv-hide community';
 			hideNode.textContent 	= chrome.i18n.getMessage('label_HideCommunity');
-			break;
+		break;
 
 		case 'channels':
 			hideNode.className 		= 'uttv-hide channel';
 			hideNode.textContent 	= chrome.i18n.getMessage('label_HideChannel');
-			break;
+		break;
 
 		default:
-			hideNode.className 		= 'uttv-hide';
-			hideNode.textContent 	= 'Hide Item';
-			break;
+			return;
 	}
 
 	const itemsLength = items.length;
@@ -805,6 +926,107 @@ function onHideItem() {
 }
 
 /**
+ * Removes the node from the DOM based on the current item type.
+ */
+function removeItem(node) {
+	logTrace('invoking removeItem($)', node);
+
+	let topNode;
+
+	switch (currentItemType) {
+
+		case 'overview':
+
+			topNode = node;
+
+			// find parent div (empty classList, empty dataset)
+			while (true) {
+
+				if (topNode === undefined) { break; }
+
+				if (
+					(Object.keys(topNode.dataset).length === 0) &&
+					(
+						(topNode.classList.length === 0) ||
+						topNode.classList.contains('tw-col-2') ||
+						topNode.classList.contains('anon-top-channels')
+					)
+				) {
+					node.setAttribute('data-uttv-hidden', '');
+					// don't hide topmost node because it causes ridiculous scaling
+					topNode.children[0].style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+
+		case 'channels':
+
+			topNode = node;
+
+			// find parent with class .stream-thumbnail or attribute [data-target] + [style^="order:"]
+			while (true) {
+
+				if (topNode === undefined) { break; }
+
+				if (
+					(topNode.classList.contains('stream-thumbnail') === true) ||
+					(
+						(topNode.getAttribute('data-target') !== null) &&
+						(
+							(typeof topNode.getAttribute('style') === 'string') &&
+							(topNode.getAttribute('style').indexOf('order:') === 0)
+						)
+					)
+				) {
+
+					node.setAttribute('data-uttv-hidden', '');
+					topNode.style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+
+		case 'games':
+		case 'communities':
+		case 'creative':
+
+			topNode = node;
+
+			// find parent with attribute [data-target] + [style^="order:"]
+			while (true) {
+
+				if (topNode === undefined) { break; }
+
+				if (
+					(topNode.getAttribute('data-target') !== null) &&
+					(
+						(typeof topNode.getAttribute('style') === 'string') &&
+						(topNode.getAttribute('style').indexOf('order:') === 0)
+					)
+				) {
+
+					node.setAttribute('data-uttv-hidden', '');
+					topNode.style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+	}
+
+	return false;
+}
+
+/**
  * Monitors scrollbar offset periodically and fires custom onScroll event if the scroll progressed further down.
  */
 function listenToScroll() {
@@ -819,13 +1041,27 @@ function listenToScroll() {
 
 		let itemsInDOM = 0;
 
-		if (currentItemType === 'channels') {
+		switch (currentItemType) {
 
-			itemsInDOM = rootNode.querySelectorAll('div.stream-thumbnail:not([style*="display"]), div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+			case 'overview':
 
-		} else {
+				itemsInDOM = rootNode.querySelectorAll('a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden]), div[data-a-target^="card-"]:not([data-uttv-hidden])').length;
 
-			itemsInDOM = rootNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+			break;
+
+			case 'channels':
+
+				itemsInDOM = rootNode.querySelectorAll('div.stream-thumbnail:not([style*="display"]), div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+
+			break;
+
+			case 'games':
+			case 'communities':
+			case 'creative':
+
+				itemsInDOM = rootNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+
+			break;
 		}
 
 		if ((itemsInDOM > 0) && (itemsInDOM !== currentItemsCount)) {
