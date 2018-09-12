@@ -25,8 +25,8 @@ const debug = 4;
 	// interval handle for page load detection
 	let waitingForPageLoad;
 
-	// currently detected slot type, one of: 'overview', 'games', 'communities', 'creative', 'channels' or null
-	let currentItemType = getItemType(currentPage, false);
+	// currently detected slot type, one of: 'frontpage', 'games', 'communities', 'creative', 'channels' or null
+	let currentItemType = getItemType(currentPage);
 
 	// indicates that the storage is currently in use
 	let storageLocked = false;
@@ -54,9 +54,9 @@ const debug = 4;
  * Returns if the current page is a supported directory.
  */
 function isSupportedPage(page) {
-	logTrace('invoking isSupportedPage("' + page + '")');
+	logTrace('invoking isSupportedPage($)', page);
 
-	const itemType = getItemType(page, false);
+	const itemType = getItemType(page);
 
 	const result = (itemType !== null);
 
@@ -72,8 +72,8 @@ function isSupportedPage(page) {
 /**
  * Returns the item type based on the current page.
  */
-function getItemType(page, log) {
-	if (log !== false) { logTrace('invoking getItemType("' + page + '")'); }
+function getItemType(page) {
+	logTrace('invoking getItemType($)', page);
 
 	let result = null;
 
@@ -82,8 +82,8 @@ function getItemType(page, log) {
 
 	switch (page) {
 
-		case '': // root
-			result = 'overview';
+		case '':
+			result = 'frontpage';
 		break;
 
 		case '/directory':
@@ -114,7 +114,6 @@ function getItemType(page, log) {
 		break;
 	}
 
-	if (log !== false) { logTrace('getItemType("' + page + '") returned:', result); }
 	return result;
 }
 
@@ -125,17 +124,19 @@ function getEnabledState(callback) {
 	logTrace('invoking getEnabledState()');
 
 	storageLocked = true;
-	chrome.storage.sync.get([ 'enabled' ], function(response) {
+	chrome.storage.sync.get([ 'enabled' ], function callback_storageGet(result) {
+		logTrace('callback invoked: chrome.storage.sync.get($)', [ 'enabled' ], result);
+
 		storageLocked = false;
 
-		if (typeof response.enabled === 'boolean') {
+		if (typeof result.enabled === 'boolean') {
 
-			enabled = response.enabled;
+			enabled = result.enabled;
 
-			if (response.enabled === true) {
-				logWarn('Extension\'s enabled state:', response.enabled);
+			if (result.enabled === true) {
+				logWarn('Extension\'s enabled state:', result.enabled);
 			} else {
-				logError('Extension\'s enabled state:', response.enabled);
+				logError('Extension\'s enabled state:', result.enabled);
 			}
 
 		} else {
@@ -159,7 +160,9 @@ function putEnabledState(state) {
 	enabled = state;
 
 	storageLocked = true;
-	chrome.storage.sync.set({ 'enabled': state }, function() {
+	chrome.storage.sync.set({ 'enabled': state }, function callback_storageSet() {
+		logTrace('callback invoked: chrome.storage.sync.set($)', { 'enabled': state });
+
 		storageLocked = false;
 
 		logWarn('Successfully disabled the blacklist.');
@@ -192,12 +195,15 @@ function init() {
 	}
 
 	// prepare blacklist (regardless of the current page support)
-	getBlacklistedItems(function(blacklistedItems) {
+	getBlacklistedItems(function callback_getBlacklistedItems(blacklistedItems) {
+		logTrace('callback invoked: getBlacklistedItems()', blacklistedItems);
+
+		// initialize defaults in blacklisted items collection
+		initBlacklistedItems(blacklistedItems);
 
 		// cache blacklisted items from storage
 		storedBlacklistedItems = blacklistedItems;
-		logTrace('[storedBlacklistedItems] initialized', storedBlacklistedItems);
-		logVerbose('Blacklist loaded:', blacklistedItems);
+		logInfo('Blacklist loaded:', blacklistedItems);
 
 		if (pageSupported === true) {
 
@@ -223,6 +229,10 @@ function init() {
 
 					// attach hide buttons to the remaining items
 					attachHideButtons(remainingItems);
+
+					// invoke recommendations filter
+					filterRecommendations();
+					observeRecommendations();
 				}
 
 			}, pageLoadMonitorInterval);
@@ -234,7 +244,7 @@ function init() {
  * Event to fire whenever the page changes. Re-runs the filter.
  */
 function onPageChange(page) {
-	logTrace('invoking onPageChange()');
+	logTrace('invoking onPageChange($)', page);
 
 	if (isSupportedPage(page) === false) { return; }
 
@@ -251,9 +261,9 @@ function onPageChange(page) {
 
 		switch (currentItemType) {
 
-			case 'overview':
+			case 'frontpage':
 
-				indicator = document.querySelector('div.preview-card');
+				indicator = rootNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
 				if (indicator !== null) {
 
 					window.clearInterval(waitingForPageLoad);
@@ -283,6 +293,10 @@ function onPageChange(page) {
 
 					// attach hide buttons to the remaining items
 					attachHideButtons(remainingItems);
+
+					// invoke recommendations filter
+					filterRecommendations();
+					observeRecommendations();
 				}
 
 			break;
@@ -335,7 +349,9 @@ function getBlacklistedItems(callback) {
 	}
 
 	storageLocked = true;
-	chrome.storage.sync.get(null, function(result) {
+	chrome.storage.sync.get(null, function callback_storageGet(result) {
+		logTrace('callback invoked: chrome.storage.sync.get($)', null, result);
+
 		storageLocked = false;
 
 		let blacklistedItems = {};
@@ -359,20 +375,20 @@ function getBlacklistedItems(callback) {
 /**
  * Stores all blacklisted items in the storage.
  */
-function putBlacklistedItems(blacklistedItems, callback) {
-	logTrace('invoking putBlacklistedItems($)', blacklistedItems);
+function putBlacklistedItems(items, callback) {
+	logTrace('invoking putBlacklistedItems($)', items);
 
-	storedBlacklistedItems = blacklistedItems;
+	storedBlacklistedItems = items;
 
 	storageLocked = true;
 
-	let dataToStore 	= { 'blacklistedItems': blacklistedItems };
+	let dataToStore 	= { 'blacklistedItems': items };
 	const requiredSize 	= measureStoredSize(dataToStore);
 
 	if (requiredSize > storageSyncMaxSize) {
 
 		logWarn('Blacklist to store (' + requiredSize + ') exceeds the maximum storage size per item (' + storageSyncMaxSize + '). Splitting required...');
-		dataToStore = splitBlacklistItems(blacklistedItems);
+		dataToStore = splitBlacklistItems(items);
 		logWarn('Splitting of blacklist completed:', dataToStore);
 	}
 
@@ -382,9 +398,12 @@ function putBlacklistedItems(blacklistedItems, callback) {
 		keysToRemove.push('blItemsFragment' + i);
 	}
 
-	chrome.storage.sync.remove(keysToRemove, function() {
+	chrome.storage.sync.remove(keysToRemove, function callback_storageRemove() {
+		logTrace('callback invoked: chrome.storage.sync.remove($)', keysToRemove);
 
-		chrome.storage.sync.set(dataToStore, function() {
+		chrome.storage.sync.set(dataToStore, function callback_storageSet() {
+			logTrace('callback invoked: chrome.storage.sync.set($)', dataToStore);
+
 			storageLocked = false;
 
 			// handle storage quota
@@ -400,12 +419,12 @@ function putBlacklistedItems(blacklistedItems, callback) {
 
 			} else {
 
-				logInfo('Successfully added to blacklist:', blacklistedItems);
+				logInfo('Successfully added to blacklist:', items);
 			}
 
 			if (typeof callback === 'function') {
 
-				callback(blacklistedItems);
+				callback(items);
 			}
 		});
 	});
@@ -510,6 +529,43 @@ function mergeBlacklistFragments(fragments) {
 }
 
 /**
+ * Returns if the specified item is blacklisted as the specified type.
+ */
+function isBlacklistedItem(item, type) {
+	logTrace('invoking isBlacklistedItem($, $)', item, type);
+
+	if (typeof item !== 'string') { return false; }
+	if (storedBlacklistedItems[type] === undefined) { return false; }
+
+	switch (type) {
+
+		case 'channels':
+
+			item = item.toLowerCase();
+
+		break;
+	}
+
+	return (storedBlacklistedItems[type][item] !== undefined);
+}
+
+/**
+ * Returns if the specified game is blacklisted.
+ */
+function isBlacklistedGame(game) {
+
+	return isBlacklistedItem(game, 'games');
+}
+
+/**
+ * Returns if the specified channel is blacklisted.
+ */
+function isBlacklistedChannel(channel) {
+
+	return isBlacklistedItem(channel, 'channels');
+}
+
+/**
  * Filters directory by removing blacklisted items. Returns the remaining items.
  */
 function filterDirectory() {
@@ -527,7 +583,7 @@ function filterDirectory() {
 	let remainingItems = [];
 	if (currentItems.length > 0) {
 
-		remainingItems = filterItems(storedBlacklistedItems, currentItems);
+		remainingItems = filterItems(currentItems);
 	}
 	filterRunning = false;
 
@@ -565,7 +621,7 @@ function getItems() {
 
 	switch (currentItemType) {
 
-		case 'overview':
+		case 'frontpage':
 
 			// channels, clips, videos
 			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
@@ -592,7 +648,7 @@ function getItems() {
 					if ((itemName === null) || !itemName.textContent) { continue; }
 
 					// game might not be set
-					let subItem = 'unknown';
+					let subItem = 'uttv_unknown';
 					if (wrapper.children.length >= 2) {
 
 						subItem = wrapper.children[1].querySelector('a[data-a-target]');
@@ -611,7 +667,7 @@ function getItems() {
 
 			} else {
 
-				logWarn('Item containers (channels, clips, videos) not found in overview container. Expected:', itemContainersSelector);
+				logWarn('Item containers (channels, clips, videos) not found in frontpage container. Expected:', itemContainersSelector);
 			}
 
 			// games
@@ -638,7 +694,7 @@ function getItems() {
 
 			} else {
 
-				logWarn('Item containers (games) not found in overview container. Expected:', itemContainersSelector);
+				logWarn('Item containers (games) not found in frontpage container. Expected:', itemContainersSelector);
 			}
 
 		break;
@@ -723,36 +779,33 @@ function getItems() {
 /**
  * Removes all blacklisted items and returns the remaining items.
  */
-function filterItems(blacklisted, present) {
-	logTrace('invoking filterItems($, $)', blacklisted, present);
+function filterItems(items) {
+	logTrace('invoking filterItems($)', items);
 
 	if (typeof currentItemType !== 'string') {
 
 		throw new Error('UnwantedTwitch: Current item type is invalid. Cannot proceed with: filterItems()');
 	}
 
-	// initialize defaults in blacklisted items collection
-	initBlacklistedItems(blacklisted);
-
 	let remainingItems 	= [];
-	const presentLength = present.length;
+	const itemsLength = items.length;
 
 	switch (currentItemType) {
 
-		case 'overview':
+		case 'frontpage':
 
-			for (let i = 0; i < presentLength; i++) {
+			for (let i = 0; i < itemsLength; i++) {
 
-				const entry = present[i];
+				const entry = items[i];
 
 				// game
 				if (entry.subItem === null) {
 
-					if (blacklisted.games[entry.item] !== undefined) {
+					if (isBlacklistedGame(entry.item) === true) {
 
 						if (removeItem(entry.node) === true) {
 
-							logInfo('Blacklisted:', entry.item);
+							logInfo('Blacklisted frontpage item:', entry.item);
 						}
 
 					} else {
@@ -763,14 +816,18 @@ function filterItems(blacklisted, present) {
 				// channel, clip, video
 				} else {
 
-					if (
-						(blacklisted.channels[entry.item] !== undefined) ||
-						(blacklisted.games[entry.subItem] !== undefined)
-					) {
+					if (isBlacklistedChannel(entry.item) === true) {
 
 						if (removeItem(entry.node) === true) {
 
-							logInfo('Blacklisted:', entry.item);
+							logInfo('Blacklisted frontpage item:', entry.item);
+						}
+
+					} else if (isBlacklistedGame(entry.subItem) === true) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted frontpage item:', entry.subItem);
 						}
 
 					} else {
@@ -784,21 +841,22 @@ function filterItems(blacklisted, present) {
 
 		case 'channels':
 
-			for (let i = 0; i < presentLength; i++) {
+			for (let i = 0; i < itemsLength; i++) {
 
-				const entry = present[i];
+				const entry = items[i];
 
-				if (
-					(blacklisted.channels[entry.item] !== undefined) ||
-					(
-						(entry.subItem !== null) &&
-						(blacklisted.games[entry.subItem] !== undefined)
-					)
-				) {
+				if (isBlacklistedChannel(entry.item) === true) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted:', entry.item);
+						logInfo('Blacklisted channel:', entry.item);
+					}
+
+				} else if (isBlacklistedGame(entry.subItem) === true) {
+
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted game:', entry.subItem);
 					}
 
 				} else {
@@ -813,15 +871,15 @@ function filterItems(blacklisted, present) {
 		case 'communities':
 		case 'creative':
 
-			for (let i = 0; i < presentLength; i++) {
+			for (let i = 0; i < itemsLength; i++) {
 
-				const entry = present[i];
+				const entry = items[i];
 
-				if (blacklisted[currentItemType][entry.item] !== undefined) {
+				if (isBlacklistedItem(entry.item, currentItemType) === true) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted:', entry.item);
+						logInfo('Blacklisted item:', entry.item);
 					}
 
 				} else {
@@ -840,6 +898,130 @@ function filterItems(blacklisted, present) {
 }
 
 /**
+ * Removes all blacklisted items in the recommendation sidebar.
+ */
+function filterRecommendations() {
+	logTrace('invoking filterRecommendations()');
+
+	switch (currentItemType) {
+
+		case 'frontpage':
+			logWarn('Recommendations not present on frontpage. Filtering aborted.');
+			return;
+	}
+
+	const recommSelector 	= 'div[data-a-target="side-nav-bar"] div.simplebar-content div.tw-mg-b-2 div[data-a-target="side-nav-card-metadata"]';
+	const recomm 			= rootNode.querySelectorAll(recommSelector);
+	const recommLength 		= recomm.length;
+
+	let items = [];
+
+	// expanded
+	if (recommLength > 0) {
+
+		for (let i = 0; i < recommLength; i++) {
+
+			// channel
+			let channelTitle = recomm[i].querySelector('div[data-a-target="side-nav-title"]');
+			if (channelTitle !== null) {
+
+				channelTitle = channelTitle.getAttribute('title');
+			}
+
+			// game
+			let gameTitle = recomm[i].querySelector('div[data-a-target="featured-channel-game-title"]');
+			if (gameTitle !== null) {
+
+				gameTitle = gameTitle.getAttribute('title');
+			}
+
+			items.push({
+				channel: 	channelTitle,
+				game: 		gameTitle,
+				node: 		recomm[i]
+			});
+		}
+
+		const itemsLength = items.length;
+
+		if (itemsLength > 0) {
+
+			for (let i = 0; i < itemsLength; i++) {
+
+				const entry = items[i];
+
+				if (isBlacklistedGame(entry.game) === true) {
+
+					if (removeRecommendation(entry.node, 'expanded') === true) {
+
+						logInfo('Blacklisted recommendation:', entry.game);
+					}
+
+				} else if (isBlacklistedChannel(entry.channel) === true) {
+
+					if (removeRecommendation(entry.node, 'expanded') === true) {
+
+						logInfo('Blacklisted recommendation:', entry.channel);
+					}
+				}
+			}
+
+		} else {
+
+			logWarn('No recommendations (expanded) found.', recomm);
+		}
+
+	// collapsed
+	} else {
+
+		logWarn('Recommendations (expanded) not found. Expected:', recommSelector);
+
+		const recommAltSelector 	= 'div[data-test-selector="side-nav-card-collapsed"] a[href]';
+		const recommAlt 			= rootNode.querySelectorAll(recommAltSelector);
+		const recommAltLength 		= recommAlt.length;
+
+		if (recommAltLength > 0) {
+
+			for (let i = 0; i < recommAltLength; i++) {
+
+				let channelTitle = recommAlt[i].getAttribute('href').replace(/^\//, '');
+
+				items.push({
+					channel: 	channelTitle,
+					node: 		recommAlt[i]
+				});
+			}
+
+			const itemsLength = items.length;
+
+			if (itemsLength > 0) {
+
+				for (let i = 0; i < itemsLength; i++) {
+
+					const entry = items[i];
+
+					if (isBlacklistedChannel(entry.channel) === true) {
+
+						if (removeRecommendation(entry.node, 'collapsed') === true) {
+
+							logInfo('Blacklisted recommendation:', entry.channel);
+						}
+					}
+				}
+
+			} else {
+
+				logWarn('No recommendations (collapsed) found.', recomm);
+			}
+
+		} else {
+
+			logWarn('Recommendations (collapsed) not found. Expected:', recommAltSelector);
+		}
+	}
+}
+
+/**
  * Attaches "Hide Item" button to each item container.
  */
 function attachHideButtons(items) {
@@ -854,7 +1036,7 @@ function attachHideButtons(items) {
 
 	switch (currentItemType) {
 
-		case 'overview':
+		case 'frontpage':
 			return;
 
 		case 'games':
@@ -935,11 +1117,11 @@ function removeItem(node) {
 
 	switch (currentItemType) {
 
-		case 'overview':
+		case 'frontpage':
 
 			topNode = node;
 
-			// find parent div (empty classList, empty dataset)
+			// find parent (empty dataset and either empty classList or one of the classes .tw-col-2 or .anon-top-channels)
 			while (true) {
 
 				if (topNode === undefined) { break; }
@@ -953,7 +1135,8 @@ function removeItem(node) {
 					)
 				) {
 					node.setAttribute('data-uttv-hidden', '');
-					// don't hide topmost node because it causes ridiculous scaling
+					// don't hide topmost node because it causes the remaining items to scale/cover the full width,
+					// instead hide the first child node
 					topNode.children[0].style.display = 'none';
 					return true;
 				}
@@ -1027,6 +1210,64 @@ function removeItem(node) {
 }
 
 /**
+ * Removes the recommendation node from the DOM.
+ */
+function removeRecommendation(node, type) {
+	logTrace('invoking removeRecommendation($, $)', node, type);
+
+	let topNode = node;
+
+	switch (type) {
+
+		case 'expanded':
+
+			// find parent (empty classList, empty dataset)
+			while (true) {
+
+				if (topNode === undefined) { break; }
+
+				if (
+					(Object.keys(topNode.dataset).length === 0) &&
+					(topNode.classList.length === 0)
+				) {
+
+					node.setAttribute('data-uttv-hidden', '');
+					topNode.style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+
+		case 'collapsed':
+
+			// find parent with attribute [data-test-selector="side-nav-card-collapsed"]
+			while (true) {
+
+				if (topNode === undefined) { break; }
+
+				if (
+					(topNode.getAttribute('data-test-selector') === 'side-nav-card-collapsed')
+				) {
+
+					node.setAttribute('data-uttv-hidden', '');
+					topNode.style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+
+	}
+
+	return false;
+}
+
+/**
  * Monitors scrollbar offset periodically and fires custom onScroll event if the scroll progressed further down.
  */
 function listenToScroll() {
@@ -1043,7 +1284,7 @@ function listenToScroll() {
 
 		switch (currentItemType) {
 
-			case 'overview':
+			case 'frontpage':
 
 				itemsInDOM = rootNode.querySelectorAll('a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden]), div[data-a-target^="card-"]:not([data-uttv-hidden])').length;
 
@@ -1082,7 +1323,7 @@ function onScroll() {
 
 	if (pageLoads === true) {
 
-		logTrace('invocation of onScroll() canceled, page load is in progress');
+		logWarn('invocation of onScroll() canceled, page load is in progress');
 		return;
 	}
 
@@ -1106,7 +1347,7 @@ function triggerScroll() {
 	}
 
 	const scrollbarNodeSelector = '.simplebar-content.root-scrollable__content';
-	const scrollbarNode 		= document.querySelector(scrollbarNodeSelector);
+	const scrollbarNode 		= rootNode.querySelector(scrollbarNodeSelector);
 
 	if (scrollbarNode !== null) {
 
@@ -1119,6 +1360,38 @@ function triggerScroll() {
 	}
 
 	return false;
+}
+
+/**
+ * Attaches the observer to the recommendations.
+ */
+function observeRecommendations() {
+	logTrace('invoking observeRecommendations()');
+
+	switch (currentItemType) {
+
+		case 'frontpage':
+			logWarn('Recommendations not present on frontpage. Observing aborted.');
+			return;
+	}
+
+	const targetSelector 	= 'div.side-nav';
+	const target 			= rootNode.querySelector(targetSelector);
+
+	if (target !== null) {
+
+		const observer = new MutationObserver(function callback_observeRecommendations() {
+			logTrace('callback invoked: observeRecommendations()');
+
+			// trigger recommendations filter
+			filterRecommendations();
+		});
+		observer.observe(target, { childList: true, subtree: true });
+
+	} else {
+
+		logWarn('Cannot observe recommendations. Expected:', targetSelector);
+	}
 }
 
 /* BEGIN: utility */
@@ -1139,6 +1412,25 @@ function triggerScroll() {
 		logTrace('invoking isBTTV()');
 
 		return (document.querySelector('img.bttv-logo') !== null);
+	}
+
+	/**
+	 * Returns the approx. size required to store the provided data in the storage.
+	 */
+	function measureStoredSize(o) {
+		logTrace('invoking measureStoredSize($)', o);
+
+		let serialized;
+		if (typeof o !== 'string') {
+
+			serialized = JSON.stringify(o);
+
+		} else {
+
+			serialized = o;
+		}
+
+		return serialized.length;
 	}
 
 	function logTrace() {
@@ -1187,31 +1479,14 @@ function triggerScroll() {
 		console.error.apply(console, args);
 	}
 
-	/**
-	 * Returns the approx. size required to store the provided data in the storage.
-	 */
-	function measureStoredSize(o) {
-		logTrace('invoking measureStoredSize($)', o);
-
-		let serialized;
-		if (typeof o !== 'string') {
-
-			serialized = JSON.stringify(o);
-
-		} else {
-
-			serialized = o;
-		}
-
-		return serialized.length;
-	}
-
 /* END: utility */
 
-window.addEventListener('load', function() {
+window.addEventListener('load', function callback_windowLoad() {
+	logTrace('event invoked: window.load()');
 
 	// init extension's enabled state
-	getEnabledState(function(state) {
+	getEnabledState(function callback_getEnabledState(state) {
+		logTrace('callback invoked: getEnabledState($)', state);
 
 		if (state === false) { return; }
 
@@ -1240,7 +1515,8 @@ window.setInterval(function monitorPages() {
 }, pageChangeMonitorInterval);
 
 // listen to chrome extension messages
-chrome.runtime.onMessage.addListener(function(request) {
+chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request) {
+	logTrace('event invoked: chrome.runtime.onMessage($)', request);
 
 	logWarn('Command received:', request);
 
