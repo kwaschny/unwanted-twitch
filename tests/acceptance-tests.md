@@ -1,6 +1,6 @@
 ﻿# Acceptance Tests
 
-## Test Case 1
+## Test Case: Blacklisting games works
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
 - [ ] A label named "Hide Game" is on the top left corner of each cover.
 2. Click on one of the labels.
@@ -8,7 +8,7 @@
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
-## Test Case 2
+## Test Case: Blacklisting communities works
 1. Open [twitch.tv/directory/communities](https://www.twitch.tv/directory/communities).
 - [ ] A label named "Hide Community" is on the top left corner of each cover.
 2. Click on one of the labels.
@@ -16,7 +16,7 @@
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
-## Test Case 3
+## Test Case: Blacklisting creative works
 1. Open [twitch.tv/directory/creative](https://www.twitch.tv/directory/creative).
 - [ ] A label named "Hide Community" is on the top left corner of each cover.
 2. Click on one of the labels.
@@ -24,7 +24,7 @@
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
-## Test Case 4
+## Test Case: Blacklisting channels works
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
 - [ ] A label named "Hide Channel" is on the top left corner of each cover.
 2. Click on one of the labels.
@@ -32,23 +32,39 @@
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
-## Test Case 5
+## Test Case: Sidebar is filtered in directory
+1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
+2. Block a channel that is listed on the left sidebar under Featured/Recommended channels using the directory view.
+3. Reload the page.
+- [ ] The corresponding list item is no longer visible in the sidebar.
+4. Shrink the browser viewport to the point where the sidebar collapses.
+- [ ] The corresponding small cover is no longer visible in the sidebar.
+
+## Test Case: Scrolling is detected in games directory
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
 2. Scroll down until new covers are added.
 - [ ] A label named "Hide Game" appears on the top left corner of each cover that was added after scrolling.
 
-## Test Case 6
+## Test Case: Scrolling is detected in channels directory
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
 2. Scroll down until new covers are added.
 - [ ] A label named "Hide Channel" appears on the top left corner of each cover that was added after scrolling.
 
-## Test Case 7
+## Test Case: Frontpage is filtered as anonymous user
+1. Open [twitch.tv/](https://www.twitch.tv/) as anonymous user (not being logged in).
+- [ ] Previously hidden covers should disappear beneath Featured/Top sections, leaving a blank container.
+
+## Test Case: Frontpage is filtered as authenticated user
+1. Open [twitch.tv/](https://www.twitch.tv/) as authenticated user (being logged in).
+- [ ] Previously hidden covers should disappear beneath Popular/Recommended sections, leaving a blank container.
+
+## Test Case: Back action page changes are detected
 1. Navigate between different pages on [twitch.tv](https://www.twitch.tv/).
 2. Use the "back" function (browser history).
 - [ ] Previously hidden covers should disappear.
 - [ ] A label to hide the item should appear on the top left corner of each cover.
 
-## Test Case 8
+## Test Case: Toggle extension works
 1. Click on the UnwantedTwitch icon in the extension bar.
 - [ ] A dialog appears with a button named "Disable Extension".
 2. Click on "Disable Extension".
@@ -56,7 +72,7 @@
 3. Open up the dialog once more and click on "Enable Extension".
 - [ ] The page reloads and all previously hidden covers disappear once again.
 
-## Test Case 9
+## Test Case: Blacklist management works
 1. Click on the UnwantedTwitch icon in the extension bar.
 - [ ] A dialog appears with a button named "Manage Blacklist".
 2. Click on "Manage Blacklist".
