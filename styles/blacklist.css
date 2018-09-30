@@ -2,34 +2,34 @@
 	padding-bottom: 96px;
 }
 
-	#blacklist .category {
+	#blacklist .area {
 		display: inline-block;
 		margin-bottom: 64px;
 		vertical-align: top;
 		width: 48%;
 	}
-		#blacklist .category.left {
+		#blacklist .area.left {
 			margin-right: 1%;
 		}
-		#blacklist .category.right {
+		#blacklist .area.right {
 			margin-left: 1%;
 		}
 
-		#blacklist .category th {
+		#blacklist .area th {
 			position: relative;
 		}
 
-		#blacklist .category td:nth-child(1) {
+		#blacklist .area td:nth-child(1) {
 			width: 99%;
 		}
-		#blacklist .category td:nth-child(2) {
+		#blacklist .area td:nth-child(2) {
 			width: 1%;
 		}
 
-		#blacklist .category button {
+		#blacklist .area button {
 			width: 96px;
 		}
-			#blacklist .category button.clear {
+			#blacklist .area button.clear {
 				border-color: #FFFFFF;
 				padding: 4px 8px;
 				position: absolute;

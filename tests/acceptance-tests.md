@@ -1,24 +1,8 @@
 ﻿# Acceptance Tests
 
-## Test Case: Blacklisting games works
+## Test Case: Blacklisting categories works
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
-- [ ] A label named "Hide Game" is on the top left corner of each cover.
-2. Click on one of the labels.
-- [ ] The cover disappeared without leaving behind an empty space.
-3. Reload the page.
-- [ ] The cover is no longer visible.
-
-## Test Case: Blacklisting communities works
-1. Open [twitch.tv/directory/communities](https://www.twitch.tv/directory/communities).
-- [ ] A label named "Hide Community" is on the top left corner of each cover.
-2. Click on one of the labels.
-- [ ] The cover disappeared without leaving behind an empty space.
-3. Reload the page.
-- [ ] The cover is no longer visible.
-
-## Test Case: Blacklisting creative works
-1. Open [twitch.tv/directory/creative](https://www.twitch.tv/directory/creative).
-- [ ] A label named "Hide Community" is on the top left corner of each cover.
+- [ ] A label named "Hide Category" is on the top left corner of each cover.
 2. Click on one of the labels.
 - [ ] The cover disappeared without leaving behind an empty space.
 3. Reload the page.
@@ -40,10 +24,10 @@
 4. Shrink the browser viewport to the point where the sidebar collapses.
 - [ ] The corresponding small cover is no longer visible in the sidebar.
 
-## Test Case: Scrolling is detected in games directory
+## Test Case: Scrolling is detected in categories directory
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
 2. Scroll down until new covers are added.
-- [ ] A label named "Hide Game" appears on the top left corner of each cover that was added after scrolling.
+- [ ] A label named "Hide Category" appears on the top left corner of each cover that was added after scrolling.
 
 ## Test Case: Scrolling is detected in channels directory
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
@@ -76,7 +60,7 @@
 1. Click on the UnwantedTwitch icon in the extension bar.
 - [ ] A dialog appears with a button named "Manage Blacklist".
 2. Click on "Manage Blacklist".
-- [ ] A new tab opens up that shows 4 categories: "Blacklisted Games", "Blacklisted Channels", "Blacklisted Communities" and "Blacklisted Creative"
+- [ ] A new tab opens up that shows 2 categories: "Blacklisted Categories" and "Blacklisted Channels"
 - [ ] Previously hidden covers appear in their category
 3. Remove some entries under these categories using the "Remove" button next to each entry and confirm clicking on the "Save" button.
 - [ ] An alert shows that notifies about reloading already opened tabs.

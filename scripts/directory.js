@@ -1,4 +1,5 @@
 ﻿// jshint esversion: 6
+// jshint -W069
 
 // debug
 // 0 = TRACE, VERBOSE, INFO, WARN, ERROR
@@ -25,7 +26,7 @@ const debug = 4;
 	// interval handle for page load detection
 	let waitingForPageLoad;
 
-	// currently detected slot type, one of: 'frontpage', 'games', 'communities', 'creative', 'channels' or null
+	// currently detected slot type, one of: 'frontpage', 'categories', 'channels' or null
 	let currentItemType = getItemType(currentPage);
 
 	// indicates that the storage is currently in use
@@ -87,15 +88,7 @@ function getItemType(page) {
 		break;
 
 		case '/directory':
-			result = 'games';
-		break;
-
-		case '/directory/communities':
-			result = 'communities';
-		break;
-
-		case '/directory/creative':
-			result = 'creative';
+			result = 'categories';
 		break;
 
 		case '/directory/all':
@@ -104,10 +97,6 @@ function getItemType(page) {
 
 		default:
 			if (RegExp('^/directory/(all|game)/[^/]+(/[a-z]{2})?$').test(page) === true) {
-
-				result = 'channels';
-
-			} else if (RegExp('^/communities/[^/]+(/[a-z]{2})?$').test(page) === true) {
 
 				result = 'channels';
 			}
@@ -277,9 +266,7 @@ function onPageChange(page) {
 				break;
 
 			case 'channels':
-			case 'games':
-			case 'communities':
-			case 'creative':
+			case 'categories':
 
 				indicator = rootNode.querySelector('div[data-target][style^="order:"]');
 				if (indicator !== null) {
@@ -312,9 +299,7 @@ function initBlacklistedItems(collection) {
 	logTrace('invoking initBlacklistedItems($)', collection);
 
 	const itemTypes = [
-		'games',
-		'communities',
-		'creative',
+		'categories',
 		'channels'
 	];
 
@@ -365,6 +350,13 @@ function getBlacklistedItems(callback) {
 			logVerbose('Successfully merged fragments to blacklist:', result, blacklistedItems);
 		}
 
+		// rename previous type "games" to "categories"
+		if (typeof blacklistedItems['games'] === 'object') {
+
+			blacklistedItems['categories'] = blacklistedItems['games'];
+			delete blacklistedItems['games'];
+		}
+
 		if (typeof callback === 'function') {
 
 			callback(blacklistedItems);
@@ -377,6 +369,10 @@ function getBlacklistedItems(callback) {
  */
 function putBlacklistedItems(items, callback) {
 	logTrace('invoking putBlacklistedItems($)', items);
+
+	// remove no longer existing item types to save storage space
+	delete items['communities'];
+	delete items['creative'];
 
 	storedBlacklistedItems = items;
 
@@ -550,11 +546,11 @@ function isBlacklistedItem(item, type) {
 }
 
 /**
- * Returns if the specified game is blacklisted.
+ * Returns if the specified category is blacklisted.
  */
-function isBlacklistedGame(game) {
+function isBlacklistedCategory(category) {
 
-	return isBlacklistedItem(game, 'games');
+	return isBlacklistedItem(category, 'categories');
 }
 
 /**
@@ -590,9 +586,7 @@ function filterDirectory() {
 	switch (currentItemType) {
 
 		case 'channels':
-		case 'games':
-		case 'communities':
-		case 'creative':
+		case 'categories':
 
 			if (remainingItems.length < currentItems.length) {
 
@@ -647,7 +641,7 @@ function getItems() {
 					let itemName = wrapper.children[0].querySelector('a[data-a-target]');
 					if ((itemName === null) || !itemName.textContent) { continue; }
 
-					// game might not be set
+					// category might not be set
 					let subItem = 'uttv_unknown';
 					if (wrapper.children.length >= 2) {
 
@@ -670,7 +664,7 @@ function getItems() {
 				logWarn('Item containers (channels, clips, videos) not found in frontpage container. Expected:', itemContainersSelector);
 			}
 
-			// games
+			// categories
 			itemContainersSelector 	= 'div[data-a-target^="card-"]:not([data-uttv-hidden])';
 			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
@@ -694,7 +688,7 @@ function getItems() {
 
 			} else {
 
-				logWarn('Item containers (games) not found in frontpage container. Expected:', itemContainersSelector);
+				logWarn('Item containers (categories) not found in frontpage container. Expected:', itemContainersSelector);
 			}
 
 		break;
@@ -717,7 +711,7 @@ function getItems() {
 				const itemName = itemContainers[i].getAttribute('href');
 				if ((typeof itemName === 'string') && (itemName.length > 0)) {
 
-					// try to find game
+					// try to find category
 					let subItem = null;
 					let subNode = itemContainers[i].parentNode.parentNode;
 					if (subNode.classList.contains('preview-card')) {
@@ -739,9 +733,7 @@ function getItems() {
 
 		break;
 
-		case 'games':
-		case 'communities':
-		case 'creative':
+		case 'categories':
 
 			// items
 			itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
@@ -798,10 +790,10 @@ function filterItems(items) {
 
 				const entry = items[i];
 
-				// game
+				// category
 				if (entry.subItem === null) {
 
-					if (isBlacklistedGame(entry.item) === true) {
+					if (isBlacklistedCategory(entry.item) === true) {
 
 						if (removeItem(entry.node) === true) {
 
@@ -823,7 +815,7 @@ function filterItems(items) {
 							logInfo('Blacklisted frontpage item:', entry.item);
 						}
 
-					} else if (isBlacklistedGame(entry.subItem) === true) {
+					} else if (isBlacklistedCategory(entry.subItem) === true) {
 
 						if (removeItem(entry.node) === true) {
 
@@ -852,11 +844,11 @@ function filterItems(items) {
 						logInfo('Blacklisted channel:', entry.item);
 					}
 
-				} else if (isBlacklistedGame(entry.subItem) === true) {
+				} else if (isBlacklistedCategory(entry.subItem) === true) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted game:', entry.subItem);
+						logInfo('Blacklisted category:', entry.subItem);
 					}
 
 				} else {
@@ -867,9 +859,7 @@ function filterItems(items) {
 
 		break;
 
-		case 'games':
-		case 'communities':
-		case 'creative':
+		case 'categories':
 
 			for (let i = 0; i < itemsLength; i++) {
 
@@ -928,16 +918,16 @@ function filterRecommendations() {
 				channelTitle = channelTitle.getAttribute('title');
 			}
 
-			// game
-			let gameTitle = recomm[i].querySelector('div[data-a-target="featured-channel-game-title"]');
-			if (gameTitle !== null) {
+			// category
+			let categoryTitle = recomm[i].querySelector('div[data-a-target="featured-channel-game-title"]');
+			if (categoryTitle !== null) {
 
-				gameTitle = gameTitle.getAttribute('title');
+				categoryTitle = categoryTitle.getAttribute('title');
 			}
 
 			items.push({
 				channel: 	channelTitle,
-				game: 		gameTitle,
+				category: 	categoryTitle,
 				node: 		recomm[i]
 			});
 		}
@@ -950,11 +940,11 @@ function filterRecommendations() {
 
 				const entry = items[i];
 
-				if (isBlacklistedGame(entry.game) === true) {
+				if (isBlacklistedCategory(entry.category) === true) {
 
 					if (removeRecommendation(entry.node, 'expanded') === true) {
 
-						logInfo('Blacklisted recommendation:', entry.game);
+						logInfo('Blacklisted recommendation:', entry.category);
 					}
 
 				} else if (isBlacklistedChannel(entry.channel) === true) {
@@ -1039,15 +1029,9 @@ function attachHideButtons(items) {
 		case 'frontpage':
 			return;
 
-		case 'games':
-			hideNode.className 		= 'uttv-hide game';
-			hideNode.textContent 	= chrome.i18n.getMessage('label_HideGame');
-		break;
-
-		case 'communities':
-		case 'creative':
-			hideNode.className 		= 'uttv-hide community';
-			hideNode.textContent 	= chrome.i18n.getMessage('label_HideCommunity');
+		case 'categories':
+			hideNode.className 		= 'uttv-hide category';
+			hideNode.textContent 	= chrome.i18n.getMessage('label_HideCategory');
 		break;
 
 		case 'channels':
@@ -1176,9 +1160,7 @@ function removeItem(node) {
 
 		break;
 
-		case 'games':
-		case 'communities':
-		case 'creative':
+		case 'categories':
 
 			topNode = node;
 
@@ -1296,9 +1278,7 @@ function listenToScroll() {
 
 			break;
 
-			case 'games':
-			case 'communities':
-			case 'creative':
+			case 'categories':
 
 				itemsInDOM = rootNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
 
@@ -1458,7 +1438,7 @@ function observeRecommendations() {
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('UnwantedTwitch:');
 
-		console.info.apply(console, args);
+		console.log.apply(console, args);
 	}
 	function logWarn() {
 
@@ -1467,7 +1447,7 @@ function observeRecommendations() {
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('UnwantedTwitch:');
 
-		console.warn.apply(console, args);
+		console.log.apply(console, args);
 	}
 	function logError() {
 
@@ -1476,7 +1456,7 @@ function observeRecommendations() {
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('UnwantedTwitch:');
 
-		console.error.apply(console, args);
+		console.log.apply(console, args);
 	}
 
 /* END: utility */

@@ -1,13 +1,10 @@
 ﻿{
 	"app_Desc": {
-		"message": "Hide unwanted streams, games, channels and communities on: twitch.tv"
+		"message": "Hide unwanted streams, games, categories and channels on: twitch.tv"
 	},
 
-	"label_HideGame": {
-		"message": "Hide Game"
-	},
-	"label_HideCommunity": {
-		"message": "Hide Community"
+	"label_HideCategory": {
+		"message": "Hide Category"
 	},
 	"label_HideChannel": {
 		"message": "Hide Channel"
@@ -26,17 +23,11 @@
 		"message": "Disable Extension"
 	},
 
-	"blacklist_Games": {
-		"message": "Blacklisted Games"
+	"blacklist_Categories": {
+		"message": "Blacklisted Categories"
 	},
 	"blacklist_Channels": {
 		"message": "Blacklisted Channels"
-	},
-	"blacklist_Communities": {
-		"message": "Blacklisted Communities"
-	},
-	"blacklist_Creative": {
-		"message": "Blacklisted Creative"
 	},
 	"blacklist_Empty": {
 		"message": "Nothing blacklisted yet."

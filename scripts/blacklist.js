@@ -1,4 +1,5 @@
 ﻿// jshint esversion: 6
+// jshint -W069
 
 // maximum number of keys that can be stored in the sync storage
 // chrome.storage.sync.MAX_ITEMS - 12 (wiggle room)
@@ -152,10 +153,8 @@ function onSave() {
 
 	let result = {};
 
-	result.games 		= gatherKeys(games);
+	result.categories 	= gatherKeys(categories);
 	result.channels 	= gatherKeys(channels);
-	result.communities 	= gatherKeys(communities);
-	result.creative 	= gatherKeys(creative);
 
 	chrome.runtime.sendMessage(
 		{ "blacklistedItems": result }
@@ -196,31 +195,11 @@ function flashSaveButton(interval) {
 
 let isModified = false;
 
-const games 		= document.getElementById('table_games');
+const categories 	= document.getElementById('table_categories');
 const channels 		= document.getElementById('table_channels');
-const communities 	= document.getElementById('table_communities');
-const creative 		= document.getElementById('table_creative');
 
 const saveButton 	= document.getElementById('save');
 const cancelButton 	= document.getElementById('cancel');
-
-chrome.storage.sync.get(null, function(result) {
-
-	let blacklistedItems = {};
-	if (typeof result.blacklistedItems === 'object') {
-
-		blacklistedItems = result.blacklistedItems;
-
-	} else if (typeof result['blItemsFragment0'] === 'object') {
-
-		blacklistedItems = mergeBlacklistFragments(result);
-	}
-
-	addItems(games, 		blacklistedItems.games);
-	addItems(channels, 		blacklistedItems.channels);
-	addItems(communities, 	blacklistedItems.communities);
-	addItems(creative, 		blacklistedItems.creative);
-});
 
 document.querySelectorAll('button.clear').forEach(function(e) {
 
@@ -236,10 +215,8 @@ cancelButton.addEventListener('click', onCancel);
 
 /* BEGIN: localize */
 
-	document.getElementById('column_Games').textContent 		= chrome.i18n.getMessage('blacklist_Games');
+	document.getElementById('column_Categories').textContent 	= chrome.i18n.getMessage('blacklist_Categories');
 	document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
-	document.getElementById('column_Communities').textContent 	= chrome.i18n.getMessage('blacklist_Communities');
-	document.getElementById('column_Creative').textContent 		= chrome.i18n.getMessage('blacklist_Creative');
 
 	document.querySelectorAll('button.clear').forEach(function(e) {
 
@@ -250,3 +227,27 @@ cancelButton.addEventListener('click', onCancel);
 	cancelButton.textContent 	= chrome.i18n.getMessage('blacklist_Cancel');
 
 /* END: localize */
+
+// load blacklisted items
+chrome.storage.sync.get(null, function(result) {
+
+	let blacklistedItems = {};
+	if (typeof result.blacklistedItems === 'object') {
+
+		blacklistedItems = result.blacklistedItems;
+
+	} else if (typeof result['blItemsFragment0'] === 'object') {
+
+		blacklistedItems = mergeBlacklistFragments(result);
+	}
+
+	// rename previous type "games" to "categories"
+	if (typeof blacklistedItems['games'] === 'object') {
+
+		blacklistedItems['categories'] = blacklistedItems['games'];
+		delete blacklistedItems['games'];
+	}
+
+	addItems(categories, 	blacklistedItems.categories);
+	addItems(channels, 		blacklistedItems.channels);
+});

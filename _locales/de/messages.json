@@ -1,13 +1,10 @@
 ﻿{
 	"app_Desc": {
-		"message": "Ausblenden von Streams, Spielen, Kanälen und Communities auf: twitch.tv"
+		"message": "Ausblenden von Streams, Spielen, Kategorien und Kanälen auf: twitch.tv"
 	},
 
-	"label_HideGame": {
-		"message": "Spiel ausblenden"
-	},
-	"label_HideCommunity": {
-		"message": "Community ausblenden"
+	"label_HideCategory": {
+		"message": "Kategorie ausblenden"
 	},
 	"label_HideChannel": {
 		"message": "Kanal ausblenden"
@@ -26,17 +23,11 @@
 		"message": "Erweiterung deaktivieren"
 	},
 
-	"blacklist_Games": {
-		"message": "Ausgeblendete Spiele"
+	"blacklist_Categories": {
+		"message": "Ausgeblendete Kategorien"
 	},
 	"blacklist_Channels": {
 		"message": "Ausgeblendete Kanäle"
-	},
-	"blacklist_Communities": {
-		"message": "Ausgeblendete Communities"
-	},
-	"blacklist_Creative": {
-		"message": "Ausgeblendete Kreativ-Communities"
 	},
 	"blacklist_Empty": {
 		"message": "Noch kein Eintrag vorhanden."
