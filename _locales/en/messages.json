@@ -1,6 +1,6 @@
 ﻿{
 	"app_Desc": {
-		"message": "Hide unwanted streams, games, categories and channels on: twitch.tv"
+		"message": "Hide unwanted streams, games, categories, channels and tags on: twitch.tv"
 	},
 
 	"label_HideCategory": {
@@ -8,6 +8,12 @@
 	},
 	"label_HideChannel": {
 		"message": "Hide Channel"
+	},
+	"label_HideTag": {
+		"message": "Hide Tag"
+	},
+	"confirm_HideTag": {
+		"message": "Unwanted Twitch:\nYou are about to hide all categories and channels with the tag:"
 	},
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nThe blacklist is full.\nYou cannot add more items."
@@ -28,6 +34,9 @@
 	},
 	"blacklist_Channels": {
 		"message": "Blacklisted Channels"
+	},
+	"blacklist_Tags": {
+		"message": "Blacklisted Tags"
 	},
 	"blacklist_Empty": {
 		"message": "Nothing blacklisted yet."

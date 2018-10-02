@@ -1,20 +1,32 @@
-﻿.uttv-hide {
+﻿.uttv-hide-item {
 	background-color: #00000099;
 	border-radius: 2px;
 	color: #FFFFFF;
 	cursor: pointer;
 	font-size: 90%;
-	left: 10px;
-	padding: 2px 8px;
+	right: 10px;
+	padding: 2px 12px;
 	position: absolute;
 	top: 10px;
 	user-select: none;
 	z-index: 1;
 }
-	.uttv-hide.channel {
-		top: 36px;
+	.uttv-hide-item:hover {
+		background-color: #4B367C;
+		color: #FFFFFF;
 	}
-	.uttv-hide:hover {
+
+.uttv-hide-tag {
+	border: 1px solid #DAD8DE;
+	border-radius: 2px;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 90%;
+	margin-left: 12px;
+	padding: 2px 6px;
+	user-select: none;
+}
+	.uttv-hide-tag:hover {
 		background-color: #4B367C;
 		color: #FFFFFF;
 	}

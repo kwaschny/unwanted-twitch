@@ -1,6 +1,6 @@
 ﻿{
 	"app_Desc": {
-		"message": "Ausblenden von Streams, Spielen, Kategorien und Kanälen auf: twitch.tv"
+		"message": "Ausblenden von Streams, Spielen, Kategorien, Kanälen und Tags auf: twitch.tv"
 	},
 
 	"label_HideCategory": {
@@ -8,6 +8,12 @@
 	},
 	"label_HideChannel": {
 		"message": "Kanal ausblenden"
+	},
+	"label_HideTag": {
+		"message": "Tag ausblenden"
+	},
+	"confirm_HideTag": {
+		"message": "Unwanted Twitch:\nSie sind dabei alle Kategorien und Kanäle mit folgendem Tag auszublenden:"
 	},
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nDie Sperrliste ist voll.\nEs können keine weiteren Einträge hinzugefügt werden."
@@ -28,6 +34,9 @@
 	},
 	"blacklist_Channels": {
 		"message": "Ausgeblendete Kanäle"
+	},
+	"blacklist_Tags": {
+		"message": "Ausgeblendete Tags"
 	},
 	"blacklist_Empty": {
 		"message": "Noch kein Eintrag vorhanden."

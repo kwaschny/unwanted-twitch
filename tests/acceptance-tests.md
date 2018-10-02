@@ -2,7 +2,7 @@
 
 ## Test Case: Blacklisting categories works
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
-- [ ] A label named "Hide Category" is on the top left corner of each cover.
+- [ ] A label named "X" is on the top right corner of each cover.
 2. Click on one of the labels.
 - [ ] The cover disappeared without leaving behind an empty space.
 3. Reload the page.
@@ -10,8 +10,26 @@
 
 ## Test Case: Blacklisting channels works
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
-- [ ] A label named "Hide Channel" is on the top left corner of each cover.
+- [ ] A label named "X" is on the top right corner of each cover.
 2. Click on one of the labels.
+- [ ] The cover disappeared without leaving behind an empty space.
+3. Reload the page.
+- [ ] The cover is no longer visible.
+
+## Test Case: Blacklisting tags works in categories directory
+1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
+- [ ] A label named "X" is on the right side of each tag label below the covers.
+2. Click on one of the labels.
+- [ ] A prompt asks you to confirm your action.
+- [ ] The cover disappeared without leaving behind an empty space.
+3. Reload the page.
+- [ ] The cover is no longer visible.
+
+## Test Case: Blacklisting tags works in channels directory
+1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
+- [ ] A label named "X" is on the right side of each tag label below the covers.
+2. Click on one of the labels.
+- [ ] A prompt asks you to confirm your action.
 - [ ] The cover disappeared without leaving behind an empty space.
 3. Reload the page.
 - [ ] The cover is no longer visible.
@@ -27,12 +45,12 @@
 ## Test Case: Scrolling is detected in categories directory
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
 2. Scroll down until new covers are added.
-- [ ] A label named "Hide Category" appears on the top left corner of each cover that was added after scrolling.
+- [ ] A label named "X" appears on the top right corner of each cover that was added after scrolling.
 
 ## Test Case: Scrolling is detected in channels directory
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
 2. Scroll down until new covers are added.
-- [ ] A label named "Hide Channel" appears on the top left corner of each cover that was added after scrolling.
+- [ ] A label named "X" appears on the top right right of each cover that was added after scrolling.
 
 ## Test Case: Frontpage is filtered as anonymous user
 1. Open [twitch.tv/](https://www.twitch.tv/) as anonymous user (not being logged in).
@@ -46,7 +64,7 @@
 1. Navigate between different pages on [twitch.tv](https://www.twitch.tv/).
 2. Use the "back" function (browser history).
 - [ ] Previously hidden covers should disappear.
-- [ ] A label to hide the item should appear on the top left corner of each cover.
+- [ ] A label to hide the item should appear on the top right corner of each cover.
 
 ## Test Case: Toggle extension works
 1. Click on the UnwantedTwitch icon in the extension bar.
@@ -60,7 +78,7 @@
 1. Click on the UnwantedTwitch icon in the extension bar.
 - [ ] A dialog appears with a button named "Manage Blacklist".
 2. Click on "Manage Blacklist".
-- [ ] A new tab opens up that shows 2 categories: "Blacklisted Categories" and "Blacklisted Channels"
+- [ ] A new tab opens up that shows 3 categories: "Blacklisted Categories", "Blacklisted Channels" and "Blacklisted Tags"
 - [ ] Previously hidden covers appear in their category
 3. Remove some entries under these categories using the "Remove" button next to each entry and confirm clicking on the "Save" button.
 - [ ] An alert shows that notifies about reloading already opened tabs.

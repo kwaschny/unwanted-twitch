@@ -1,5 +1,6 @@
 ﻿// jshint esversion: 6
 // jshint -W069
+// jshint -W083
 
 // debug
 // 0 = TRACE, VERBOSE, INFO, WARN, ERROR
@@ -300,7 +301,8 @@ function initBlacklistedItems(collection) {
 
 	const itemTypes = [
 		'categories',
-		'channels'
+		'channels',
+		'tags'
 	];
 
 	if (typeof collection !== 'object') {
@@ -562,6 +564,31 @@ function isBlacklistedChannel(channel) {
 }
 
 /**
+ * Returns if the specified tag is blacklisted. Also accepts an array of tags.
+ */
+function isBlacklistedTag(tag) {
+
+	if (Array.isArray(tag)) {
+
+		const tagsLength = tag.length;
+
+		for (let i = 0; i < tagsLength; i++) {
+
+			if ( isBlacklistedItem(tag[i], 'tags') === true ) {
+
+				return true;
+			}
+		}
+
+		return false;
+
+	} else {
+
+		return isBlacklistedItem(tag, 'tags');
+	}
+}
+
+/**
  * Filters directory by removing blacklisted items. Returns the remaining items.
  */
 function filterDirectory() {
@@ -635,7 +662,7 @@ function getItems() {
 						(wrapper === null) ||
 						(wrapper.children.length === 0)
 					) {
-							continue;
+						continue;
 					}
 
 					let itemName = wrapper.children[0].querySelector('a[data-a-target]');
@@ -652,9 +679,42 @@ function getItems() {
 						}
 					}
 
+					/* BEGIN: tags */
+
+						let tagsData = [];
+
+						let tagContainer = itemSibling.parentNode;
+						if (tagContainer !== null) {
+
+							const tagsSelector 	= '.tw-tag__content div';
+							const tags 			= tagContainer.querySelectorAll(tagsSelector);
+							const tagsLength 	= tags.length;
+
+							if (tagsLength > 0) {
+
+								for (let n = 0; n < tagsLength; n++) {
+
+									const tagName = tags[n].textContent;
+
+									tagsData.push(tagName);
+								}
+
+							} else {
+
+								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+							}
+
+						} else {
+
+							logWarn('No tags found for card:', itemSibling);
+						}
+
+					/* END: tags */
+
 					items.push({
 						item: 		itemName.textContent,
 						subItem: 	subItem,
+						tags: 		tagsData,
 						node: 		itemContainers[i]
 					});
 				}
@@ -679,9 +739,42 @@ function getItems() {
 					itemName = headline.textContent;
 					if (!itemName) { continue; }
 
+					/* BEGIN: tags */
+
+						let tagsData = [];
+
+						let tagContainer = itemContainers[i].parentNode;
+						if (tagContainer !== null) {
+
+							const tagsSelector 	= '.tw-tag__content div';
+							const tags 			= tagContainer.querySelectorAll(tagsSelector);
+							const tagsLength 	= tags.length;
+
+							if (tagsLength > 0) {
+
+								for (let n = 0; n < tagsLength; n++) {
+
+									const tagName = tags[n].textContent;
+
+									tagsData.push(tagName);
+								}
+
+							} else {
+
+								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+							}
+
+						} else {
+
+							logWarn('No tags found for card:', itemSibling);
+						}
+
+					/* END: tags */
+
 					items.push({
 						item: 		itemName,
 						subItem: 	null,
+						tags: 		tagsData,
 						node: 		itemContainers[i]
 					});
 				}
@@ -708,6 +801,9 @@ function getItems() {
 
 			for (let i = 0; i < itemContainersLength; i++) {
 
+				let itemData = null;
+
+				// card
 				const itemName = itemContainers[i].getAttribute('href');
 				if ((typeof itemName === 'string') && (itemName.length > 0)) {
 
@@ -723,11 +819,54 @@ function getItems() {
 						}
 					}
 
-					items.push({
+					itemData = {
 						item: 		itemName.replace('/', ''),
 						subItem: 	subItem,
+						tags: 		[],
 						node: 		itemContainers[i]
-					});
+					};
+				}
+
+				/* BEGIN: tags */
+
+					let tagContainer = itemContainers[i].parentNode;
+					if (tagContainer === null) {
+
+						logWarn('No tags found for card:', itemContainers[i]);
+						continue;
+					}
+
+					tagContainer = tagContainer.nextSibling;
+					if (tagContainer !== null) {
+
+						const tagsSelector 	= '.tw-tag__content div';
+						const tags 			= tagContainer.querySelectorAll(tagsSelector);
+						const tagsLength 	= tags.length;
+
+						if (tagsLength > 0) {
+
+							for (let n = 0; n < tagsLength; n++) {
+
+								const tagName = tags[n].textContent;
+
+								itemData.tags.push(tagName);
+							}
+
+						} else {
+
+							logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+						}
+
+					} else {
+
+						logWarn('No tags found for card:', itemContainers[i]);
+					}
+
+				/* END: tags */
+
+				if (itemData !== null) {
+
+					items.push(itemData);
 				}
 			}
 
@@ -748,14 +887,53 @@ function getItems() {
 
 			for (let i = 0; i < itemContainersLength; i++) {
 
+				let itemData = null;
+
+				// card
 				const itemName = itemContainers[i].getAttribute('aria-label');
 				if ((typeof itemName === 'string') && (itemName.length > 0)) {
 
-					items.push({
+					itemData = {
 						item: 		itemName,
 						subItem: 	null,
+						tags: 		[],
 						node: 		itemContainers[i]
-					});
+					};
+				}
+
+				/* BEGIN: tags */
+
+					const tagContainer = itemContainers[i].nextSibling;
+					if (tagContainer !== null) {
+
+						const tagsSelector 	= '.tw-tag__content div';
+						const tags 			= tagContainer.querySelectorAll(tagsSelector);
+						const tagsLength 	= tags.length;
+
+						if (tagsLength > 0) {
+
+							for (let n = 0; n < tagsLength; n++) {
+
+								const tagName = tags[n].textContent;
+
+								itemData.tags.push(tagName);
+							}
+
+						} else {
+
+							logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+						}
+
+					} else {
+
+						logWarn('No tags found for card:', itemContainers[i]);
+					}
+
+				/* END: tags */
+
+				if (itemData !== null) {
+
+					items.push(itemData);
 				}
 			}
 
@@ -793,7 +971,10 @@ function filterItems(items) {
 				// category
 				if (entry.subItem === null) {
 
-					if (isBlacklistedCategory(entry.item) === true) {
+					if (
+						(isBlacklistedCategory(entry.item) === true) ||
+						(isBlacklistedTag(entry.tags) === true)
+					) {
 
 						if (removeItem(entry.node) === true) {
 
@@ -820,6 +1001,13 @@ function filterItems(items) {
 						if (removeItem(entry.node) === true) {
 
 							logInfo('Blacklisted frontpage item:', entry.subItem);
+						}
+
+					} else if (isBlacklistedTag(entry.tags) === true) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted frontpage item:', entry.tags);
 						}
 
 					} else {
@@ -851,6 +1039,13 @@ function filterItems(items) {
 						logInfo('Blacklisted category:', entry.subItem);
 					}
 
+				} else if (isBlacklistedTag(entry.tags) === true) {
+
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted by tag:', entry.tags);
+					}
+
 				} else {
 
 					remainingItems.push(entry);
@@ -865,7 +1060,10 @@ function filterItems(items) {
 
 				const entry = items[i];
 
-				if (isBlacklistedItem(entry.item, currentItemType) === true) {
+				if (
+					(isBlacklistedItem(entry.item, currentItemType) === true) ||
+					(isBlacklistedTag(entry.tags) === true)
+				 ) {
 
 					if (removeItem(entry.node) === true) {
 
@@ -1021,27 +1219,34 @@ function attachHideButtons(items) {
 
 	const attachedKey = 'data-uttv-hide-attached';
 
-	// button prototype
-	let hideNode = document.createElement('div');
-
+	// button on items
+	let hideItem = document.createElement('div');
 	switch (currentItemType) {
 
 		case 'frontpage':
 			return;
 
 		case 'categories':
-			hideNode.className 		= 'uttv-hide category';
-			hideNode.textContent 	= chrome.i18n.getMessage('label_HideCategory');
+			hideItem.className 		= 'uttv-hide-item category';
+			hideItem.textContent 	= 'X';
+			hideItem.title 			= chrome.i18n.getMessage('label_HideCategory');
 		break;
 
 		case 'channels':
-			hideNode.className 		= 'uttv-hide channel';
-			hideNode.textContent 	= chrome.i18n.getMessage('label_HideChannel');
+			hideItem.className 		= 'uttv-hide-item channel';
+			hideItem.textContent 	= 'X';
+			hideItem.title 			= chrome.i18n.getMessage('label_HideChannel');
 		break;
 
 		default:
 			return;
 	}
+
+	// button for tags
+	let hideTag 			= document.createElement('div');
+	hideTag.className 		= 'uttv-hide-tag';
+	hideTag.textContent 	= 'X';
+	hideTag.title 			= chrome.i18n.getMessage('label_HideTag');
 
 	const itemsLength = items.length;
 	for (let i = 0; i < itemsLength; i++) {
@@ -1051,11 +1256,113 @@ function attachHideButtons(items) {
 
 		items[i].node.setAttribute(attachedKey, 'true');
 
-		let newNode = hideNode.cloneNode(true);
-		newNode.setAttribute('data-uttv-item', items[i].item);
-		newNode.addEventListener('click', onHideItem);
+		// button on item
+		let hideItemNode = hideItem.cloneNode(true);
+		hideItemNode.setAttribute('data-uttv-item', items[i].item);
+		hideItemNode.addEventListener('click', onHideItem);
+		items[i].node.parentNode.appendChild(hideItemNode);
 
-		items[i].node.parentNode.appendChild(newNode);
+		// button for tags
+		let tagContainer;
+		switch (currentItemType) {
+
+			case 'categories':
+
+				tagContainer = items[i].node.nextSibling;
+				if (tagContainer !== null) {
+
+					const tagsSelector 	= '.tw-tag__content div';
+					const tags 			= tagContainer.querySelectorAll(tagsSelector);
+					const tagsLength 	= tags.length;
+
+					if (tagsLength > 0) {
+
+						for (let n = 0; n < tagsLength; n++) {
+
+							const tagName = tags[n].textContent;
+
+							let hideTagNode = hideTag.cloneNode(true);
+							hideTagNode.setAttribute('data-uttv-tag', tagName);
+							hideTagNode.addEventListener('click', function(event) {
+
+								// cancel click on tag event
+								event.preventDefault();
+								event.stopPropagation();
+
+								const decision = confirm( chrome.i18n.getMessage('confirm_HideTag') + '\n\n[' + tagName + ']' );
+								if (decision === true) {
+
+									onHideTag(this);
+								}
+							});
+							tags[n].parentNode.appendChild(hideTagNode);
+						}
+
+
+					} else {
+
+						logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+					}
+
+				} else {
+
+					logWarn('No tags found for card:', items[i].node);
+				}
+
+			break;
+
+			case 'channels':
+
+				tagContainer = items[i].node.parentNode;
+				if (tagContainer === null) {
+
+					logWarn('No tags found for card:', items[i].node);
+					continue;
+				}
+
+				tagContainer = tagContainer.nextSibling;
+				if (tagContainer !== null) {
+
+					const tagsSelector 	= '.tw-tag__content div';
+					const tags 			= tagContainer.querySelectorAll(tagsSelector);
+					const tagsLength 	= tags.length;
+
+					if (tagsLength > 0) {
+
+						for (let n = 0; n < tagsLength; n++) {
+
+							const tagName = tags[n].textContent;
+
+							let hideTagNode = hideTag.cloneNode(true);
+							hideTagNode.setAttribute('data-uttv-tag', tagName);
+							hideTagNode.addEventListener('click', function(event) {
+
+								// cancel click on tag event
+								event.preventDefault();
+								event.stopPropagation();
+
+								const decision = confirm('Unwanted Twitch:\nYou are about to hide all categories and channels with the tag:\n\n[' + tagName + ']');
+								if (decision === true) {
+
+									onHideTag(this);
+								}
+							});
+							tags[n].parentNode.appendChild(hideTagNode);
+						}
+
+
+					} else {
+
+						logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+					}
+
+				} else {
+
+					logWarn('No tags found for card:', items[i].node);
+				}
+
+			break;
+		}
 	}
 }
 
@@ -1088,6 +1395,43 @@ function onHideItem() {
 	if (removeItem(this) === true) {
 
 		logVerbose('Node removed due to item being blacklisted:', this);
+	}
+}
+
+/**
+ * Event to fire by the "Hide Tag" button. Adds the selected tag to the blacklist in storage.
+ */
+function onHideTag(node) {
+	logTrace('invoking onHideTag()');
+
+	if ((node === undefined) || (node.nodeType !== 1)) { return false; }
+
+	// determine tag to blacklist
+	const tag = node.getAttribute('data-uttv-tag');
+	if ((typeof tag !== 'string') || (tag.length === 0)) { return; }
+
+	if (storageLocked === true) {
+
+		throw new Error('UnwantedTwitch: Storage currently locked. Cannot proceed with: onHideTag()');
+	}
+
+	// update cache
+	if (storedBlacklistedItems['tags'] === undefined) {
+
+		storedBlacklistedItems['tags'] = {};
+	}
+	storedBlacklistedItems['tags'][tag] = 1;
+
+	// update storage
+	putBlacklistedItems(storedBlacklistedItems);
+
+	// remove item
+	if (removeItem(node) === true) {
+
+		logVerbose('Node removed due to tag being blacklisted:', node);
+
+		// trigger full filtering since the just blacklisted tag might be present in other items
+		filterDirectory();
 	}
 }
 

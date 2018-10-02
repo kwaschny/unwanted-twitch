@@ -155,6 +155,7 @@ function onSave() {
 
 	result.categories 	= gatherKeys(categories);
 	result.channels 	= gatherKeys(channels);
+	result.tags 		= gatherKeys(tags);
 
 	chrome.runtime.sendMessage(
 		{ "blacklistedItems": result }
@@ -197,6 +198,7 @@ let isModified = false;
 
 const categories 	= document.getElementById('table_categories');
 const channels 		= document.getElementById('table_channels');
+const tags 			= document.getElementById('table_tags');
 
 const saveButton 	= document.getElementById('save');
 const cancelButton 	= document.getElementById('cancel');
@@ -217,6 +219,7 @@ cancelButton.addEventListener('click', onCancel);
 
 	document.getElementById('column_Categories').textContent 	= chrome.i18n.getMessage('blacklist_Categories');
 	document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
+	document.getElementById('column_Tags').textContent 			= chrome.i18n.getMessage('blacklist_Tags');
 
 	document.querySelectorAll('button.clear').forEach(function(e) {
 
@@ -250,4 +253,5 @@ chrome.storage.sync.get(null, function(result) {
 
 	addItems(categories, 	blacklistedItems.categories);
 	addItems(channels, 		blacklistedItems.channels);
+	addItems(tags, 			blacklistedItems.tags);
 });

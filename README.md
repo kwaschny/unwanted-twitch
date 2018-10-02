@@ -1,4 +1,4 @@
-# Hide unwanted streams, games, categories and channels on: twitch.tv
+# Hide unwanted streams, games, categories, channels and tags on: twitch.tv
 
 ## Download
 - [Chrome Web Store](https://chrome.google.com/webstore/detail/unwanted-twitch/egbpddkgpjmliolmpjenjomflclekjld)
@@ -7,6 +7,7 @@
 ## Features
 - hide unwanted categories
 - hide unwanted channels
+- hide unwanted tags
 - blacklist automatically synced between devices
 - one-click-toggle to disable/enable extension
 - compatible with BetterTTV (BTTV) and FrankerFaceZ (FFZ)
