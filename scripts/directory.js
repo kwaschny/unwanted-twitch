@@ -1,4 +1,4 @@
-// jshint esversion: 6
+﻿// jshint esversion: 6
 // jshint -W069
 // jshint -W083
 
@@ -708,7 +708,23 @@ function getItems() {
 					}
 
 					let itemName = wrapper.children[0].querySelector('a[data-a-target]');
-					if ((itemName === null) || !itemName.textContent) { continue; }
+					if (itemName === null) { continue; }
+
+					let itemLink = itemName.getAttribute('href');
+					    itemName = itemName.textContent;
+					if (typeof itemLink === 'string') {
+
+						itemLink = itemLink.split('/');
+
+						if ( (itemLink.length === 1) && (itemLink[0].length > 0) ) {
+
+							itemName = itemLink[0];
+
+						} else if ( (itemLink.length >= 2) && (itemLink[1].length > 0) ) {
+
+							itemName = itemLink[1];
+						}
+					}
 
 					// category might not be set
 					let subItem = 'uttv_unknown';
@@ -754,7 +770,7 @@ function getItems() {
 					/* END: tags */
 
 					items.push({
-						item: 		itemName.textContent,
+						item: 		itemName,
 						subItem: 	subItem,
 						tags: 		tagsData,
 						node: 		itemContainers[i]
