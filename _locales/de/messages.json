@@ -13,7 +13,7 @@
 		"message": "Tag ausblenden"
 	},
 	"confirm_HideTag": {
-		"message": "Unwanted Twitch:\nSie sind dabei alle Kategorien und Kanäle mit folgendem Tag auszublenden:"
+		"message": "Unwanted Twitch:\nSie sind dabei alle Kategorien und Kanäle\nmit folgendem Tag auszublenden:"
 	},
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nDie Sperrliste ist voll.\nEs können keine weiteren Einträge hinzugefügt werden."
@@ -38,8 +38,20 @@
 	"blacklist_Tags": {
 		"message": "Ausgeblendete Tags"
 	},
+	"blacklist_CategoriesInput": {
+		"message": "Name der auszublendenen Kategorie"
+	},
+	"blacklist_ChannelsInput": {
+		"message": "Name des auszublendenen Kanals"
+	},
+	"blacklist_TagsInput": {
+		"message": "Name des auszublendenen Tags"
+	},
 	"blacklist_Empty": {
 		"message": "Noch kein Eintrag vorhanden."
+	},
+	"blacklist_Add": {
+		"message": "Hinzufügen"
 	},
 	"blacklist_Remove": {
 		"message": "Entfernen"

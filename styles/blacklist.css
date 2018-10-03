@@ -26,6 +26,16 @@
 			width: 1%;
 		}
 
+		#blacklist .area tr.input td:first-child {
+			padding-left: 2px;
+			padding-right: 2px;
+		}
+
+		#blacklist .area input {
+			padding: 4px;
+			width: 100%;
+		}
+
 		#blacklist .area button {
 			width: 96px;
 		}

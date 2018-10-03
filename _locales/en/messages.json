@@ -13,7 +13,7 @@
 		"message": "Hide Tag"
 	},
 	"confirm_HideTag": {
-		"message": "Unwanted Twitch:\nYou are about to hide all categories and channels with the tag:"
+		"message": "Unwanted Twitch:\nYou are about to hide all categories and channels\nwith the following tag:"
 	},
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nThe blacklist is full.\nYou cannot add more items."
@@ -38,8 +38,20 @@
 	"blacklist_Tags": {
 		"message": "Blacklisted Tags"
 	},
+	"blacklist_CategoriesInput": {
+		"message": "Name of Category to blacklist"
+	},
+	"blacklist_ChannelsInput": {
+		"message": "Name of Channel to blacklist"
+	},
+	"blacklist_TagsInput": {
+		"message": "Name of Tag to blacklist"
+	},
 	"blacklist_Empty": {
 		"message": "Nothing blacklisted yet."
+	},
+	"blacklist_Add": {
+		"message": "Add"
 	},
 	"blacklist_Remove": {
 		"message": "Remove"

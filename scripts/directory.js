@@ -535,16 +535,13 @@ function isBlacklistedItem(item, type) {
 	if (typeof item !== 'string') { return false; }
 	if (storedBlacklistedItems[type] === undefined) { return false; }
 
-	switch (type) {
+	// always check all-lowercase spelling
+	const itemL = item.toLowerCase();
 
-		case 'channels':
-
-			item = item.toLowerCase();
-
-		break;
-	}
-
-	return (storedBlacklistedItems[type][item] !== undefined);
+	return (
+		(storedBlacklistedItems[type][item]  !== undefined) ||
+		(storedBlacklistedItems[type][itemL] !== undefined)
+	);
 }
 
 /**
@@ -1289,7 +1286,7 @@ function attachHideButtons(items) {
 								event.preventDefault();
 								event.stopPropagation();
 
-								const decision = confirm( chrome.i18n.getMessage('confirm_HideTag') + '\n\n[' + tagName + ']' );
+								const decision = confirm( chrome.i18n.getMessage('confirm_HideTag') + ' [' + tagName + ']' );
 								if (decision === true) {
 
 									onHideTag(this);
