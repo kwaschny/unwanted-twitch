@@ -1,5 +1,8 @@
 ﻿# Acceptance Tests
 
+## Note about testing in Firefox
+If you load the add-on via `about:debugging`, make sure to close the tab or move it to a separate window. Otherwise it will conflict with tab queries in the background script and cause unexpected behavior.
+
 ## Test Case: Blacklisting categories works
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
 - [ ] A label named "X" is on the top right corner of each cover.
@@ -18,7 +21,7 @@
 
 ## Test Case: Blacklisting tags works in categories directory
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
-- [ ] A label named "X" is on the right side of each tag label below the covers.
+- [ ] A label named "X" is on the right side (Firefox: at the bottom) of each tag label below the covers.
 2. Click on one of the labels.
 - [ ] A prompt asks you to confirm your action.
 - [ ] The cover disappeared without leaving behind an empty space.
@@ -27,7 +30,7 @@
 
 ## Test Case: Blacklisting tags works in channels directory
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
-- [ ] A label named "X" is on the right side of each tag label below the covers.
+- [ ] A label named "X" is on the right side (Firefox: at the bottom) of each tag label below the covers.
 2. Click on one of the labels.
 - [ ] A prompt asks you to confirm your action.
 - [ ] The cover disappeared without leaving behind an empty space.
@@ -65,6 +68,18 @@
 2. Use the "back" function (browser history).
 - [ ] Previously hidden covers should disappear.
 - [ ] A label to hide the item should appear on the top right corner of each cover.
+
+## Test Case: Management button appears in categories directory
+1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
+- [ ] A button named "Manage Blacklist" appears next to the filters at the top of the directory.
+2. Click on the button.
+- [ ] A new tab opens up that shows the Blacklist management.
+
+## Test Case: Management button appears in channels directory
+1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
+- [ ] A button named "Manage Blacklist" appears next to the filters at the top of the directory.
+2. Click on the button.
+- [ ] A new tab opens up that shows the Blacklist management.
 
 ## Test Case: Toggle extension works
 1. Click on the UnwantedTwitch icon in the extension bar.

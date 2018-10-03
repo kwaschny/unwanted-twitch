@@ -3,6 +3,9 @@
 		"message": "Ausblenden von Streams, Spielen, Kategorien, Kanälen und Tags auf: twitch.tv"
 	},
 
+	"label_Management": {
+		"message": "Sperrliste verwalten"
+	},
 	"label_HideCategory": {
 		"message": "Kategorie ausblenden"
 	},

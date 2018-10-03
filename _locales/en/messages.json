@@ -3,6 +3,9 @@
 		"message": "Hide unwanted streams, games, categories, channels and tags on: twitch.tv"
 	},
 
+	"label_Management": {
+		"message": "Manage Blacklist"
+	},
 	"label_HideCategory": {
 		"message": "Hide Category"
 	},

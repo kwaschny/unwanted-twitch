@@ -14,12 +14,28 @@ function forwardMessageToTabs(request, tabs, isGlobal) {
 }
 chrome.runtime.onMessage.addListener(function(request) {
 
-	// prevent forwarding a locking state multiple times
-	const isGlobal = (request && (typeof request.blacklistedItems === 'object'));
+	// actions
+	if (request && request.action) {
 
-	// since we cannot detect which tabs are on twitch.tv (would require "tabs" permission), we target all tabs
-	chrome.tabs.query({}, function(tabs) {
+		switch (request.action) {
 
-		forwardMessageToTabs(request, tabs, isGlobal);
-	});
+			case 'openBlacklist':
+
+				chrome.tabs.create({ active: true, url: '/views/blacklist.html' });
+
+			break;
+		}
+
+	// passthrough
+	} else {
+
+		// prevent forwarding a locking state multiple times
+		const isGlobal = (request && (typeof request.blacklistedItems === 'object'));
+
+		// since we cannot detect which tabs are on twitch.tv (would require "tabs" permission), we target all tabs
+		chrome.tabs.query({}, function(tabs) {
+
+			forwardMessageToTabs(request, tabs, isGlobal);
+		});
+	}
 });

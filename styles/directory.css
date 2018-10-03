@@ -1,4 +1,27 @@
-﻿.uttv-hide-item {
+﻿.uttv-button {
+	display: flex;
+	flex-direction: column;
+	font-size: 130%;
+	justify-content: flex-end;
+	padding: 0.5rem;
+}
+
+	.uttv-button div {
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAB3RJTUUH4ggDFiYvxTmVuQAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAJFSURBVHjaY1AXd9NOtF/4Nd151X98ONVp+f9kh8X/GNCBi3ZxWbLDkl9+Rs2zvQ3qJ/oY1E9Cx976tb2RllPPgAzBMCDBbt7rJPtFXwXYlbgZ8AAP3cpmkEswJFIcl/0HGSDJayAC4gtzqvEZy0e6gtjygpYy+jJBViC2p151Bw4DlqIYoCnhqR9nO/cZiG2rlhEXYTHpEIkGeOjF2cx+CDZANT0m3GLCPpIMUBV1Ugszn7AHxDZXivcNMG6dDw2DlnTn1YQNAAEmBjZGEM3MwMAIFVLP5pZ4t5yT6X8JE8NxIF8DLg814IsIpzofttDnAVq+hYv15yt2hv/vORj+P2Nh+L+FneGDBFAc4gKHpcAEsuRvhOXkI0B8VFfa38RaJTUCxHfUyj61g53172dGhv9vmZj+v2Vg+P8GiF8C8QZO5i9A7SYMQM3/Qa4AJZI0pxX/g0y71gDF/oD4xTzS/18CNT9jZv7/FKjpVULC/z8vXvx/W1v7/yaQn8nEcA3sBVBagGCQQSv+pzouB+OFDIz/nwJtvguytbv7//+/f///ePz4/6PAwP+3gGI9DAz/GLQkvAw0xN11gM6OAtkKTAOPDeXCHEDilQyMl+4BFT7u6voPAu+PH/9/HcgH4YtAgzMYGM7CAwtkCMgLlspJwUhhqLGdgeHdbWvr//cnTvx/DqjxPBBfAeLlQHFQ7DAQAlIMDNZrGBienwFqAlr3/yQQL2BgeCbIwGBJUDNSOhALYWBYUcHAcD+AgWEZkC8CSS8MjAAp/SWxILJBIQAAAABJRU5ErkJggg==');
+		background-position: 6px center;
+		background-repeat: no-repeat;
+		border: 1px solid #B19DD8;
+		border-radius: 6px;
+		color: #6441A4;
+		cursor: pointer;
+		display: block;
+		padding: 6px 8px 5px 26px;
+	}
+		.uttv-button div:hover {
+			background-color: rgba(100, 65, 164, 0.05);
+		}
+
+.uttv-hide-item {
 	background-color: #00000099;
 	border-radius: 2px;
 	color: #FFFFFF;
@@ -13,7 +36,7 @@
 }
 	.uttv-hide-item:hover {
 		background-color: #4B367C;
-		color: #FFFFFF;
+		color: #EFEEF1;
 	}
 
 .uttv-hide-tag {
@@ -28,5 +51,30 @@
 }
 	.uttv-hide-tag:hover {
 		background-color: #4B367C;
-		color: #FFFFFF;
+		color: #EFEEF1;
 	}
+	.uttv-hide-tag.firefox {
+		display: block;
+		margin-left: 0px;
+		text-align: center;
+	}
+
+/* BEGIN: dark theme */
+
+	body.tw-root--theme-dark .uttv-button div {
+		border-color: #4B367C;
+		color: #DAD8DE;
+	}
+		body.tw-root--theme-dark .uttv-button div:hover {
+			background-color: rgba(100, 65, 164, 0.20);
+		}
+
+	body.tw-root--theme-dark .uttv-hide-tag {
+		border-color: #2C2541;
+		color: #DAD8DE;
+	}
+		body.tw-root--theme-dark .uttv-hide-tag:hover {
+			background-color: #4B367C;
+		}
+
+/* END: dark theme */

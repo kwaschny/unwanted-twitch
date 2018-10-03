@@ -1,4 +1,4 @@
-﻿// jshint esversion: 6
+// jshint esversion: 6
 // jshint -W069
 // jshint -W083
 
@@ -214,6 +214,8 @@ function init() {
 					pageLoads = false;
 					logTrace('polling stopped in init(): page loaded');
 
+					placeManagementButton();
+
 					// invoke directory filter
 					const remainingItems = filterDirectory();
 
@@ -287,10 +289,53 @@ function onPageChange(page) {
 					observeRecommendations();
 				}
 
+				placeManagementButton();
+
 			break;
 		}
 
 	}, pageLoadMonitorInterval);
+}
+
+/**
+ * Places a button to the right of the filters area in the directory. The button opens the management area of UnwantedTwitch.
+ */
+function placeManagementButton() {
+	logTrace('invoking placeManagementButton()');
+
+	const filtersAreaSelector 	= 'div.browse-header__filters, div.directory-header__filters';
+	const filtersArea 			= rootNode.querySelector(filtersAreaSelector);
+
+	if (filtersArea !== null) {
+
+		// prevent adding more than one button
+		if (filtersArea.querySelector('div[data-uttv-management]') !== null) {
+
+			logWarn('Management button already added to filters area:', filtersArea);
+			return false;
+		}
+
+		let container = document.createElement('div');
+		container.setAttribute('data-uttv-management', '');
+		container.className = 'uttv-button';
+
+		let button = document.createElement('div');
+		button.textContent = chrome.i18n.getMessage('label_Management');
+
+		button.addEventListener('click', function() {
+
+			chrome.runtime.sendMessage({ action: 'openBlacklist' });
+		});
+
+		container.appendChild(button);
+		filtersArea.appendChild(container);
+
+		return true;
+
+	} else {
+
+		logWarn('Filters not found. Expected:', filtersAreaSelector);
+	}
 }
 
 /**
@@ -1292,7 +1337,19 @@ function attachHideButtons(items) {
 									onHideTag(this);
 								}
 							});
-							tags[n].parentNode.appendChild(hideTagNode);
+
+							// Firefox doesn't support click events within button tags
+							if (isFirefox() === true) {
+
+								hideTagNode.classList.add('firefox');
+
+								// place next to the button element
+								tags[n].parentNode.parentNode.parentNode.appendChild(hideTagNode);
+
+							} else {
+
+								tags[n].parentNode.appendChild(hideTagNode);
+							}
 						}
 
 
@@ -1338,13 +1395,25 @@ function attachHideButtons(items) {
 								event.preventDefault();
 								event.stopPropagation();
 
-								const decision = confirm('Unwanted Twitch:\nYou are about to hide all categories and channels with the tag:\n\n[' + tagName + ']');
+								const decision = confirm( chrome.i18n.getMessage('confirm_HideTag') + ' [' + tagName + ']' );
 								if (decision === true) {
 
 									onHideTag(this);
 								}
 							});
-							tags[n].parentNode.appendChild(hideTagNode);
+
+							// Firefox doesn't support click events within button tags
+							if (isFirefox() === true) {
+
+								hideTagNode.classList.add('firefox');
+
+								// place next to the button element
+								tags[n].parentNode.parentNode.parentNode.appendChild(hideTagNode);
+
+							} else {
+
+								tags[n].parentNode.appendChild(hideTagNode);
+							}
 						}
 
 
@@ -1716,6 +1785,18 @@ function observeRecommendations() {
 }
 
 /* BEGIN: utility */
+
+	/**
+	 * Returns if the extension is loaded via Firefox.
+	 */
+	function isFirefox() {
+		logTrace('invoking isFirefox()');
+
+		return (
+			(typeof chrome  !== 'undefined') &&
+			(typeof browser !== 'undefined')
+		);
+	}
 
 	/**
 	 * Returns if the FrankerFaceZ extension is loaded.

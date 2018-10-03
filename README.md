@@ -11,6 +11,7 @@
 - blacklist automatically synced between devices
 - one-click-toggle to disable/enable extension
 - compatible with BetterTTV (BTTV) and FrankerFaceZ (FFZ)
+- supports Twitch's Dark Mode
 
 ## Notice
 Twitch is infamous for changing their website without further notice, which may break this extension over night. If you notice pages no longer working properly, disable the extension and wait for an update.
