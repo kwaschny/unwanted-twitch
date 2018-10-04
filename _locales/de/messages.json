@@ -68,6 +68,18 @@
 	"blacklist_Cancel": {
 		"message": "Abbrechen"
 	},
+	"blacklist_Import": {
+		"message": "↳ Importieren"
+	},
+	"blacklist_ImportSuccess": {
+		"message": "Unwanted Twitch:\nDie ausgewählte Datei wurde erfolgreich importiert.\nKlicken Sie auf [Speichern], um den Vorgang abzuschließen."
+	},
+	"blacklist_ImportFailure": {
+		"message": "Unwanted Twitch:\n(Fehler) Die ausgewählte Datei scheint kein gültiger Export zu sein."
+	},
+	"blacklist_Export": {
+		"message": "↱ Exportieren"
+	},
 	"alert_ReloadNote": {
 		"message": "Unwanted Twitch:\nDamit die Änderungen sichtbar werden,\nmüssen bereits geöffnete Tabs neu geladen werden."
 	}

@@ -99,3 +99,14 @@ If you load the add-on via `about:debugging`, make sure to close the tab or move
 - [ ] An alert shows that notifies about reloading already opened tabs.
 4. Reload already opened twitch.tv tabs.
 - [ ] The removed entries reappear with their cover in the corresponding categories.
+
+## Test Case: Blacklist import/export works
+1. Open the Blacklist management and make sure there are some items.
+- [ ] Two buttons appear in the bottom left corner: "Import" and "Export"
+2. Click on "Export" and save the file on disk.
+- [ ] The saved file contains all listed items in their corresponding group as JSON.
+3. Clear all items using the "Clear" buttons.
+- [ ] There are no more items left.
+4. Click on "Import" and select the previously saved file from disk.
+- [ ] An alert appears informing about the operation state.
+- [ ] All items reappear in their corresponding group.

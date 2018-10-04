@@ -16,6 +16,7 @@ button {
 	border-radius: 2px;
 	color: #FFFFFF;
 	cursor: pointer;
+	font-family: inherit;
 	outline: none;
 	padding: 8px;
 	user-select: none;
@@ -33,6 +34,22 @@ button {
 		border-color: #7D5BBE;
 		box-shadow: 0px 0px 6px 0px #7D5BBE;
 	}
+
+	button.lowlight {
+		background-color: #6B588D;
+	}
+		button.lowlight:hover {
+			background-color: #8472A7;
+			border-color: #8472A7;
+		}
+		button.lowlight:focus {
+			border-color: #A091BA;
+			box-shadow: 0px 0px 6px 0px #8472A7;
+		}
+		button.lowlight:active {
+			border-color: #8472A7;
+			box-shadow: 0px 0px 6px 0px #8472A7;
+		}
 
 	button.disabled {
 		background-color: #737373;
@@ -56,7 +73,7 @@ button {
 	}
 
 input {
-	font: inherit;
+	font-family: inherit;
 }
 
 table {

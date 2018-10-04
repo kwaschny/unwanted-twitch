@@ -65,12 +65,19 @@ function createItemRow(key) {
 
 function addItem(table, key) {
 
+	// prevent adding the same key more than once
+	if (itemExists(table, key) === true) {
+
+		return false;
+	}
+
 	table.insertBefore(
 		createItemRow(key),
 		table.children[0].nextSibling
 	);
-
 	handleItemCount(table);
+
+	return true;
 }
 
 function addItems(table, items) {
@@ -80,12 +87,14 @@ function addItems(table, items) {
 		return handleItemCount(table);
 	}
 
+	let sortedKeys 			= ( Array.isArray(items) ? items : Object.keys(items) );
+	const sortedKeysLength 	= sortedKeys.length;
+
 	// sort items (case insensitive)
-	const sortedKeys = Object.keys(items).sort(function (a, b) {
+	sortedKeys = sortedKeys.sort(function (a, b) {
 
 		return a.toLowerCase().localeCompare( b.toLowerCase() );
 	});
-	const sortedKeysLength = sortedKeys.length;
 
 	let fragment = document.createDocumentFragment();
 
@@ -93,7 +102,8 @@ function addItems(table, items) {
 
 		let key = sortedKeys[i];
 
-		if (!items.hasOwnProperty(key)) { continue; }
+		// prevent adding the same key more than once
+		if (itemExists(table, key) === true) { continue; }
 
 		fragment.appendChild(
 			createItemRow(key)
@@ -101,7 +111,7 @@ function addItems(table, items) {
 	}
 
 	table.appendChild(fragment);
-	handleItemCount(table, sortedKeysLength);
+	return handleItemCount(table);
 }
 
 function clearItems(table) {
@@ -117,6 +127,15 @@ function clearItems(table) {
 	handleItemCount(table);
 
 	flashSaveButton();
+}
+
+function itemExists(table, key) {
+
+	key = key.toLowerCase();
+
+	const presentKeys = gatherKeys(table, true);
+
+	return (presentKeys[key] !== undefined);
 }
 
 function onAddItem(row) {
@@ -162,19 +181,25 @@ function onRemoveItem() {
 	flashSaveButton();
 }
 
-function handleItemCount(table, count) {
+function handleItemCount(table) {
 
-	if (count === undefined) {
+	const count = table.querySelectorAll('tr.item').length;
 
-		count = table.querySelectorAll('tr.item').length;
-	}
-
+	// update count in head
 	table.parentNode.querySelector('.count').textContent = ('(' + count + ')');
+
+	// remove row with a note about having no items
+	const emptyRow = table.querySelector('tr.empty');
+	if (emptyRow !== null) {
+
+		emptyRow.remove();
+	}
 
 	// append row with a note about having no items
 	if (count === 0) {
 
 		let row = document.createElement('tr');
+		row.className = 'empty';
 
 		let cell = document.createElement('td');
 		cell.setAttribute('colspan', 2);
@@ -183,11 +208,19 @@ function handleItemCount(table, count) {
 		row.appendChild(cell);
 		table.appendChild(row);
 
+		// hide "Clear" button
 		table.parentNode.querySelector('button.clear').style.display = 'none';
+
+	} else {
+
+		// show "Clear" button
+		table.parentNode.querySelector('button.clear').style.display = 'inline-block';
 	}
+
+	return count;
 }
 
-function gatherKeys(table) {
+function gatherKeys(table, allLowerCase) {
 
 	let result = {};
 
@@ -197,7 +230,13 @@ function gatherKeys(table) {
 	for (let i = 0; i < nodesLength; i++) {
 
 		let key = nodes[i].getAttribute('data-key');
-		result[key] = true;
+
+		if (allLowerCase === true) {
+
+			key = key.toLowerCase();
+		}
+
+		result[key] = 1;
 	}
 
 	return result;
@@ -231,6 +270,98 @@ function onCancel() {
 	});
 }
 
+function onImport() {
+
+	let input = document.createElement('input');
+	input.type = 'file';
+	input.accept = '.json,.txt';
+
+	input.addEventListener('change', function(event) {
+
+		if (event.target.files.length === 0) { return; }
+
+		// reader
+		const reader = new FileReader();
+		reader.addEventListener('load', function() {
+
+			let processed = false;
+
+			try {
+
+				const deserializedImport = JSON.parse(reader.result);
+
+				if (typeof deserializedImport === 'object') {
+
+					if ( Array.isArray(deserializedImport.categories) ) {
+
+						addItems(categories, deserializedImport.categories);
+					}
+
+					if ( Array.isArray(deserializedImport.channels) ) {
+
+						addItems(channels, deserializedImport.channels);
+					}
+
+					if ( Array.isArray(deserializedImport.tags) ) {
+
+						addItems(tags, deserializedImport.tags);
+					}
+
+					processed = true;
+
+				} else {
+
+					console.warn('UnwantedTwitch: Unexpected content:', deserializedImport);
+				}
+
+			} catch (exception) {
+
+				console.error('UnwantedTwitch: Exception caught:', exception);
+			}
+
+			if (processed === true) {
+
+				alert( chrome.i18n.getMessage('blacklist_ImportSuccess') );
+
+			} else {
+
+				alert( chrome.i18n.getMessage('blacklist_ImportFailure') );
+			}
+		});
+		reader.addEventListener('error', function() {
+
+			alert('Unwanted Twitch:\nUnexpected error while reading the selected file.');
+		});
+
+		const content = reader.readAsText(
+			event.target.files[0]
+		);
+	});
+
+	// trigger dialog
+	input.click();
+}
+
+function onExport() {
+
+	let result = {};
+
+	result.categories 	= Object.keys( gatherKeys(categories) );
+	result.channels 	= Object.keys( gatherKeys(channels)   );
+	result.tags 		= Object.keys( gatherKeys(tags)       );
+
+	const serializedBlacklist = JSON.stringify(result);
+
+	let download = document.createElement('a');
+	download.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(serializedBlacklist));
+	download.setAttribute('download', 'UnwantedTwitch_Blacklist.json');
+
+	// trigger dialog
+	document.body.appendChild(download);
+	download.click();
+	document.body.removeChild(download);
+}
+
 function flashSaveButton(interval) {
 
 	if (typeof interval !== 'number') {
@@ -256,6 +387,9 @@ const tags 			= document.getElementById('table_tags');
 
 const saveButton 	= document.getElementById('save');
 const cancelButton 	= document.getElementById('cancel');
+
+const importButton 	= document.getElementById('import');
+const exportButton 	= document.getElementById('export');
 
 // "clear" buttons
 document.querySelectorAll('button.clear').forEach(function(e) {
@@ -292,6 +426,9 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 saveButton.addEventListener('click', onSave);
 cancelButton.addEventListener('click', onCancel);
 
+importButton.addEventListener('click', onImport);
+exportButton.addEventListener('click', onExport);
+
 /* BEGIN: localize */
 
 	document.getElementById('column_Categories').textContent 	= chrome.i18n.getMessage('blacklist_Categories');
@@ -322,6 +459,9 @@ cancelButton.addEventListener('click', onCancel);
 
 	saveButton.textContent 		= chrome.i18n.getMessage('blacklist_Save');
 	cancelButton.textContent 	= chrome.i18n.getMessage('blacklist_Cancel');
+
+	importButton.textContent 	= chrome.i18n.getMessage('blacklist_Import');
+	exportButton.textContent 	= chrome.i18n.getMessage('blacklist_Export');
 
 /* END: localize */
 

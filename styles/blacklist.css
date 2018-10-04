@@ -6,7 +6,7 @@
 		display: inline-block;
 		margin-bottom: 64px;
 		vertical-align: top;
-		width: 48%;
+		width: 32%;
 	}
 		#blacklist .area.left {
 			margin-right: 1%;
@@ -41,6 +41,7 @@
 		}
 			#blacklist .area button.clear {
 				border-color: #FFFFFF;
+				font-weight: normal;
 				padding: 4px 8px;
 				position: absolute;
 				right: 8px;
@@ -51,6 +52,8 @@
 		background-color: #DAD8DE;
 		border-top: 2px solid #C0BDC7;
 		bottom: 0px;
+		display: flex;
+		justify-content: space-between;
 		left: 0px;
 		padding: 16px 32px;
 		position: fixed;
@@ -58,9 +61,30 @@
 		width: 100%;
 	}
 
+		#blacklist .actions .left button {
+			width: 128px;
+		}
+
 		#blacklist .actions button {
 			margin-right: 16px;
 		}
 			#blacklist .actions button:last-child {
 				margin-right: 0px;
 			}
+
+@media (max-width: 1023px) {
+
+	#blacklist .area {
+		width: 100%;
+	}
+
+}
+
+@media (max-width: 799px) {
+
+	#blacklist .actions button {
+		margin-bottom: 8px;
+		margin-right: 0px;
+	}
+
+}
