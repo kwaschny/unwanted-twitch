@@ -24,8 +24,11 @@ const debug = 4;
 	// indicates that a page load is in progress
 	let pageLoads = false;
 
-	// interval handle for page load detection
-	let waitingForPageLoad;
+	// interval handles for page load detection
+	let monitorPagesInterval;
+	let initInterval;
+	let onPageChangeInterval;
+	let checkSlotsInterval;
 
 	// currently detected slot type, one of: 'frontpage', 'categories', 'channels' or null
 	let currentItemType = getItemType(currentPage);
@@ -201,7 +204,8 @@ function init() {
 
 			// wait for page to load the DOM completely, the loading is deferred, so we need to wait for an indicator
 			const pageLoadMonitorInterval = 200;
-			waitingForPageLoad = window.setInterval(function init_waitingForPageLoad() {
+			window.clearInterval(initInterval);
+			initInterval = window.setInterval(function init_waitingForPageLoad() {
 				logTrace('polling started in init(): waiting for page to load');
 
 				if (enabled === false) { return; }
@@ -210,7 +214,7 @@ function init() {
 				const indicator = rootNode.getAttribute('data-a-page-loaded');
 				if (indicator !== null) {
 
-					window.clearInterval(waitingForPageLoad);
+					window.clearInterval(initInterval);
 					pageLoads = false;
 					logTrace('polling stopped in init(): page loaded');
 
@@ -244,7 +248,8 @@ function onPageChange(page) {
 
 	// wait for page to load the DOM completely, the loading is deferred, so we need to wait for the first slot
 	const pageLoadMonitorInterval = 200;
-	waitingForPageLoad = window.setInterval(function onPageChange_waitingForPageLoad() {
+	window.clearInterval(onPageChangeInterval);
+	onPageChangeInterval = window.setInterval(function onPageChange_waitingForPageLoad() {
 		logTrace('polling started in onPageChange(): waiting for page to load');
 
 		if (enabled === false) { return; }
@@ -258,7 +263,7 @@ function onPageChange(page) {
 				indicator = rootNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
 				if (indicator !== null) {
 
-					window.clearInterval(waitingForPageLoad);
+					window.clearInterval(onPageChangeInterval);
 					pageLoads = false;
 					logTrace('polling stopped in onPageChange(): page loaded');
 
@@ -274,9 +279,11 @@ function onPageChange(page) {
 				indicator = rootNode.querySelector('div[data-target][style^="order:"]');
 				if (indicator !== null) {
 
-					window.clearInterval(waitingForPageLoad);
+					window.clearInterval(onPageChangeInterval);
 					pageLoads = false;
 					logTrace('polling stopped in onPageChange(): page loaded');
+
+					placeManagementButton();
 
 					// invoke directory filter
 					const remainingItems = filterDirectory();
@@ -288,8 +295,6 @@ function onPageChange(page) {
 					filterRecommendations();
 					observeRecommendations();
 				}
-
-				placeManagementButton();
 
 			break;
 		}
@@ -1275,7 +1280,8 @@ function attachHideButtons(items) {
 
 	if (items.length === 0) { return; }
 
-	const attachedKey = 'data-uttv-hide-attached';
+	const ffWorkaround 	= isFirefox();
+	const attachedKey 	= 'data-uttv-hide-attached';
 
 	// button on items
 	let hideItem = document.createElement('div');
@@ -1355,7 +1361,7 @@ function attachHideButtons(items) {
 							});
 
 							// Firefox doesn't support click events within button tags
-							if (isFirefox() === true) {
+							if (ffWorkaround === true) {
 
 								hideTagNode.classList.add('firefox');
 
@@ -1419,7 +1425,7 @@ function attachHideButtons(items) {
 							});
 
 							// Firefox doesn't support click events within button tags
-							if (isFirefox() === true) {
+							if (ffWorkaround === true) {
 
 								hideTagNode.classList.add('firefox');
 
@@ -1682,7 +1688,8 @@ function listenToScroll() {
 	logTrace('invoking listenToScroll()');
 
 	const scrollChangeMonitoringInterval = 1000;
-	window.setInterval(function checkSlots() {
+	window.clearInterval(checkSlotsInterval);
+	checkSlotsInterval = window.setInterval(function checkSlots() {
 
 		if (enabled === false) { return; }
 
@@ -1917,7 +1924,8 @@ window.addEventListener('load', function callback_windowLoad() {
  * Constantly monitor path to notice change of page.
  */
 const pageChangeMonitorInterval = 333;
-window.setInterval(function monitorPages() {
+window.clearInterval(monitorPagesInterval);
+monitorPagesInterval = window.setInterval(function monitorPages() {
 
 	if (enabled === false) { return; }
 
