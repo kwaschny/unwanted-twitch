@@ -1543,12 +1543,9 @@ function removeItem(node) {
 				if (topNode === undefined) { break; }
 
 				if (
-					(Object.keys(topNode.dataset).length === 0) &&
-					(
-						(topNode.classList.length === 0) ||
-						topNode.classList.contains('tw-col-2') ||
-						topNode.classList.contains('anon-top-channels')
-					)
+					topNode.classList.contains('tw-col-2') || 					// featured
+					topNode.classList.contains('anon-top-channels') || 			// top channels
+					topNode.classList.contains('list-animation__item-animate') 	// popular
 				) {
 					node.setAttribute('data-uttv-hidden', '');
 					// don't hide topmost node because it causes the remaining items to scale/cover the full width,
