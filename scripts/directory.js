@@ -1,4 +1,4 @@
-// jshint esversion: 6
+﻿// jshint esversion: 6
 // jshint -W069
 // jshint -W083
 
@@ -1537,10 +1537,15 @@ function removeItem(node) {
 
 			topNode = node;
 
-			// find parent (empty dataset and either empty classList or one of the classes .tw-col-2 or .anon-top-channels)
 			while (true) {
 
-				if (topNode === undefined) { break; }
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
 
 				if (
 					topNode.classList.contains('tw-col-2') || 					// featured
@@ -1563,10 +1568,15 @@ function removeItem(node) {
 
 			topNode = node;
 
-			// find parent with class .stream-thumbnail or attribute [data-target] + [style^="order:"]
 			while (true) {
 
-				if (topNode === undefined) { break; }
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
 
 				if (
 					(topNode.classList.contains('stream-thumbnail') === true) ||
@@ -1593,10 +1603,15 @@ function removeItem(node) {
 
 			topNode = node;
 
-			// find parent with attribute [data-target] + [style^="order:"]
 			while (true) {
 
-				if (topNode === undefined) { break; }
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
 
 				if (
 					(topNode.getAttribute('data-target') !== null) &&
@@ -1632,10 +1647,15 @@ function removeRecommendation(node, type) {
 
 		case 'expanded':
 
-			// find parent (empty classList, empty dataset)
 			while (true) {
 
-				if (topNode === undefined) { break; }
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
 
 				if (
 					(Object.keys(topNode.dataset).length === 0) &&
@@ -1654,10 +1674,15 @@ function removeRecommendation(node, type) {
 
 		case 'collapsed':
 
-			// find parent with attribute [data-test-selector="side-nav-card-collapsed"]
 			while (true) {
 
-				if (topNode === undefined) { break; }
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
 
 				if (
 					(topNode.getAttribute('data-test-selector') === 'side-nav-card-collapsed')
