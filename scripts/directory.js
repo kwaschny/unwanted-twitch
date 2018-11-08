@@ -966,7 +966,7 @@ function getItems() {
 
 				/* BEGIN: tags */
 
-					const tagContainer = itemContainers[i].parentNode.parentNode.parentNode.nextSibling;
+					const tagContainer = itemContainers[i].parentNode.parentNode.nextSibling;
 					if (tagContainer !== null) {
 
 						const tagsSelector 	= '.tw-tag__content div';
@@ -1332,7 +1332,7 @@ function attachHideButtons(items) {
 
 			case 'categories':
 
-				tagContainer = items[i].node.parentNode.parentNode.parentNode.nextSibling;
+				tagContainer = items[i].node.parentNode.parentNode.nextSibling;
 				if (tagContainer !== null) {
 
 					const tagsSelector 	= '.tw-tag__content div';
