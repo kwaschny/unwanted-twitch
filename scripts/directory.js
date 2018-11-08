@@ -1,4 +1,4 @@
-﻿// jshint esversion: 6
+// jshint esversion: 6
 // jshint -W069
 // jshint -W083
 
@@ -158,7 +158,7 @@ function putEnabledState(state) {
 
 		storageLocked = false;
 
-		logWarn('Successfully disabled the blacklist.');
+		logInfo('Successfully disabled the blacklist.');
 	});
 }
 
@@ -437,7 +437,7 @@ function putBlacklistedItems(items, callback) {
 
 		logWarn('Blacklist to store (' + requiredSize + ') exceeds the maximum storage size per item (' + storageSyncMaxSize + '). Splitting required...');
 		dataToStore = splitBlacklistItems(items);
-		logWarn('Splitting of blacklist completed:', dataToStore);
+		logVerbose('Splitting of blacklist completed:', dataToStore);
 	}
 
 	const keysToRemove = [ 'blacklistedItems' ];
@@ -769,7 +769,7 @@ function getItems() {
 
 						} else {
 
-							logWarn('No tags found for card:', itemSibling);
+							logWarn('No tags found on frontpage for card:', itemSibling);
 						}
 
 					/* END: tags */
@@ -829,7 +829,7 @@ function getItems() {
 
 						} else {
 
-							logWarn('No tags found for card:', itemSibling);
+							logWarn('No tags found on frontpage for card:', itemSibling);
 						}
 
 					/* END: tags */
@@ -895,7 +895,7 @@ function getItems() {
 					let tagContainer = itemContainers[i].parentNode;
 					if (tagContainer === null) {
 
-						logWarn('No tags found for card:', itemContainers[i]);
+						logWarn('No tags found on channels for card:', itemContainers[i]);
 						continue;
 					}
 
@@ -922,7 +922,7 @@ function getItems() {
 
 					} else {
 
-						logWarn('No tags found for card:', itemContainers[i]);
+						logWarn('No tags found on channels for card:', itemContainers[i]);
 					}
 
 				/* END: tags */
@@ -989,7 +989,7 @@ function getItems() {
 
 					} else {
 
-						logWarn('No tags found for card:', itemContainers[i]);
+						logWarn('No tags found on categories for card:', itemContainers[i]);
 					}
 
 				/* END: tags */
@@ -1937,7 +1937,7 @@ window.addEventListener('load', function callback_windowLoad() {
 
 		if (state === false) { return; }
 
-		logWarn('Page initialization for:', currentPage);
+		logInfo('Page initialization for:', currentPage);
 		init();
 	});
 });
