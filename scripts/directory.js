@@ -1,4 +1,4 @@
-﻿// jshint esversion: 6
+// jshint esversion: 6
 // jshint -W069
 // jshint -W083
 
@@ -1041,7 +1041,7 @@ function filterItems(items) {
 
 						if (removeItem(entry.node) === true) {
 
-							logInfo('Blacklisted frontpage item:', entry.item);
+							logInfo('Blacklisted frontpage item:', entry.item, entry.node);
 						}
 
 					} else {
@@ -1056,21 +1056,21 @@ function filterItems(items) {
 
 						if (removeItem(entry.node) === true) {
 
-							logInfo('Blacklisted frontpage item:', entry.item);
+							logInfo('Blacklisted frontpage channel:', entry.item, entry.node);
 						}
 
 					} else if (isBlacklistedCategory(entry.subItem) === true) {
 
 						if (removeItem(entry.node) === true) {
 
-							logInfo('Blacklisted frontpage item:', entry.subItem);
+							logInfo('Blacklisted frontpage category:', entry.subItem, entry.node);
 						}
 
 					} else if (isBlacklistedTag(entry.tags) === true) {
 
 						if (removeItem(entry.node) === true) {
 
-							logInfo('Blacklisted frontpage item:', entry.tags);
+							logInfo('Blacklisted frontpage tag:', entry.tags, entry.node);
 						}
 
 					} else {
@@ -1092,21 +1092,21 @@ function filterItems(items) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted channel:', entry.item);
+						logInfo('Blacklisted channel:', entry.item, entry.node);
 					}
 
 				} else if (isBlacklistedCategory(entry.subItem) === true) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted category:', entry.subItem);
+						logInfo('Blacklisted category:', entry.subItem, entry.node);
 					}
 
 				} else if (isBlacklistedTag(entry.tags) === true) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted by tag:', entry.tags);
+						logInfo('Blacklisted by tag:', entry.tags, entry.node);
 					}
 
 				} else {
@@ -1130,7 +1130,7 @@ function filterItems(items) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted item:', entry.item);
+						logInfo('Blacklisted item:', entry.item, entry.node);
 					}
 
 				} else {
@@ -1863,7 +1863,7 @@ function observeRecommendations() {
 		if (debug > 0) { return; }
 
 		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch:');
+		args.unshift('UnwantedTwitch TRACE:');
 
 		console.log.apply(console, args);
 	}
@@ -1872,7 +1872,7 @@ function observeRecommendations() {
 		if (debug > 1) { return; }
 
 		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch:');
+		args.unshift('UnwantedTwitch VERBOSE:');
 
 		console.log.apply(console, args);
 	}
@@ -1881,7 +1881,7 @@ function observeRecommendations() {
 		if (debug > 2) { return; }
 
 		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch:');
+		args.unshift('UnwantedTwitch INFO:');
 
 		console.log.apply(console, args);
 	}
@@ -1890,7 +1890,7 @@ function observeRecommendations() {
 		if (debug > 3) { return; }
 
 		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch:');
+		args.unshift('UnwantedTwitch WARN:');
 
 		console.log.apply(console, args);
 	}
@@ -1899,7 +1899,7 @@ function observeRecommendations() {
 		if (debug > 4) { return; }
 
 		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch:');
+		args.unshift('UnwantedTwitch ERROR:');
 
 		console.log.apply(console, args);
 	}
