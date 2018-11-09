@@ -18,6 +18,9 @@ const debug = 4;
 	// determines if the directory filter is enabled
 	let enabled = true;
 
+	// determines if attached buttons are rendered/visible
+	let renderButtons = true;
+
 	// the current page being monitored
 	let currentPage = window.location.pathname;
 
@@ -111,25 +114,29 @@ function getItemType(page) {
 }
 
 /**
- * Retrieves the enabled state from the storage.
+ * Retrieves the extension state from storage.
  */
-function getEnabledState(callback) {
-	logTrace('invoking getEnabledState()');
+function initExtensionState(callback) {
+	logTrace('invoking initExtensionState()');
 
 	storageLocked = true;
-	chrome.storage.sync.get([ 'enabled' ], function callback_storageGet(result) {
+	chrome.storage.sync.get([ 'enabled', 'renderButtons' ], function callback_storageGet(result) {
 		logTrace('callback invoked: chrome.storage.sync.get($)', [ 'enabled' ], result);
 
 		storageLocked = false;
 
+		// enabled
 		if (typeof result.enabled === 'boolean') {
 
 			enabled = result.enabled;
 
 			if (result.enabled === true) {
-				logWarn('Extension\'s enabled state:', result.enabled);
+
+				logVerbose('Extension\'s enabled state:', result.enabled);
+
 			} else {
-				logError('Extension\'s enabled state:', result.enabled);
+
+				logWarn('Extension\'s enabled state:', result.enabled);
 			}
 
 		} else {
@@ -137,9 +144,28 @@ function getEnabledState(callback) {
 			logWarn('Extension\'s enabled state unknown, assuming:', true);
 		}
 
+		// renderButtons
+		if (typeof result.renderButtons === 'boolean') {
+
+			renderButtons = result.renderButtons;
+
+			if (result.renderButtons === true) {
+
+				logVerbose('Extension\'s render buttons state:', result.renderButtons);
+
+			} else {
+
+				logWarn('Extension\'s render buttons state:', result.renderButtons);
+			}
+
+		} else {
+
+			logWarn('Extension\'s render buttons state unknown, assuming:', true);
+		}
+
 		if (typeof callback === 'function') {
 
-			callback(enabled);
+			callback(enabled, renderButtons);
 		}
 	});
 }
@@ -158,7 +184,25 @@ function putEnabledState(state) {
 
 		storageLocked = false;
 
-		logInfo('Successfully disabled the blacklist.');
+		logInfo('Successfully stored enabled state:', state);
+	});
+}
+
+/**
+ * Stores the render buttons state in the storage.
+ */
+function putRenderButtonsState(state) {
+	logTrace('invoking putRenderButtonsState($)', state);
+
+	renderButtons = state;
+
+	storageLocked = true;
+	chrome.storage.sync.set({ 'renderButtons': state }, function callback_storageSet() {
+		logTrace('callback invoked: chrome.storage.sync.set($)', { 'renderButtons': state });
+
+		storageLocked = false;
+
+		logInfo('Successfully stored render buttons state:', state);
 	});
 }
 
@@ -1273,7 +1317,7 @@ function filterRecommendations() {
 }
 
 /**
- * Attaches "Hide Item" button to each item container.
+ * Attaches "Hide Item/Tag" button to each item container.
  */
 function attachHideButtons(items) {
 	logTrace('invoking attachHideButtons($)', items);
@@ -1311,6 +1355,12 @@ function attachHideButtons(items) {
 	hideTag.className 		= 'uttv-hide-tag';
 	hideTag.textContent 	= 'X';
 	hideTag.title 			= chrome.i18n.getMessage('label_HideTag');
+
+	if (renderButtons === false) {
+
+		hideItem.classList.add('uttv-hidden');
+		hideTag.classList.add('uttv-hidden');
+	}
 
 	const itemsLength = items.length;
 	for (let i = 0; i < itemsLength; i++) {
@@ -1452,6 +1502,41 @@ function attachHideButtons(items) {
 			break;
 		}
 	}
+}
+
+/**
+ * Refreshes all present "Hide Item/Tag" buttons to reflect the current visibility state.
+ */
+function toggleHideButtonRendering() {
+	logTrace('invoking toggleHideButtonRendering()');
+
+	const buttonsSelector 	= '.uttv-hide-item, .uttv-hide-tag';
+	const buttons 			= rootNode.querySelectorAll(buttonsSelector);
+	const buttonsLength 	= buttons.length;
+
+	if (buttonsLength > 0) {
+
+		if (renderButtons === true) {
+
+			for (let i = 0; i < buttonsLength; i++) {
+
+				buttons[i].classList.remove('uttv-hidden');
+			}
+
+		} else {
+
+			for (let i = 0; i < buttonsLength; i++) {
+
+				buttons[i].classList.add('uttv-hidden');
+			}
+		}
+
+	} else {
+
+		logWarn('Hide buttons not found. Expected:', buttonsSelector);
+	}
+
+	return buttons;
 }
 
 /**
@@ -1931,11 +2016,11 @@ function observeRecommendations() {
 window.addEventListener('load', function callback_windowLoad() {
 	logTrace('event invoked: window.load()');
 
-	// init extension's enabled state
-	getEnabledState(function callback_getEnabledState(state) {
-		logTrace('callback invoked: getEnabledState($)', state);
+	// init extension's state
+	initExtensionState(function callback_initExtensionState(enabled, renderButtons) {
+		logTrace('callback invoked: initExtensionState($)', enabled, renderButtons);
 
-		if (state === false) { return; }
+		if (enabled === false) { return; }
 
 		logInfo('Page initialization for:', currentPage);
 		init();
@@ -1966,7 +2051,15 @@ monitorPagesInterval = window.setInterval(function monitorPages() {
 chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request) {
 	logTrace('event invoked: chrome.runtime.onMessage($)', request);
 
-	logWarn('Command received:', request);
+	logVerbose('Command received:', request);
+
+	// renderButtons
+	if (typeof request.renderButtons === 'boolean') {
+
+		putRenderButtonsState(request.renderButtons);
+		toggleHideButtonRendering();
+		return;
+	}
 
 	// extension
 	if (typeof request.extension === 'string') {
@@ -1975,11 +2068,13 @@ chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request)
 
 			putEnabledState(false);
 			window.location.reload();
+			return;
 
 		} else if (request.extension === 'enable') {
 
 			putEnabledState(true);
 			window.location.reload();
+			return;
 		}
 	}
 
@@ -1987,5 +2082,8 @@ chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request)
 	if (typeof request.blacklistedItems === 'object') {
 
 		putBlacklistedItems(request.blacklistedItems);
+		return;
 	}
+
+	logWarn('Unknown command received. The following command was ignored:', request);
 });

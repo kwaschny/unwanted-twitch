@@ -31,6 +31,9 @@
 	"popup_DisableExtension": {
 		"message": "Erweiterung deaktivieren"
 	},
+	"popup_ToggleButtons": {
+		"message": "zeige \"X\" Buttons"
+	},
 
 	"blacklist_Categories": {
 		"message": "Ausgeblendete Kategorien"

@@ -1,4 +1,8 @@
-﻿.uttv-button {
+﻿.uttv-hidden {
+	display: none !important;
+}
+
+.uttv-button {
 	display: flex;
 	flex-direction: column;
 	font-size: 130%;

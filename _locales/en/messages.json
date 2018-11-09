@@ -31,6 +31,9 @@
 	"popup_DisableExtension": {
 		"message": "Disable Extension"
 	},
+	"popup_ToggleButtons": {
+		"message": "Show \"X\" Buttons"
+	},
 
 	"blacklist_Categories": {
 		"message": "Blacklisted Categories"
