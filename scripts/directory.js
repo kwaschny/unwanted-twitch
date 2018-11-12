@@ -2,15 +2,6 @@
 // jshint -W069
 // jshint -W083
 
-// debug
-// 0 = TRACE, VERBOSE, INFO, WARN, ERROR
-// 1 = VERBOSE, INFO, WARN, ERROR
-// 2 = INFO, WARN, ERROR
-// 3 = WARN, ERROR
-// 4 = ERROR
-// 5 = NONE
-const debug = 4;
-
 /* BEGIN: runtime variables */
 
 	let rootNode;
@@ -33,28 +24,17 @@ const debug = 4;
 	let onPageChangeInterval;
 	let checkSlotsInterval;
 
-	// currently detected slot type, one of: 'frontpage', 'categories', 'channels' or null
-	let currentItemType = getItemType(currentPage);
-
-	// indicates that the storage is currently in use
-	let storageLocked = false;
-
-	// maximum size of data that can be stored in the sync storage (in Bytes)
-	// chrome.storage.sync.QUOTA_BYTES_PER_ITEM - 192 (wiggle room)
-	const storageSyncMaxSize = 8000;
-
-	// maximum number of keys that can be stored in the sync storage
-	// chrome.storage.sync.MAX_ITEMS - 12 (wiggle room)
-	const storageSyncMaxKeys = 500;
-
-	// collection of blacklisted items, serves as local cache
-	let storedBlacklistedItems = {};
-
 	// indicates that the filtering is in progress
 	let filterRunning = false;
 
-	// number of items currently registered
+	// number of items currently registered (used to detect changes)
 	let currentItemsCount = 0;
+
+	// currently detected slot type, one of: 'frontpage', 'categories', 'channels' or null
+	let currentItemType = getItemType(currentPage);
+
+	// collection of blacklisted items, serves as local cache
+	let storedBlacklistedItems = {};
 
 /* END: runtime variables */
 
@@ -119,11 +99,13 @@ function getItemType(page) {
 function initExtensionState(callback) {
 	logTrace('invoking initExtensionState()');
 
-	storageLocked = true;
-	chrome.storage.sync.get([ 'enabled', 'renderButtons' ], function callback_storageGet(result) {
-		logTrace('callback invoked: chrome.storage.sync.get($)', [ 'enabled' ], result);
+	const stateKeys = [
+		'enabled',
+		'renderButtons'
+	];
 
-		storageLocked = false;
+	storageGet(stateKeys, function callback_storageGet(result) {
+		logTrace('callback invoked: storageGet($)', stateKeys, result);
 
 		// enabled
 		if (typeof result.enabled === 'boolean') {
@@ -178,11 +160,10 @@ function putEnabledState(state) {
 
 	enabled = state;
 
-	storageLocked = true;
-	chrome.storage.sync.set({ 'enabled': state }, function callback_storageSet() {
-		logTrace('callback invoked: chrome.storage.sync.set($)', { 'enabled': state });
+	const stateKVP = { 'enabled': state };
 
-		storageLocked = false;
+	storageSet(stateKVP, function callback_storageSet() {
+		logTrace('callback invoked: storageSet($)', stateKVP);
 
 		logInfo('Successfully stored enabled state:', state);
 	});
@@ -196,11 +177,10 @@ function putRenderButtonsState(state) {
 
 	renderButtons = state;
 
-	storageLocked = true;
-	chrome.storage.sync.set({ 'renderButtons': state }, function callback_storageSet() {
-		logTrace('callback invoked: chrome.storage.sync.set($)', { 'renderButtons': state });
+	const stateKVP = { 'renderButtons': state };
 
-		storageLocked = false;
+	storageSet(stateKVP, function callback_storageSet() {
+		logTrace('callback invoked: storageSet($)', stateKVP);
 
 		logInfo('Successfully stored render buttons state:', state);
 	});
@@ -424,16 +404,8 @@ function initBlacklistedItems(collection) {
 function getBlacklistedItems(callback) {
 	logTrace('invoking getBlacklistedItems()');
 
-	if (storageLocked === true) {
-
-		throw new Error('UnwantedTwitch: Storage currently locked. Cannot proceed with: getBlacklistedItems()');
-	}
-
-	storageLocked = true;
-	chrome.storage.sync.get(null, function callback_storageGet(result) {
-		logTrace('callback invoked: chrome.storage.sync.get($)', null, result);
-
-		storageLocked = false;
+	storageGet(null, function callback_storageGet(result) {
+		logTrace('callback invoked: storageGet($)', null, result);
 
 		let blacklistedItems = {};
 		if (typeof result.blacklistedItems === 'object') {
@@ -472,8 +444,6 @@ function putBlacklistedItems(items, callback) {
 
 	storedBlacklistedItems = items;
 
-	storageLocked = true;
-
 	let dataToStore 	= { 'blacklistedItems': items };
 	const requiredSize 	= measureStoredSize(dataToStore);
 
@@ -485,29 +455,32 @@ function putBlacklistedItems(items, callback) {
 	}
 
 	const keysToRemove = [ 'blacklistedItems' ];
-	for (let i = 0; i < 100; i++) {
+	for (let i = 0; i < (storageMaxFragments - 1); i++) {
 
 		keysToRemove.push('blItemsFragment' + i);
 	}
 
-	chrome.storage.sync.remove(keysToRemove, function callback_storageRemove() {
-		logTrace('callback invoked: chrome.storage.sync.remove($)', keysToRemove);
+	storageRemove(keysToRemove, function callback_storageRemove() {
+		logTrace('callback invoked: storageRemove($)', keysToRemove);
 
-		chrome.storage.sync.set(dataToStore, function callback_storageSet() {
-			logTrace('callback invoked: chrome.storage.sync.set($)', dataToStore);
+		storageSet(dataToStore, function callback_storageSet(error) {
+			logTrace('callback invoked: storageSet($)', dataToStore);
 
-			storageLocked = false;
-
-			// handle storage quota
+			// inform user about storage quota
 			if (
-				(chrome.runtime.lastError !== undefined) &&
-				(chrome.runtime.lastError.message !== undefined) &&
-				(typeof chrome.runtime.lastError.message === 'string') &&
-				(chrome.runtime.lastError.message.indexOf('QUOTA_BYTES') >= 0)
+				(error !== null) &&
+				(error.message !== undefined) &&
+				(typeof error.message === 'string')
 			) {
 
-				logError(chrome.runtime.lastError);
-				alert( chrome.i18n.getMessage('alert_StorageQuota') );
+				if (error.message.indexOf('QUOTA_BYTES') >= 0) {
+
+					alert( chrome.i18n.getMessage('alert_StorageQuota') );
+
+				} else if (error.message.indexOf('MAX_') >= 0) {
+
+					alert( chrome.i18n.getMessage('alert_StorageThrottle') );
+				}
 
 			} else {
 
@@ -520,104 +493,6 @@ function putBlacklistedItems(items, callback) {
 			}
 		});
 	});
-}
-
-/**
- * Splits the provided blacklist items into fragments in order to utilize the storage more efficient.
- */
-function splitBlacklistItems(items) {
-	logTrace('invoking splitBlacklistItems($)', items);
-
-	const maxValuesPerFragment = 250;
-
-	let fragments 		= {};
-	let fragmentIndex 	= 0;
-
-	let remainingSpace 	= maxValuesPerFragment;
-
-	for (let type in items) {
-		if (!items.hasOwnProperty(type)) { continue; }
-
-		// max. fragments reached?
-		if (fragmentIndex >= storageSyncMaxKeys) { break; }
-
-		let key = ('blItemsFragment' + fragmentIndex);
-		if (fragments[key] === undefined) { fragments[key] = {}; }
-
-		let values 			= Object.keys(items[type]);
-		let valuesLength 	= values.length;
-
-		let sliceOffset 	= 0;
-		let remainingValues = valuesLength;
-
-		if (remainingValues === 0) { continue; }
-
-		while (true) {
-
-			// no more space, start new fragment
-			if (remainingSpace === 0) {
-
-				fragmentIndex 			+= 1;
-				key 					 = ('blItemsFragment' + fragmentIndex);
-				fragments[key] 			 = {};
-				fragments[key][type] 	 = [];
-				remainingSpace 			 = maxValuesPerFragment;
-			}
-
-			// max. fragments reached?
-			if (fragmentIndex >= storageSyncMaxKeys) { break; }
-
-			let slice 		= values.slice(sliceOffset, (sliceOffset + Math.min(remainingSpace, maxValuesPerFragment)));
-			let sliceLength = slice.length;
-
-			sliceOffset 	+= sliceLength;
-			remainingSpace 	-= sliceLength;
-			remainingValues -= sliceLength;
-
-			fragments[key][type] = slice;
-
-			// no more values to add, go to next entry type
-			if (remainingValues === 0) { break; }
-		}
-	}
-
-	return fragments;
-}
-
-/**
- * Merges the provided blacklist fragments back into blacklist items.
- */
-function mergeBlacklistFragments(fragments) {
-	logTrace('invoking mergeBlacklistFragments($)', fragments);
-
-	let result = {};
-
-	for (let i = 0; i < storageSyncMaxKeys; i++) {
-
-		let fragmentKey = ('blItemsFragment' + i);
-
-		let fragment = fragments[fragmentKey];
-		if (fragment === undefined) { break; }
-
-		for (let type in fragment) {
-			if (!fragment.hasOwnProperty(type)) { continue; }
-
-			if (result[type] === undefined) {
-
-				result[type] = {};
-			}
-
-			const itemList 			= fragment[type];
-			const itemListLength 	= itemList.length;
-			for (let n = 0; n < itemListLength; n++) {
-
-				result[type][itemList[n]] = 1;
-			}
-		}
-
-	}
-
-	return result;
 }
 
 /**
@@ -1558,11 +1433,6 @@ function onHideItem() {
 	const item = this.getAttribute('data-uttv-item');
 	if ((typeof item !== 'string') || (item.length === 0)) { return; }
 
-	if (storageLocked === true) {
-
-		throw new Error('UnwantedTwitch: Storage currently locked. Cannot proceed with: onHideItem()');
-	}
-
 	// update cache
 	if (storedBlacklistedItems[currentItemType] === undefined) {
 
@@ -1591,11 +1461,6 @@ function onHideTag(node) {
 	// determine tag to blacklist
 	const tag = node.getAttribute('data-uttv-tag');
 	if ((typeof tag !== 'string') || (tag.length === 0)) { return; }
-
-	if (storageLocked === true) {
-
-		throw new Error('UnwantedTwitch: Storage currently locked. Cannot proceed with: onHideTag()');
-	}
 
 	// update cache
 	if (storedBlacklistedItems['tags'] === undefined) {
@@ -1932,18 +1797,6 @@ function observeRecommendations() {
 /* BEGIN: utility */
 
 	/**
-	 * Returns if the extension is loaded via Firefox.
-	 */
-	function isFirefox() {
-		logTrace('invoking isFirefox()');
-
-		return (
-			(typeof chrome  !== 'undefined') &&
-			(typeof browser !== 'undefined')
-		);
-	}
-
-	/**
 	 * Returns if the FrankerFaceZ extension is loaded.
 	 */
 	function isFFZ() {
@@ -1959,71 +1812,6 @@ function observeRecommendations() {
 		logTrace('invoking isBTTV()');
 
 		return (document.querySelector('img.bttv-logo') !== null);
-	}
-
-	/**
-	 * Returns the approx. size required to store the provided data in the storage.
-	 */
-	function measureStoredSize(o) {
-		logTrace('invoking measureStoredSize($)', o);
-
-		let serialized;
-		if (typeof o !== 'string') {
-
-			serialized = JSON.stringify(o);
-
-		} else {
-
-			serialized = o;
-		}
-
-		return serialized.length;
-	}
-
-	function logTrace() {
-
-		if (debug > 0) { return; }
-
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch TRACE:');
-
-		console.log.apply(console, args);
-	}
-	function logVerbose() {
-
-		if (debug > 1) { return; }
-
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch VERBOSE:');
-
-		console.log.apply(console, args);
-	}
-	function logInfo() {
-
-		if (debug > 2) { return; }
-
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch INFO:');
-
-		console.log.apply(console, args);
-	}
-	function logWarn() {
-
-		if (debug > 3) { return; }
-
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch WARN:');
-
-		console.log.apply(console, args);
-	}
-	function logError() {
-
-		if (debug > 4) { return; }
-
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('UnwantedTwitch ERROR:');
-
-		console.log.apply(console, args);
 	}
 
 /* END: utility */

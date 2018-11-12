@@ -1,45 +1,6 @@
 ﻿// jshint esversion: 6
 // jshint -W069
 
-// maximum number of keys that can be stored in the sync storage
-// chrome.storage.sync.MAX_ITEMS - 12 (wiggle room)
-const storageSyncMaxKeys = 500;
-
-/**
- * Merges the provided blacklist fragments back into blacklist items.
- */
-function mergeBlacklistFragments(fragments) {
-
-	let result = {};
-
-	for (let i = 0; i < storageSyncMaxKeys; i++) {
-
-		let fragmentKey = ('blItemsFragment' + i);
-
-		let fragment = fragments[fragmentKey];
-		if (fragment === undefined) { break; }
-
-		for (let type in fragment) {
-			if (!fragment.hasOwnProperty(type)) { continue; }
-
-			if (result[type] === undefined) {
-
-				result[type] = {};
-			}
-
-			const itemList 			= fragment[type];
-			const itemListLength 	= itemList.length;
-			for (let n = 0; n < itemListLength; n++) {
-
-				result[type][itemList[n]] = 1;
-			}
-		}
-
-	}
-
-	return result;
-}
-
 function createItemRow(key) {
 
 	let row = document.createElement('tr');
@@ -475,7 +436,7 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 /* END: localize */
 
 // load blacklisted items
-chrome.storage.sync.get(null, function(result) {
+storageGet(null, function(result) {
 
 	let blacklistedItems = {};
 	if (typeof result.blacklistedItems === 'object') {

@@ -11,6 +11,13 @@
 	},
 	"content_scripts": [
 		{
+			"matches": [ "*://*/*" ],
+			"js": [
+				"scripts/common.js",
+				"scripts/storage.js"
+			]
+		},
+		{
 			"matches": 	[ "https://www.twitch.tv/*" ],
 			"js": 		[ "scripts/directory.js" ],
 			"css": 		[ "styles/directory.css" ]

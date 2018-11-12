@@ -21,6 +21,9 @@
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nDie Sperrliste ist voll.\nEs können keine weiteren Einträge hinzugefügt werden."
 	},
+	"alert_StorageThrottle": {
+		"message": "Unwanted Twitch:\nDer Synchronisierungsdienst ist derzeit überlastet.\nBitte warten Sie ein paar Minuten, starten den Browser neu und versuchen es dann noch einmal."
+	},
 
 	"popup_ManageBlacklist": {
 		"message": "Sperrliste verwalten"

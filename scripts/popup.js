@@ -1,4 +1,4 @@
-// jshint esversion: 6
+﻿// jshint esversion: 6
 
 function openBlacklist() {
 
@@ -7,7 +7,7 @@ function openBlacklist() {
 
 function getState(callback) {
 
-	chrome.storage.sync.get([ 'enabled', 'renderButtons' ], function(response) {
+	storageGet([ 'enabled', 'renderButtons' ], function(response) {
 
 		let enabled 		= true;
 		let renderButtons 	= true;
