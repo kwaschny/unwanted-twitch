@@ -89,6 +89,16 @@ If you load the add-on via `about:debugging`, make sure to close the tab or move
 3. Open up the dialog once more and click on "Enable Extension".
 - [ ] The page reloads and all previously hidden covers disappear once again.
 
+## Test Case: Toggle button rendering works
+1. Click on the UnwantedTwitch icon in the extension bar.
+- [ ] A dialog appears with an already checked checkbox labeled "Show X Buttons".
+2. Uncheck on "Show X Buttons".
+- [ ] All buttons attached to covers/tags should now disappear.
+3. Reload the page.
+- [ ] There are no longer buttons attached to covers/tags.
+4. Open up the dialog once more and check "Show X Buttons" again.
+- [ ] All buttons attached to covers/tags appear again.
+
 ## Test Case: Blacklist management works
 1. Click on the UnwantedTwitch icon in the extension bar.
 - [ ] A dialog appears with a button named "Manage Blacklist".
