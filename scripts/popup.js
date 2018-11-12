@@ -1,4 +1,4 @@
-﻿// jshint esversion: 6
+// jshint esversion: 6
 
 function openBlacklist() {
 
@@ -31,14 +31,14 @@ function getState(callback) {
 function enableExtension() {
 
 	chrome.runtime.sendMessage(
-		{ "extension": "enable" }
+		{ 'extension': 'enable' }
 	);
 }
 
 function disableExtension() {
 
 	chrome.runtime.sendMessage(
-		{ "extension": "disable" }
+		{ 'extension': 'disable' }
 	);
 }
 
@@ -59,18 +59,26 @@ function toggleExtension() {
 function toggleButtonsToggle() {
 
 	chrome.runtime.sendMessage(
-		{ "renderButtons": this.checked }
+		{ 'renderButtons': this.checked }
 	);
 }
 
+// prepare elements
 const blacklistManagerButton 	= document.getElementById('open_blacklist');
 const stateToggleButton 		= document.getElementById('toggle_extension');
 const buttonsToggleButton 		= document.getElementById('toggle_buttons');
 
+// button actions
 blacklistManagerButton.addEventListener('click', openBlacklist);
 stateToggleButton.addEventListener('click', toggleExtension);
 buttonsToggleButton.addEventListener('change', toggleButtonsToggle);
 
+// localize
+blacklistManagerButton.textContent 									= chrome.i18n.getMessage('popup_ManageBlacklist');
+stateToggleButton.textContent 										= chrome.i18n.getMessage('popup_DisableExtension');
+buttonsToggleButton.parentNode.querySelector('label').textContent 	= chrome.i18n.getMessage('popup_ToggleButtons');
+
+// initialize state
 getState(function onGetState(enabled, renderButtons) {
 
 	// enabled
@@ -94,8 +102,3 @@ getState(function onGetState(enabled, renderButtons) {
 	// renderButtons
 	buttonsToggleButton.checked = renderButtons;
 });
-
-// localize
-blacklistManagerButton.textContent 									= chrome.i18n.getMessage('popup_ManageBlacklist');
-stateToggleButton.textContent 										= chrome.i18n.getMessage('popup_DisableExtension');
-buttonsToggleButton.parentNode.querySelector('label').textContent 	= chrome.i18n.getMessage('popup_ToggleButtons');

@@ -251,7 +251,7 @@ function onSave() {
 	result.tags 		= gatherKeys(tags);
 
 	chrome.runtime.sendMessage(
-		{ "blacklistedItems": result }
+		{ 'blacklistedItems': result }
 	);
 
 	if (isModified === true) {
@@ -379,17 +379,22 @@ function flashSaveButton(interval) {
 	}, interval);
 }
 
+// indicates if there are changes to save
 let isModified = false;
 
-const categories 	= document.getElementById('table_categories');
-const channels 		= document.getElementById('table_channels');
-const tags 			= document.getElementById('table_tags');
+/* BEGIN: prepare elements */
 
-const saveButton 	= document.getElementById('save');
-const cancelButton 	= document.getElementById('cancel');
+	const categories 	= document.getElementById('table_categories');
+	const channels 		= document.getElementById('table_channels');
+	const tags 			= document.getElementById('table_tags');
 
-const importButton 	= document.getElementById('import');
-const exportButton 	= document.getElementById('export');
+	const saveButton 	= document.getElementById('save');
+	const cancelButton 	= document.getElementById('cancel');
+
+	const importButton 	= document.getElementById('import');
+	const exportButton 	= document.getElementById('export');
+
+/* END: prepare elements */
 
 // "clear" buttons
 document.querySelectorAll('button.clear').forEach(function(e) {
@@ -423,11 +428,15 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	});
 });
 
-saveButton.addEventListener('click', onSave);
-cancelButton.addEventListener('click', onCancel);
+/* BEGIN: button actions */
 
-importButton.addEventListener('click', onImport);
-exportButton.addEventListener('click', onExport);
+	saveButton.addEventListener('click', onSave);
+	cancelButton.addEventListener('click', onCancel);
+
+	importButton.addEventListener('click', onImport);
+	exportButton.addEventListener('click', onExport);
+
+/* END: button actions */
 
 /* BEGIN: localize */
 
@@ -478,7 +487,7 @@ chrome.storage.sync.get(null, function(result) {
 		blacklistedItems = mergeBlacklistFragments(result);
 	}
 
-	// rename previous type "games" to "categories"
+	// backward compatibility: rename previous type "games" to "categories"
 	if (typeof blacklistedItems['games'] === 'object') {
 
 		blacklistedItems['categories'] = blacklistedItems['games'];

@@ -446,7 +446,7 @@ function getBlacklistedItems(callback) {
 			logVerbose('Successfully merged fragments to blacklist:', result, blacklistedItems);
 		}
 
-		// rename previous type "games" to "categories"
+		// backward compatibility: rename previous type "games" to "categories"
 		if (typeof blacklistedItems['games'] === 'object') {
 
 			blacklistedItems['categories'] = blacklistedItems['games'];
@@ -466,7 +466,7 @@ function getBlacklistedItems(callback) {
 function putBlacklistedItems(items, callback) {
 	logTrace('invoking putBlacklistedItems($)', items);
 
-	// remove no longer existing item types to save storage space
+	// backward compatibility: remove no longer existing item types to save storage space
 	delete items['communities'];
 	delete items['creative'];
 
@@ -685,6 +685,7 @@ function isBlacklistedTag(tag) {
 function filterDirectory() {
 	logTrace('invoking filterDirectory()');
 
+	// prevent filtering more than once at the same time
 	if (filterRunning === true) {
 
 		logWarn('Filter already running.');
@@ -813,7 +814,7 @@ function getItems() {
 
 						} else {
 
-							logWarn('No tags found on frontpage for card:', itemSibling);
+							logWarn('No tags found for card in frontpage view:', itemSibling);
 						}
 
 					/* END: tags */
@@ -873,7 +874,7 @@ function getItems() {
 
 						} else {
 
-							logWarn('No tags found on frontpage for card:', itemSibling);
+							logWarn('No tags found for card in frontpage view:', itemSibling);
 						}
 
 					/* END: tags */
@@ -939,7 +940,7 @@ function getItems() {
 					let tagContainer = itemContainers[i].parentNode;
 					if (tagContainer === null) {
 
-						logWarn('No tags found on channels for card:', itemContainers[i]);
+						logWarn('No tags found for card in channels view:', itemContainers[i]);
 						continue;
 					}
 
@@ -966,7 +967,7 @@ function getItems() {
 
 					} else {
 
-						logWarn('No tags found on channels for card:', itemContainers[i]);
+						logWarn('No tags found for card in channels view:', itemContainers[i]);
 					}
 
 				/* END: tags */
@@ -1033,7 +1034,7 @@ function getItems() {
 
 					} else {
 
-						logWarn('No tags found on categories for card:', itemContainers[i]);
+						logWarn('No tags found for card in categories view:', itemContainers[i]);
 					}
 
 				/* END: tags */
@@ -1058,11 +1059,6 @@ function getItems() {
  */
 function filterItems(items) {
 	logTrace('invoking filterItems($)', items);
-
-	if (typeof currentItemType !== 'string') {
-
-		throw new Error('UnwantedTwitch: Current item type is invalid. Cannot proceed with: filterItems()');
-	}
 
 	let remainingItems 	= [];
 	const itemsLength = items.length;
@@ -1163,6 +1159,12 @@ function filterItems(items) {
 
 		case 'categories':
 
+			if (typeof currentItemType !== 'string') {
+
+				logError('Current item type is illegal:', currentItemType);
+				return remainingItems;
+			}
+
 			for (let i = 0; i < itemsLength; i++) {
 
 				const entry = items[i];
@@ -1186,6 +1188,7 @@ function filterItems(items) {
 		break;
 	}
 
+	// register new items
 	currentItemsCount = remainingItems.length;
 
 	logVerbose('Remaining items on the current page:', remainingItems);
@@ -1432,7 +1435,7 @@ function attachHideButtons(items) {
 
 				} else {
 
-					logWarn('No tags found for card:', items[i].node);
+					logWarn('No tags found for card in categories view:', items[i].node);
 				}
 
 			break;
@@ -1442,7 +1445,7 @@ function attachHideButtons(items) {
 				tagContainer = items[i].node.parentNode;
 				if (tagContainer === null) {
 
-					logWarn('No tags found for card:', items[i].node);
+					logWarn('No tags found for card in channels view:', items[i].node);
 					continue;
 				}
 
@@ -1496,7 +1499,7 @@ function attachHideButtons(items) {
 
 				} else {
 
-					logWarn('No tags found for card:', items[i].node);
+					logWarn('No tags found for card in channels view:', items[i].node);
 				}
 
 			break;
@@ -1544,6 +1547,12 @@ function toggleHideButtonRendering() {
  */
 function onHideItem() {
 	logTrace('invoking onHideItem()');
+
+	if (typeof currentItemType !== 'string') {
+
+		logError('Current item type is illegal:', currentItemType);
+		return;
+	}
 
 	// determine item to blacklist
 	const item = this.getAttribute('data-uttv-item');
@@ -1800,7 +1809,12 @@ function listenToScroll() {
 
 		if (enabled === false) { return; }
 
-		if (pageLoads === true) { return; }
+		// prevent monitoring during page load
+		if (pageLoads === true) {
+
+			logWarn('Invocation of checkSlots() skipped, page load is in progress.');
+			return;
+		}
 
 		let itemsInDOM = 0;
 
@@ -1841,9 +1855,10 @@ function listenToScroll() {
 function onScroll() {
 	logTrace('invoking onScroll()');
 
+	// prevent scroll event during page load
 	if (pageLoads === true) {
 
-		logWarn('invocation of onScroll() canceled, page load is in progress');
+		logWarn('Invocation of onScroll() canceled, page load is in progress.');
 		return;
 	}
 
@@ -2041,7 +2056,7 @@ monitorPagesInterval = window.setInterval(function monitorPages() {
 		currentPage 	= window.location.pathname;
 		currentItemType = getItemType(currentPage);
 
-		logWarn('Page changed to:', currentPage);
+		logInfo('Page changed to:', currentPage);
 		onPageChange(currentPage);
 	}
 
