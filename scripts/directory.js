@@ -1740,12 +1740,6 @@ function onScroll() {
 function triggerScroll() {
 	logTrace('invoking triggerScroll()');
 
-	if (isFFZ() === true) {
-
-		logWarn('FFZ detected. Scroll trigger aborted.');
-		return false;
-	}
-
 	const scrollbarNodeSelector = '.simplebar-content.root-scrollable__content';
 	const scrollbarNode 		= rootNode.querySelector(scrollbarNodeSelector);
 
