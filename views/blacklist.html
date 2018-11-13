@@ -2,6 +2,35 @@
 <link rel="stylesheet" type="text/css" href="/styles/blacklist.css">
 <div id="blacklist">
 
+	<div class="settings">
+
+		<div class="left">
+
+			<h2>
+				Settings
+			</h2>
+
+			<div class="reruns checkable">
+				<input type="checkbox" checked id="hideReruns" /> <label for="hideReruns" id="label_hideReruns">Hide Stream Reruns</label>
+			</div>
+
+		</div><!--
+
+		--><div class="right">
+
+			<div class="storage-mode checkable">
+				<input type="checkbox" checked id="useSyncStorage" /> <label for="useSyncStorage" id="label_useSyncStorage">Synchronize Blacklist via Cloud</label>
+			</div>
+
+			<div class="storage-stats">
+				<span id="storageSize_sync">0</span> bytes used in &nbsp;sync storage<br>
+				<span id="storageSize_local">0</span> bytes used in local storage<br>
+			</div>
+
+		</div>
+
+	</div>
+
 	<div class="area left">
 		<table>
 			<thead>
@@ -21,9 +50,9 @@
 				</tr>
 			</tbody>
 		</table>
-	</div>
+	</div><!--
 
-	<div class="area center">
+	--><div class="area center">
 		<table>
 			<thead>
 				<th colspan="2">
@@ -42,9 +71,9 @@
 				</tr>
 			</tbody>
 		</table>
-	</div>
+	</div><!--
 
-	<div class="area right">
+	--><div class="area right">
 		<table>
 			<thead>
 				<th colspan="2">

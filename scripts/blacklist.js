@@ -205,22 +205,34 @@ function gatherKeys(table, allLowerCase) {
 
 function onSave() {
 
-	let result = {};
+	// storage mode (store in local storage only)
+	chrome.storage.local.set({ 'useLocalStorage': !useSyncStorageCheckbox.checked }, function() {
 
-	result.categories 	= gatherKeys(categories);
-	result.channels 	= gatherKeys(channels);
-	result.tags 		= gatherKeys(tags);
+		// hide reruns
+		storageSet({ 'hideReruns': hideRerunsCheckbox.checked });
 
-	chrome.runtime.sendMessage(
-		{ 'blacklistedItems': result }
-	);
+		/* BEGIN: update items */
 
-	if (isModified === true) {
+			let items = {};
 
-		alert( chrome.i18n.getMessage('alert_ReloadNote') );
-	}
+			items.categories 	= gatherKeys(categories);
+			items.channels 		= gatherKeys(channels);
+			items.tags 			= gatherKeys(tags);
 
-	onCancel();
+			// store via content script to reflect changes immediately
+			chrome.runtime.sendMessage({
+				'blacklistedItems': items
+			});
+
+		/* END: update items */
+
+		if (isModified === true) {
+
+			alert( chrome.i18n.getMessage('alert_ReloadNote') );
+		}
+
+		onCancel();
+	});
 }
 
 function onCancel() {
@@ -345,15 +357,18 @@ let isModified = false;
 
 /* BEGIN: prepare elements */
 
-	const categories 	= document.getElementById('table_categories');
-	const channels 		= document.getElementById('table_channels');
-	const tags 			= document.getElementById('table_tags');
+	const hideRerunsCheckbox 		= document.getElementById('hideReruns');
+	const useSyncStorageCheckbox 	= document.getElementById('useSyncStorage');
 
-	const saveButton 	= document.getElementById('save');
-	const cancelButton 	= document.getElementById('cancel');
+	const categories 				= document.getElementById('table_categories');
+	const channels 					= document.getElementById('table_channels');
+	const tags 						= document.getElementById('table_tags');
 
-	const importButton 	= document.getElementById('import');
-	const exportButton 	= document.getElementById('export');
+	const saveButton 				= document.getElementById('save');
+	const cancelButton 				= document.getElementById('cancel');
+
+	const importButton 				= document.getElementById('import');
+	const exportButton 				= document.getElementById('export');
 
 /* END: prepare elements */
 
@@ -391,6 +406,9 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 
 /* BEGIN: button actions */
 
+	hideRerunsCheckbox.addEventListener('change', flashSaveButton);
+	useSyncStorageCheckbox.addEventListener('change', flashSaveButton);
+
 	saveButton.addEventListener('click', onSave);
 	cancelButton.addEventListener('click', onCancel);
 
@@ -400,6 +418,9 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 /* END: button actions */
 
 /* BEGIN: localize */
+
+	document.getElementById('label_hideReruns').textContent 	= chrome.i18n.getMessage('blacklist_SettingsHideReruns');
+	document.getElementById('label_useSyncStorage').textContent = chrome.i18n.getMessage('blacklist_SettingsSyncStorage');
 
 	document.getElementById('column_Categories').textContent 	= chrome.i18n.getMessage('blacklist_Categories');
 	document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
@@ -459,3 +480,43 @@ storageGet(null, function(result) {
 	addItems(channels, 		blacklistedItems.channels);
 	addItems(tags, 			blacklistedItems.tags);
 });
+
+// hide reruns
+storageGet('hideReruns', function(result) {
+
+	hideRerunsCheckbox.checked = (
+		(typeof result.hideReruns !== 'boolean') ||
+		(result.hideReruns !== false)
+	);
+});
+
+// storage mode
+getStorageMode(function(mode) {
+
+	useSyncStorageCheckbox.checked = (mode === 'sync');
+});
+
+// stroage size
+chrome.storage.sync.getBytesInUse(null, function(result) {
+
+	document.getElementById('storageSize_sync').textContent = result.toLocaleString();
+});
+chrome.storage.local.getBytesInUse(null, function(result) {
+
+	document.getElementById('storageSize_local').textContent = result.toLocaleString();
+});
+
+// report storage contents
+if (debug <= 1) {
+
+	chrome.storage.sync.get(null, function(result) {
+
+		logVerbose('stroage.sync:', result);
+	});
+
+	chrome.storage.local.get(null, function(result) {
+
+		logVerbose('storage.local:', result);
+	});
+
+}

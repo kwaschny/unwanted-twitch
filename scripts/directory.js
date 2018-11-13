@@ -153,40 +153,6 @@ function initExtensionState(callback) {
 }
 
 /**
- * Stores the enabled state in the storage.
- */
-function putEnabledState(state) {
-	logTrace('invoking putEnabledState($)', state);
-
-	enabled = state;
-
-	const stateKVP = { 'enabled': state };
-
-	storageSet(stateKVP, function callback_storageSet() {
-		logTrace('callback invoked: storageSet($)', stateKVP);
-
-		logInfo('Successfully stored enabled state:', state);
-	});
-}
-
-/**
- * Stores the render buttons state in the storage.
- */
-function putRenderButtonsState(state) {
-	logTrace('invoking putRenderButtonsState($)', state);
-
-	renderButtons = state;
-
-	const stateKVP = { 'renderButtons': state };
-
-	storageSet(stateKVP, function callback_storageSet() {
-		logTrace('callback invoked: storageSet($)', stateKVP);
-
-		logInfo('Successfully stored render buttons state:', state);
-	});
-}
-
-/**
  * Waits for the page to load completely, then invokes the directory filter.
  */
 function init() {
@@ -1851,9 +1817,11 @@ chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request)
 	logVerbose('Command received:', request);
 
 	// renderButtons
-	if (typeof request.renderButtons === 'boolean') {
+	if (typeof request['renderButtons'] === 'boolean') {
 
-		putRenderButtonsState(request.renderButtons);
+		renderButtons = request['renderButtons'];
+		storageSet({ 'renderButtons': renderButtons });
+
 		toggleHideButtonRendering();
 		return;
 	}
@@ -1863,13 +1831,17 @@ chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request)
 
 		if (request.extension === 'disable') {
 
-			putEnabledState(false);
+			enabled = false;
+			storageSet({ 'enabled': enabled });
+
 			window.location.reload();
 			return;
 
 		} else if (request.extension === 'enable') {
 
-			putEnabledState(true);
+			enabled = true;
+			storageSet({ 'enabled': enabled });
+
 			window.location.reload();
 			return;
 		}

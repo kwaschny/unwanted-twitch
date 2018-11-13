@@ -25,9 +25,4 @@
 	color: #A0A0A0;
 	font-size: 11px;
 	margin-top: 16px;
-	user-select: none;
 }
-
-	.toggle-x * {
-		vertical-align: middle;
-	}

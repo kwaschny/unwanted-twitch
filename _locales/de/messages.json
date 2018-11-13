@@ -38,6 +38,12 @@
 		"message": "zeige \"X\" Buttons"
 	},
 
+	"blacklist_SettingsHideReruns": {
+		"message": "Stream-Wiederholungen ausblenden"
+	},
+	"blacklist_SettingsSyncStorage": {
+		"message": "Sperrliste in Cloud synchronisieren"
+	},
 	"blacklist_Categories": {
 		"message": "Ausgeblendete Kategorien"
 	},

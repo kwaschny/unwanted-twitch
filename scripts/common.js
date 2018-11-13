@@ -1,4 +1,5 @@
 ﻿// jshint esversion: 6
+// jshint -W069
 
 // debug
 // 0 = TRACE, VERBOSE, INFO, WARN, ERROR
@@ -24,9 +25,9 @@ function getStorageMode(callback) {
 			logError('An error occured trying to read from local storage:', chrome.runtime.lastError);
 		}
 
-		if (typeof result === 'boolean') {
+		if (typeof result['useLocalStorage'] === 'boolean') {
 
-			useSyncStorage = !result;
+			useSyncStorage = !result['useLocalStorage'];
 		}
 		logVerbose('Storage mode is: ' + ( useSyncStorage ? 'sync' : 'local' ));
 

@@ -98,3 +98,11 @@ table {
 		padding-top: 8px;
 		text-align: left;
 	}
+
+.checkable {
+	user-select: none;
+}
+
+	.checkable * {
+		vertical-align: middle;
+	}

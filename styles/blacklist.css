@@ -2,17 +2,48 @@
 	padding-bottom: 96px;
 }
 
+	#blacklist .settings {
+		font-size: 80%;
+		margin-bottom: 24px;
+	}
+
+	#blacklist .settings h2 {
+		color: #6441A4;
+		margin-bottom: 8px;
+	}
+
+		#blacklist .settings .left,
+		#blacklist .settings .right {
+			display: inline-block;
+			vertical-align: top;
+			width: 50%;
+		}
+
+		#blacklist .settings .left {
+			text-align: left;
+		}
+		#blacklist .settings .right {
+			text-align: right;
+		}
+
+		#blacklist .settings .storage-stats {
+			font-family: Consolas, 'Courier New', Courier, monospace;
+			font-size: 11px;
+			margin-top: 8px;
+			opacity: 0.50;
+		}
+
 	#blacklist .area {
 		display: inline-block;
 		margin-bottom: 64px;
 		vertical-align: top;
-		width: 32%;
+		width: 33%;
 	}
 		#blacklist .area.left {
-			margin-right: 1%;
+			margin-right: 0.5%;
 		}
 		#blacklist .area.right {
-			margin-left: 1%;
+			margin-left: 0.5%;
 		}
 
 		#blacklist .area th {

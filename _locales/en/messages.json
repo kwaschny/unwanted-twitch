@@ -38,6 +38,12 @@
 		"message": "Show \"X\" Buttons"
 	},
 
+	"blacklist_SettingsHideReruns": {
+		"message": "Hide Stream Reruns"
+	},
+	"blacklist_SettingsSyncStorage": {
+		"message": "Synchronize Blacklist via Cloud"
+	},
 	"blacklist_Categories": {
 		"message": "Blacklisted Categories"
 	},
