@@ -1,4 +1,4 @@
-﻿#blacklist {
+#blacklist {
 	padding-bottom: 96px;
 }
 
@@ -102,6 +102,12 @@
 			#blacklist .actions button:last-child {
 				margin-right: 0px;
 			}
+
+#blacklist #clearStorages {
+	font-size: 11px;
+	margin-top: 8px;
+	padding: 4px;
+}
 
 @media (max-width: 1023px) {
 

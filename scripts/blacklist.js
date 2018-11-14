@@ -1,4 +1,4 @@
-﻿// jshint esversion: 6
+// jshint esversion: 6
 // jshint -W069
 
 function createItemRow(key) {
@@ -519,4 +519,15 @@ if (debug <= 1) {
 		logVerbose('storage.local:', result);
 	});
 
+	const clearStoragesButton = document.getElementById('clearStorages');
+	clearStoragesButton.style.display = 'inline-block';
+	clearStoragesButton.addEventListener('click', function() {
+
+		chrome.storage.sync.clear();
+		chrome.storage.local.clear();
+
+		alert('Unwanted Twitch:\nStorages cleared. Reloading...');
+
+		window.location.reload();
+	});
 }
