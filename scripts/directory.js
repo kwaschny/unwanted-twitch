@@ -12,6 +12,9 @@
 	// determines if attached buttons are rendered/visible
 	let renderButtons = true;
 
+	// determines if stream reruns shall be hidden
+	let hideReruns = false;
+
 	// the current page being monitored
 	let currentPage = window.location.pathname;
 
@@ -101,24 +104,25 @@ function initExtensionState(callback) {
 
 	const stateKeys = [
 		'enabled',
-		'renderButtons'
+		'renderButtons',
+		'hideReruns'
 	];
 
 	storageGet(stateKeys, function callback_storageGet(result) {
 		logTrace('callback invoked: storageGet($)', stateKeys, result);
 
 		// enabled
-		if (typeof result.enabled === 'boolean') {
+		if (typeof result['enabled'] === 'boolean') {
 
-			enabled = result.enabled;
+			enabled = result['enabled'];
 
-			if (result.enabled === true) {
+			if (result['enabled'] === true) {
 
-				logVerbose('Extension\'s enabled state:', result.enabled);
+				logVerbose('Extension\'s enabled state:', result['enabled']);
 
 			} else {
 
-				logWarn('Extension\'s enabled state:', result.enabled);
+				logWarn('Extension\'s enabled state:', result['enabled']);
 			}
 
 		} else {
@@ -127,22 +131,41 @@ function initExtensionState(callback) {
 		}
 
 		// renderButtons
-		if (typeof result.renderButtons === 'boolean') {
+		if (typeof result['renderButtons'] === 'boolean') {
 
-			renderButtons = result.renderButtons;
+			renderButtons = result['renderButtons'];
 
-			if (result.renderButtons === true) {
+			if (result['renderButtons'] === true) {
 
-				logVerbose('Extension\'s render buttons state:', result.renderButtons);
+				logVerbose('Extension\'s render buttons state:', result['renderButtons']);
 
 			} else {
 
-				logWarn('Extension\'s render buttons state:', result.renderButtons);
+				logWarn('Extension\'s render buttons state:', result['renderButtons']);
 			}
 
 		} else {
 
 			logWarn('Extension\'s render buttons state unknown, assuming:', true);
+		}
+
+		// hideReruns
+		if (typeof result['hideReruns'] === 'boolean') {
+
+			hideReruns = result['hideReruns'];
+
+			if (result['hideReruns'] === true) {
+
+				logVerbose('Extension\'s hide reruns state:', result['hideReruns']);
+
+			} else {
+
+				logWarn('Extension\'s hide reruns state:', result['hideReruns']);
+			}
+
+		} else {
+
+			logWarn('Extension\'s render hide reruns state unknown, assuming:', false);
 		}
 
 		if (typeof callback === 'function') {
@@ -772,6 +795,7 @@ function getItems() {
 						item: 		itemName.replace('/', ''),
 						subItem: 	subItem,
 						tags: 		[],
+						isRerun: 	false,
 						node: 		itemContainers[i]
 					};
 				}
@@ -812,6 +836,22 @@ function getItems() {
 					}
 
 				/* END: tags */
+
+				/* BEGIN: check for rerun */
+
+					const streamTypeSelector 	= 'div.stream-type-indicator';
+					const streamTypeNode 		= itemContainers[i].querySelector(streamTypeSelector);
+
+					if (streamTypeNode !== null) {
+
+						itemData.isRerun = streamTypeNode.classList.contains('stream-type-indicator--rerun');
+
+					} else {
+
+						logWarn('No stream type indicator found for card in categories view:', itemContainers[i]);
+					}
+
+				/* END: check for rerun */
 
 				if (itemData !== null) {
 
@@ -988,6 +1028,13 @@ function filterItems(items) {
 					if (removeItem(entry.node) === true) {
 
 						logInfo('Blacklisted by tag:', entry.tags, entry.node);
+					}
+
+				} else if ( (hideReruns === true) && (entry.isRerun === true) ) {
+
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted for being a rerun:', entry.node);
 					}
 
 				} else {

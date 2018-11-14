@@ -1,4 +1,4 @@
-// jshint esversion: 6
+﻿// jshint esversion: 6
 // jshint -W069
 
 function createItemRow(key) {
@@ -485,8 +485,8 @@ storageGet(null, function(result) {
 storageGet('hideReruns', function(result) {
 
 	hideRerunsCheckbox.checked = (
-		(typeof result.hideReruns !== 'boolean') ||
-		(result.hideReruns !== false)
+		(typeof result.hideReruns === 'boolean') &&
+		(result.hideReruns === true)
 	);
 });
 
