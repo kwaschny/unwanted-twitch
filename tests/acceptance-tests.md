@@ -1,7 +1,7 @@
 ﻿# Acceptance Tests
 
 ## Note about testing in Firefox
-If you load the add-on via `about:debugging`, make sure to close the tab or move it to a separate window. Otherwise it will conflict with tab queries in the background script and cause unexpected behavior.
+If you load the add-on via `about:debugging`, make sure to close that tab or at least move it to a separate window. Otherwise it will conflict with tab queries in the background script and cause an exception.
 
 ## Test Case: Blacklisting categories works
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
@@ -36,6 +36,11 @@ If you load the add-on via `about:debugging`, make sure to close the tab or move
 - [ ] The cover disappeared without leaving behind an empty space.
 3. Reload the page.
 - [ ] The cover is no longer visible.
+
+## Test Case: Hiding reruns works in channels directory
+1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all) and spot a stream rerun.
+2. Open the Blacklist management and enable "Hide Stream Reruns" by checking it.
+- [ ] The spotted stream rerun cover is no longer visible.
 
 ## Test Case: Sidebar is filtered in directory
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
@@ -120,3 +125,9 @@ If you load the add-on via `about:debugging`, make sure to close the tab or move
 4. Click on "Import" and select the previously saved file from disk.
 - [ ] An alert appears informing about the operation state.
 - [ ] All items reappear in their corresponding group.
+
+## Test Case: Switching storage mode works
+1. Open the Blacklist management and disable "Synchronize Blacklist via Cloud" by unchecking it.
+2. Make sure there are items stored, i.e. add some items in each group.
+3. Click on the "Save" button and reopen the Blacklist management afterwards.
+- [ ] All items are still present. (You may also observe the "bytes used" statistics in the top right corner.)
