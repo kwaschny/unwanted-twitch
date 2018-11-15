@@ -24,7 +24,7 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 - [ ] A label named "X" is on the right side (Firefox: at the bottom) of each tag label below the covers.
 2. Click on one of the labels.
 - [ ] A prompt asks you to confirm your action.
-- [ ] The cover disappeared without leaving behind an empty space.
+- [ ] The cover (and any other cover with the same tag) disappeared without leaving behind an empty space.
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
@@ -33,18 +33,27 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 - [ ] A label named "X" is on the right side (Firefox: at the bottom) of each tag label below the covers.
 2. Click on one of the labels.
 - [ ] A prompt asks you to confirm your action.
-- [ ] The cover disappeared without leaving behind an empty space.
+- [ ] The cover (and any other cover with the same tag) disappeared without leaving behind an empty space.
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
 ## Test Case: Hiding reruns works in channels directory
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all) and spot a stream rerun.
 2. Open the Blacklist management and enable "Hide Stream Reruns" by checking it.
+3. Reload the page.
 - [ ] The spotted stream rerun cover is no longer visible.
 
-## Test Case: Sidebar is filtered in directory
-1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
+## Test Case: Sidebar is filtered in categories directory
+1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
+2. Block a category that is listed on the left sidebar under Featured/Recommended channels using the directory view.
+   (The sidebar might not contain Featured/Recommended channels. In this case, logout or change to a different account.)
+3. Reload the page.
+- [ ] The corresponding list item is no longer visible in the sidebar.
+
+## Test Case: Sidebar is filtered in channels directory
+1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all). (Note: The sidebar might not contain Featured
 2. Block a channel that is listed on the left sidebar under Featured/Recommended channels using the directory view.
+   (The sidebar might not contain Featured/Recommended channels. In this case, logout or change to a different account.)
 3. Reload the page.
 - [ ] The corresponding list item is no longer visible in the sidebar.
 4. Shrink the browser viewport to the point where the sidebar collapses.
@@ -72,7 +81,8 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 1. Navigate between different pages on [twitch.tv](https://www.twitch.tv/).
 2. Use the "back" function (browser history).
 - [ ] Previously hidden covers should disappear.
-- [ ] A label to hide the item should appear on the top right corner of each cover.
+- [ ] A label named "X" is on the top right corner of each cover.
+- [ ] A label named "X" is on the right side (Firefox: at the bottom) of each tag label below the covers.
 
 ## Test Case: Management button appears in categories directory
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
@@ -108,8 +118,8 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 1. Click on the UnwantedTwitch icon in the extension bar.
 - [ ] A dialog appears with a button named "Manage Blacklist".
 2. Click on "Manage Blacklist".
-- [ ] A new tab opens up that shows 3 categories: "Blacklisted Categories", "Blacklisted Channels" and "Blacklisted Tags"
-- [ ] Previously hidden covers appear in their category
+- [ ] A new tab opens up that shows 3 categories: "Blacklisted Categories", "Blacklisted Channels" and "Blacklisted Tags".
+- [ ] Previously hidden covers appear in their category.
 3. Remove some entries under these categories using the "Remove" button next to each entry and confirm clicking on the "Save" button.
 - [ ] An alert shows that notifies about reloading already opened tabs.
 4. Reload already opened twitch.tv tabs.
@@ -120,7 +130,7 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 - [ ] Two buttons appear in the bottom left corner: "Import" and "Export"
 2. Click on "Export" and save the file on disk.
 - [ ] The saved file contains all listed items in their corresponding group as JSON.
-3. Clear all items using the "Clear" buttons.
+3. Clear all items for each group using the "Clear" buttons.
 - [ ] There are no more items left.
 4. Click on "Import" and select the previously saved file from disk.
 - [ ] An alert appears informing about the operation state.
@@ -128,6 +138,6 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 
 ## Test Case: Switching storage mode works
 1. Open the Blacklist management and disable "Synchronize Blacklist via Cloud" by unchecking it.
-2. Make sure there are items stored, i.e. add some items in each group.
+2. Make sure there are items stored, i.e. add some items to each group.
 3. Click on the "Save" button and reopen the Blacklist management afterwards.
 - [ ] All items are still present. (You may also observe the "bytes used" statistics in the top right corner.)
