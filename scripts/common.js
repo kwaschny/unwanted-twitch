@@ -20,7 +20,7 @@ function getStorageMode(callback) {
 
 	chrome.storage.local.get('useLocalStorage', function(result) {
 
-		if (chrome.runtime.lastError !== undefined) {
+		if (chrome.runtime.lastError) {
 
 			logError('An error occured trying to read from local storage:', chrome.runtime.lastError);
 		}
@@ -62,7 +62,7 @@ function storageGet(data, callback) {
 
 		let error = null;
 
-		if (chrome.runtime.lastError !== undefined) {
+		if (chrome.runtime.lastError) {
 
 			error = chrome.runtime.lastError;
 			logError('An error occured trying to read from storage:', chrome.runtime.lastError);
@@ -90,7 +90,7 @@ function storageSet(data, callback) {
 
 		let error = null;
 
-		if (chrome.runtime.lastError !== undefined) {
+		if (chrome.runtime.lastError) {
 
 			error = chrome.runtime.lastError;
 			logError('An error occured trying to write to storage:', chrome.runtime.lastError);
@@ -118,7 +118,7 @@ function storageRemove(data, callback) {
 
 		let error = null;
 
-		if (chrome.runtime.lastError !== undefined) {
+		if (chrome.runtime.lastError) {
 
 			error = chrome.runtime.lastError;
 			logError('An error occured trying to write to storage:', chrome.runtime.lastError);
@@ -146,7 +146,7 @@ function storageClear(callback) {
 
 		let error = null;
 
-		if (chrome.runtime.lastError !== undefined) {
+		if (chrome.runtime.lastError) {
 
 			error = chrome.runtime.lastError;
 			logError('An error occured trying to write to storage:', chrome.runtime.lastError);

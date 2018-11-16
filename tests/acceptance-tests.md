@@ -140,4 +140,4 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 1. Open the Blacklist management and disable "Synchronize Blacklist via Cloud" by unchecking it.
 2. Make sure there are items stored, i.e. add some items to each group.
 3. Click on the "Save" button and reopen the Blacklist management afterwards.
-- [ ] All items are still present. (You may also observe the "bytes used" statistics in the top right corner.)
+- [ ] All items are still present. (Chrome: You may also observe the "bytes used" statistics in the top right corner.)

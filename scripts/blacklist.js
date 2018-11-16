@@ -496,15 +496,23 @@ getStorageMode(function(mode) {
 	useSyncStorageCheckbox.checked = (mode === 'sync');
 });
 
-// stroage size
-chrome.storage.sync.getBytesInUse(null, function(result) {
+/* BEGIN: stroage size */
 
-	document.getElementById('storageSize_sync').textContent = result.toLocaleString();
-});
-chrome.storage.local.getBytesInUse(null, function(result) {
+	// getBytesInUse() is not supported by Firefox
+	if (isFirefox() === false) {
 
-	document.getElementById('storageSize_local').textContent = result.toLocaleString();
-});
+		chrome.storage.sync.getBytesInUse(null, function(result) {
+
+			document.getElementById('storageSize_sync').textContent = result.toLocaleString();
+		});
+
+		chrome.storage.local.getBytesInUse(null, function(result) {
+
+			document.getElementById('storageSize_local').textContent = result.toLocaleString();
+		});
+	}
+
+/* END: stroage size */
 
 // report storage contents
 if (debug <= 1) {
