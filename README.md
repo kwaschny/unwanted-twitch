@@ -10,8 +10,9 @@
 - hide unwanted categories/games
 - hide unwanted channels/streams
 - hide unwanted tags
+- hide stream reruns
 - share blacklists using import/export
-- blacklist is automatically synced between devices
+- blacklist is automatically synced between devices (optional)
 - one-click-toggle to disable/enable extension
 - compatible with BetterTTV (BTTV) and FrankerFaceZ (FFZ)
 - supports Twitch's Dark Mode
