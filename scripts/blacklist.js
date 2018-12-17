@@ -419,6 +419,7 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 
 /* BEGIN: localize */
 
+	document.querySelector('.settings h2').textContent 			= chrome.i18n.getMessage('blacklist_SettingsHeadline');
 	document.getElementById('label_hideReruns').textContent 	= chrome.i18n.getMessage('blacklist_SettingsHideReruns');
 	document.getElementById('label_useSyncStorage').textContent = chrome.i18n.getMessage('blacklist_SettingsSyncStorage');
 

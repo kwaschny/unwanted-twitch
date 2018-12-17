@@ -38,6 +38,9 @@
 		"message": "Show \"X\" Buttons"
 	},
 
+	"blacklist_SettingsHeadline": {
+		"message": "Settings"
+	},
 	"blacklist_SettingsHideReruns": {
 		"message": "Hide Stream Reruns"
 	},

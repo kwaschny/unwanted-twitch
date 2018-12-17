@@ -38,6 +38,9 @@
 		"message": "zeige \"X\" Buttons"
 	},
 
+	"blacklist_SettingsHeadline": {
+		"message": "Einstellungen"
+	},
 	"blacklist_SettingsHideReruns": {
 		"message": "Stream-Wiederholungen ausblenden"
 	},
