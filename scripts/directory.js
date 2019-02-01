@@ -86,7 +86,7 @@ function getItemType(page) {
 		break;
 
 		default:
-			if (RegExp('^/directory/(all|game)/[^/]+(/[a-z]{2})?$').test(page) === true) {
+			if (RegExp('^/directory/(all|game)/').test(page) === true) {
 
 				result = 'channels';
 			}
