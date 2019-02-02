@@ -8,7 +8,7 @@
 // 3 = WARN, ERROR
 // 4 = ERROR
 // 5 = NONE
-const debug = 4;
+const debug = 3;
 
 /**
  * Returns (async) with the selected storage mode, either "sync" or "local".

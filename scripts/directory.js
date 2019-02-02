@@ -5,6 +5,7 @@
 /* BEGIN: runtime variables */
 
 	let rootNode;
+	let mainNode;
 
 	// determines if the directory filter is enabled
 	let enabled = true;
@@ -25,6 +26,7 @@
 	let monitorPagesInterval;
 	let initInterval;
 	let onPageChangeInterval;
+	let onPageChangeCounter = 0;
 	let checkSlotsInterval;
 
 	// indicates that the filtering is in progress
@@ -185,15 +187,31 @@ function init() {
 
 	const pageSupported = isSupportedPage(currentPage);
 
-	// root
-	const rootNodeSelector 	= '#root';
-	rootNode 				= document.querySelector(rootNodeSelector);
+	/* BEGIN: root */
 
-	if (rootNode === null) {
+		const rootNodeSelector 	= '#root';
+		rootNode 				= document.querySelector(rootNodeSelector);
 
-		logError('Root not found. Expected:', rootNodeSelector);
-		return;
-	}
+		if (rootNode === null) {
+
+			logError('Root not found. Expected:', rootNodeSelector);
+			return;
+		}
+
+	/* END: root */
+
+	/* BEGIN: main */
+
+		const mainNodeSelector 	= 'main div.simplebar-scroll-content';
+		mainNode 				= document.querySelector(mainNodeSelector);
+
+		if (mainNode === null) {
+
+			logError('Main not found. Expected:', mainNodeSelector);
+			return;
+		}
+
+	/* END: main */
 
 	if (pageSupported === true) {
 
@@ -216,12 +234,10 @@ function init() {
 			pageLoads = true;
 
 			// wait for page to load the DOM completely, the loading is deferred, so we need to wait for an indicator
-			const pageLoadMonitorInterval = 200;
+			const pageLoadMonitorInterval = 100;
 			window.clearInterval(initInterval);
 			initInterval = window.setInterval(function init_waitingForPageLoad() {
 				logTrace('polling started in init(): waiting for page to load');
-
-				if (enabled === false) { return; }
 
 				// this is the indicator we are looking for, the attribute is set once the page has fully loaded
 				const indicator = rootNode.getAttribute('data-a-page-loaded');
@@ -255,25 +271,31 @@ function init() {
 function onPageChange(page) {
 	logTrace('invoking onPageChange($)', page);
 
+	if (enabled === false) { return; }
+
+	if (pageLoads === true) { return; }
+
 	if (isSupportedPage(page) === false) { return; }
 
 	pageLoads = true;
 
+	onPageChangeCounter 			= 0;
+	const pageLoadMonitorInterval 	= 100;
+	const pageLoadTimeout 			= (20000 / pageLoadMonitorInterval);
+
 	// wait for page to load the DOM completely, the loading is deferred, so we need to wait for the first slot
-	const pageLoadMonitorInterval = 200;
 	window.clearInterval(onPageChangeInterval);
 	onPageChangeInterval = window.setInterval(function onPageChange_waitingForPageLoad() {
 		logTrace('polling started in onPageChange(): waiting for page to load');
 
-		if (enabled === false) { return; }
-
 		let indicator;
+		onPageChangeCounter += 1;
 
 		switch (currentItemType) {
 
 			case 'frontpage':
 
-				indicator = rootNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
+				indicator = mainNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
 				if (indicator !== null) {
 
 					window.clearInterval(onPageChangeInterval);
@@ -289,7 +311,7 @@ function onPageChange(page) {
 			case 'channels':
 			case 'categories':
 
-				indicator = rootNode.querySelector('div[data-target][style^="order:"]');
+				indicator = mainNode.querySelector('div[data-target][style^="order:"]');
 				if (indicator !== null) {
 
 					window.clearInterval(onPageChangeInterval);
@@ -312,6 +334,14 @@ function onPageChange(page) {
 			break;
 		}
 
+		// prevent waiting infinitely for page load in case the content is unknown
+		if (onPageChangeCounter > pageLoadTimeout) {
+
+			window.clearInterval(onPageChangeInterval);
+			pageLoads = false;
+			logWarn('polling stopped in onPageChange(): page did not load within 20 seconds');
+		}
+
 	}, pageLoadMonitorInterval);
 }
 
@@ -322,7 +352,7 @@ function placeManagementButton() {
 	logTrace('invoking placeManagementButton()');
 
 	const filtersAreaSelector 	= 'div.browse-header__filters, div.directory-header__filters';
-	const filtersArea 			= rootNode.querySelector(filtersAreaSelector);
+	const filtersArea 			= mainNode.querySelector(filtersAreaSelector);
 
 	if (filtersArea !== null) {
 
@@ -602,7 +632,7 @@ function getItems() {
 
 			// channels, clips, videos
 			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
-			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
 
 			if (itemContainersLength > 0) {
@@ -698,7 +728,7 @@ function getItems() {
 
 			// categories
 			itemContainersSelector 	= 'div[data-a-target^="card-"]:not([data-uttv-hidden])';
-			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
 
 			if (itemContainersLength > 0) {
@@ -762,7 +792,7 @@ function getItems() {
 
 			// items
 			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
-			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
 
 			if (itemContainersLength === 0) {
@@ -865,7 +895,7 @@ function getItems() {
 
 			// items
 			itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
-			itemContainers 			= rootNode.querySelectorAll(itemContainersSelector);
+			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
 
 			if (itemContainersLength === 0) {
@@ -1402,7 +1432,7 @@ function toggleHideButtonRendering() {
 	logTrace('invoking toggleHideButtonRendering()');
 
 	const buttonsSelector 	= '.uttv-hide-item, .uttv-hide-tag';
-	const buttons 			= rootNode.querySelectorAll(buttonsSelector);
+	const buttons 			= mainNode.querySelectorAll(buttonsSelector);
 	const buttonsLength 	= buttons.length;
 
 	if (buttonsLength > 0) {
@@ -1515,6 +1545,7 @@ function removeItem(node) {
 					(topNode === undefined) ||
 					(topNode === document.documentElement)
 				) {
+
 					logError('Could not find the expected parent node to remove item:', node);
 					break;
 				}
@@ -1524,10 +1555,14 @@ function removeItem(node) {
 					topNode.classList.contains('anon-top-channels') || 			// top channels
 					topNode.classList.contains('list-animation__item-animate') 	// popular
 				) {
+
 					node.setAttribute('data-uttv-hidden', '');
+
 					// don't hide topmost node because it causes the remaining items to scale/cover the full width,
 					// instead hide the first child node
-					topNode.children[0].style.display = 'none';
+					topNode = topNode.children[0];
+
+					topNode.style.display = 'none';
 					return true;
 				}
 
@@ -1546,6 +1581,7 @@ function removeItem(node) {
 					(topNode === undefined) ||
 					(topNode === document.documentElement)
 				) {
+
 					logError('Could not find the expected parent node to remove item:', node);
 					break;
 				}
@@ -1562,6 +1598,7 @@ function removeItem(node) {
 				) {
 
 					node.setAttribute('data-uttv-hidden', '');
+
 					topNode.style.display = 'none';
 					return true;
 				}
@@ -1594,6 +1631,7 @@ function removeItem(node) {
 				) {
 
 					node.setAttribute('data-uttv-hidden', '');
+
 					topNode.style.display = 'none';
 					return true;
 				}
@@ -1681,11 +1719,11 @@ function removeRecommendation(node, type) {
 function listenToScroll() {
 	logTrace('invoking listenToScroll()');
 
+	if (enabled === false) { return; }
+
 	const scrollChangeMonitoringInterval = 1000;
 	window.clearInterval(checkSlotsInterval);
 	checkSlotsInterval = window.setInterval(function checkSlots() {
-
-		if (enabled === false) { return; }
 
 		// prevent monitoring during page load
 		if (pageLoads === true) {
@@ -1700,19 +1738,19 @@ function listenToScroll() {
 
 			case 'frontpage':
 
-				itemsInDOM = rootNode.querySelectorAll('a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden]), div[data-a-target^="card-"]:not([data-uttv-hidden])').length;
+				itemsInDOM = mainNode.querySelectorAll('a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden]), div[data-a-target^="card-"]:not([data-uttv-hidden])').length;
 
 			break;
 
 			case 'channels':
 
-				itemsInDOM = rootNode.querySelectorAll('div.stream-thumbnail:not([style*="display"]), div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+				itemsInDOM = mainNode.querySelectorAll('div.stream-thumbnail:not([style*="display"]), div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
 
 			break;
 
 			case 'categories':
 
-				itemsInDOM = rootNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+				itemsInDOM = mainNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
 
 			break;
 		}
@@ -1826,11 +1864,11 @@ function observeRecommendations() {
 window.addEventListener('load', function callback_windowLoad() {
 	logTrace('event invoked: window.load()');
 
+	if (enabled === false) { return; }
+
 	// init extension's state
 	initExtensionState(function callback_initExtensionState(enabled, renderButtons) {
 		logTrace('callback invoked: initExtensionState($)', enabled, renderButtons);
-
-		if (enabled === false) { return; }
 
 		logInfo('Page initialization for:', currentPage);
 		init();
@@ -1840,7 +1878,7 @@ window.addEventListener('load', function callback_windowLoad() {
 /**
  * Constantly monitor path to notice change of page.
  */
-const pageChangeMonitorInterval = 333;
+const pageChangeMonitorInterval = 100;
 window.clearInterval(monitorPagesInterval);
 monitorPagesInterval = window.setInterval(function monitorPages() {
 
@@ -1852,6 +1890,7 @@ monitorPagesInterval = window.setInterval(function monitorPages() {
 		currentItemType = getItemType(currentPage);
 
 		logInfo('Page changed to:', currentPage);
+
 		onPageChange(currentPage);
 	}
 
