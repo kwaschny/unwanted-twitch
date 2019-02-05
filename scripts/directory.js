@@ -35,7 +35,7 @@
 	// number of items currently registered (used to detect changes)
 	let currentItemsCount = 0;
 
-	// currently detected slot type, one of: 'frontpage', 'categories', 'channels' or null
+	// currently detected slot type, one of: 'frontpage', 'categories', 'channels', 'videos', 'clips' or null
 	let currentItemType = getItemType(currentPage);
 
 	// collection of blacklisted items, serves as local cache
@@ -68,34 +68,39 @@ function isSupportedPage(page) {
 function getItemType(page) {
 	logTrace('invoking getItemType($)', page);
 
-	let result = null;
-
 	// remove trailing slash
 	page = page.replace(/\/$/, '');
 
 	switch (page) {
 
 		case '':
-			result = 'frontpage';
-		break;
+			return 'frontpage';
 
 		case '/directory':
-			result = 'categories';
-		break;
+			return 'categories';
 
 		case '/directory/all':
-			result = 'channels';
-		break;
+			return 'channels';
 
 		default:
 			if (RegExp('^/directory/(all|game)/').test(page) === true) {
 
-				result = 'channels';
+				if (page.indexOf('/videos/') >= 0) {
+
+					return 'videos';
+				}
+
+				if (page.indexOf('/clips') >= 0) {
+
+					return 'clips';
+				}
+
+				return 'channels';
 			}
-		break;
 	}
 
-	return result;
+	logWarn('Failed to detect item type.', page);
+	return null;
 }
 
 /**
@@ -129,7 +134,7 @@ function initExtensionState(callback) {
 
 		} else {
 
-			logWarn('Extension\'s enabled state unknown, assuming:', true);
+			logInfo('Extension\'s enabled state unknown, assuming:', true);
 		}
 
 		// renderButtons
@@ -148,7 +153,7 @@ function initExtensionState(callback) {
 
 		} else {
 
-			logWarn('Extension\'s render buttons state unknown, assuming:', true);
+			logInfo('Extension\'s render buttons state unknown, assuming:', true);
 		}
 
 		// hideReruns
@@ -167,7 +172,7 @@ function initExtensionState(callback) {
 
 		} else {
 
-			logWarn('Extension\'s render hide reruns state unknown, assuming:', false);
+			logInfo('Extension\'s render hide reruns state unknown, assuming:', false);
 		}
 
 		if (typeof callback === 'function') {
@@ -243,6 +248,13 @@ function init() {
 				const indicator = rootNode.getAttribute('data-a-page-loaded');
 				if (indicator !== null) {
 
+					const placeholderNode = rootNode.querySelector('.tw-placeholder');
+					if (placeholderNode !== null) {
+
+						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+						return;
+					}
+
 					window.clearInterval(initInterval);
 					pageLoads = false;
 					logTrace('polling stopped in init(): page loaded');
@@ -298,6 +310,13 @@ function onPageChange(page) {
 				indicator = mainNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
 				if (indicator !== null) {
 
+					const placeholderNode = rootNode.querySelector('.tw-placeholder');
+					if (placeholderNode !== null) {
+
+						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+						return;
+					}
+
 					window.clearInterval(onPageChangeInterval);
 					pageLoads = false;
 					logTrace('polling stopped in onPageChange(): page loaded');
@@ -308,11 +327,80 @@ function onPageChange(page) {
 
 				break;
 
-			case 'channels':
 			case 'categories':
+			case 'channels':
 
 				indicator = mainNode.querySelector('div[data-target][style^="order:"]');
 				if (indicator !== null) {
+
+					const placeholderNode = rootNode.querySelector('.tw-placeholder');
+					if (placeholderNode !== null) {
+
+						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+						return;
+					}
+
+					window.clearInterval(onPageChangeInterval);
+					pageLoads = false;
+					logTrace('polling stopped in onPageChange(): page loaded');
+
+					placeManagementButton();
+
+					// invoke directory filter
+					const remainingItems = filterDirectory();
+
+					// attach hide buttons to the remaining items
+					attachHideButtons(remainingItems);
+
+					// invoke recommendations filter
+					filterRecommendations();
+					observeRecommendations();
+				}
+
+			break;
+
+			case 'videos':
+
+				indicator = mainNode.querySelector('div[data-a-target^="video-tower-card-"]');
+				if (indicator !== null) {
+
+					const placeholderNode = rootNode.querySelector('.tw-placeholder');
+					if (placeholderNode !== null) {
+
+						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+						return;
+					}
+
+					window.clearInterval(onPageChangeInterval);
+					pageLoads = false;
+					logTrace('polling stopped in onPageChange(): page loaded');
+
+					placeManagementButton();
+
+					// invoke directory filter
+					const remainingItems = filterDirectory();
+
+					// attach hide buttons to the remaining items
+					attachHideButtons(remainingItems);
+
+					// invoke recommendations filter
+					filterRecommendations();
+					observeRecommendations();
+				}
+
+			break;
+
+			case 'clips':
+
+				indicator = mainNode.querySelector('div[data-a-target^="clips-card-"]');
+				if (indicator !== null) {
+
+					const placeholderNode = rootNode.querySelector('.tw-placeholder');
+					if (placeholderNode !== null) {
+
+						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+						return;
+					}
 
 					window.clearInterval(onPageChangeInterval);
 					pageLoads = false;
@@ -351,39 +439,79 @@ function onPageChange(page) {
 function placeManagementButton() {
 	logTrace('invoking placeManagementButton()');
 
-	const filtersAreaSelector 	= 'div.browse-header__filters, div.directory-header__filters';
-	const filtersArea 			= mainNode.querySelector(filtersAreaSelector);
+	let filtersAreaSelector;
+	let filtersArea;
 
-	if (filtersArea !== null) {
+	switch (currentItemType) {
 
-		// prevent adding more than one button
-		if (filtersArea.querySelector('div[data-uttv-management]') !== null) {
+		case 'videos':
+		case 'clips':
 
-			logWarn('Management button already added to filters area:', filtersArea);
-			return false;
-		}
+			filtersAreaSelector = 'div.inline-dropdown, div.filter-dropdown-button';
+			filtersArea 		= mainNode.querySelectorAll(filtersAreaSelector);
+			filtersArea 		= ( (filtersArea.length > 0) ? filtersArea[filtersArea.length - 1] : null );
 
-		let container = document.createElement('div');
-		container.setAttribute('data-uttv-management', '');
-		container.className = 'uttv-button';
+			if (filtersArea !== null) {
 
-		let button = document.createElement('div');
-		button.textContent = chrome.i18n.getMessage('label_Management');
+				filtersArea = filtersArea.parentNode.parentNode;
 
-		button.addEventListener('click', function() {
+				return buildManagementButton(filtersArea);
 
-			chrome.runtime.sendMessage({ action: 'openBlacklist' });
-		});
+			} else {
 
-		container.appendChild(button);
-		filtersArea.appendChild(container);
+				logWarn('Filters not found. Expected:', filtersAreaSelector);
+			}
 
-		return true;
+		break;
 
-	} else {
+		default:
 
-		logWarn('Filters not found. Expected:', filtersAreaSelector);
+			filtersAreaSelector = 'div.browse-header__filters, div.directory-header__filters';
+			filtersArea 		= mainNode.querySelector(filtersAreaSelector);
+
+			if (filtersArea !== null) {
+
+				return buildManagementButton(filtersArea);
+
+			} else {
+
+				logWarn('Filters not found. Expected:', filtersAreaSelector);
+			}
+
+		break;
 	}
+
+	return false;
+}
+
+/**
+ * Builds a button to open the management area of UnwantedTwitch.
+ */
+function buildManagementButton(areaNode) {
+
+	// prevent adding more than one button
+	if (areaNode.querySelector('div[data-uttv-management]') !== null) {
+
+		logWarn('Management button already added to filters area:', areaNode);
+		return false;
+	}
+
+	let container = document.createElement('div');
+	container.setAttribute('data-uttv-management', '');
+	container.className = 'uttv-button';
+
+	let button = document.createElement('div');
+	button.textContent = chrome.i18n.getMessage('label_Management');
+
+	button.addEventListener('click', function() {
+
+		chrome.runtime.sendMessage({ action: 'openBlacklist' });
+	});
+
+	container.appendChild(button);
+	areaNode.appendChild(container);
+
+	return true;
 }
 
 /**
@@ -596,18 +724,13 @@ function filterDirectory() {
 	}
 	filterRunning = false;
 
-	switch (currentItemType) {
+	if (remainingItems.length < currentItems.length) {
 
-		case 'channels':
-		case 'categories':
+		if (currentItemType !== 'frontpage') {
 
-			if (remainingItems.length < currentItems.length) {
-
-				logVerbose('Attempting to re-populate items.');
-				triggerScroll();
-			}
-
-		break;
+			logVerbose('Attempting to re-populate items.');
+			triggerScroll();
+		}
 	}
 
 	return remainingItems;
@@ -788,6 +911,73 @@ function getItems() {
 
 		break;
 
+		case 'categories':
+
+			// items
+			itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
+			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
+			itemContainersLength 	= itemContainers.length;
+
+			if (itemContainersLength === 0) {
+
+				logError('Item containers not found in directory container. Expected:', itemContainersSelector);
+				return [];
+			}
+
+			for (let i = 0; i < itemContainersLength; i++) {
+
+				let itemData = null;
+
+				// card
+				const itemName = itemContainers[i].getAttribute('aria-label');
+				if ((typeof itemName === 'string') && (itemName.length > 0)) {
+
+					itemData = {
+						item: 		itemName,
+						subItem: 	null,
+						tags: 		[],
+						node: 		itemContainers[i]
+					};
+
+					/* BEGIN: tags */
+
+						const tagContainer = itemContainers[i].parentNode.parentNode.nextSibling;
+						if (tagContainer !== null) {
+
+							const tagsSelector 	= '.tw-tag__content div';
+							const tags 			= tagContainer.querySelectorAll(tagsSelector);
+							const tagsLength 	= tags.length;
+
+							if (tagsLength > 0) {
+
+								for (let n = 0; n < tagsLength; n++) {
+
+									const tagName = tags[n].textContent;
+
+									itemData.tags.push(tagName);
+								}
+
+							} else {
+
+								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+							}
+
+						} else {
+
+							logWarn('No tags found for card in categories view:', itemContainers[i]);
+						}
+
+					/* END: tags */
+				}
+
+				if (itemData !== null) {
+
+					items.push(itemData);
+				}
+			}
+
+		break;
+
 		case 'channels':
 
 			// items
@@ -828,60 +1018,60 @@ function getItems() {
 						isRerun: 	false,
 						node: 		itemContainers[i]
 					};
-				}
 
-				/* BEGIN: tags */
+					/* BEGIN: tags */
 
-					let tagContainer = itemContainers[i].parentNode;
-					if (tagContainer === null) {
+						let tagContainer = itemContainers[i].parentNode;
+						if (tagContainer === null) {
 
-						logWarn('No tags found for card in channels view:', itemContainers[i]);
-						continue;
-					}
+							logWarn('No tags found for card in channels view:', itemContainers[i]);
+							continue;
+						}
 
-					tagContainer = tagContainer.nextSibling;
-					if (tagContainer !== null) {
+						tagContainer = tagContainer.nextSibling;
+						if (tagContainer !== null) {
 
-						const tagsSelector 	= '.tw-tag__content div';
-						const tags 			= tagContainer.querySelectorAll(tagsSelector);
-						const tagsLength 	= tags.length;
+							const tagsSelector 	= '.tw-tag__content div';
+							const tags 			= tagContainer.querySelectorAll(tagsSelector);
+							const tagsLength 	= tags.length;
 
-						if (tagsLength > 0) {
+							if (tagsLength > 0) {
 
-							for (let n = 0; n < tagsLength; n++) {
+								for (let n = 0; n < tagsLength; n++) {
 
-								const tagName = tags[n].textContent;
+									const tagName = tags[n].textContent;
 
-								itemData.tags.push(tagName);
+									itemData.tags.push(tagName);
+								}
+
+							} else {
+
+								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
 							}
 
 						} else {
 
-							logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+							logWarn('No tags found for card in channels view:', itemContainers[i]);
 						}
 
-					} else {
+					/* END: tags */
 
-						logWarn('No tags found for card in channels view:', itemContainers[i]);
-					}
+					/* BEGIN: check for rerun */
 
-				/* END: tags */
+						const streamTypeSelector 	= 'div.stream-type-indicator';
+						const streamTypeNode 		= itemContainers[i].querySelector(streamTypeSelector);
 
-				/* BEGIN: check for rerun */
+						if (streamTypeNode !== null) {
 
-					const streamTypeSelector 	= 'div.stream-type-indicator';
-					const streamTypeNode 		= itemContainers[i].querySelector(streamTypeSelector);
+							itemData.isRerun = streamTypeNode.classList.contains('stream-type-indicator--rerun');
 
-					if (streamTypeNode !== null) {
+						} else {
 
-						itemData.isRerun = streamTypeNode.classList.contains('stream-type-indicator--rerun');
+							logWarn('No stream type indicator found for card in categories view:', itemContainers[i]);
+						}
 
-					} else {
-
-						logWarn('No stream type indicator found for card in categories view:', itemContainers[i]);
-					}
-
-				/* END: check for rerun */
+					/* END: check for rerun */
+				}
 
 				if (itemData !== null) {
 
@@ -891,10 +1081,11 @@ function getItems() {
 
 		break;
 
-		case 'categories':
+		case 'videos':
+		case 'clips':
 
 			// items
-			itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
+			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
 			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
 
@@ -909,46 +1100,59 @@ function getItems() {
 				let itemData = null;
 
 				// card
-				const itemName = itemContainers[i].getAttribute('aria-label');
-				if ((typeof itemName === 'string') && (itemName.length > 0)) {
+				const itemNode = itemContainers[i].parentNode.parentNode.querySelector('a[data-a-target="preview-card-channel-link"]');
+				if (itemNode !== null) {
+
+					const itemName = itemNode.getAttribute('href');
 
 					itemData = {
-						item: 		itemName,
+						item: 		itemName.replace('/', ''),
 						subItem: 	null,
 						tags: 		[],
+						isRerun: 	false,
 						node: 		itemContainers[i]
 					};
-				}
 
-				/* BEGIN: tags */
+					/* BEGIN: tags */
 
-					const tagContainer = itemContainers[i].parentNode.parentNode.nextSibling;
-					if (tagContainer !== null) {
+						if (currentItemType !== 'clips') {
 
-						const tagsSelector 	= '.tw-tag__content div';
-						const tags 			= tagContainer.querySelectorAll(tagsSelector);
-						const tagsLength 	= tags.length;
+							let tagContainer = itemContainers[i].parentNode;
+							if (tagContainer === null) {
 
-						if (tagsLength > 0) {
-
-							for (let n = 0; n < tagsLength; n++) {
-
-								const tagName = tags[n].textContent;
-
-								itemData.tags.push(tagName);
+								logWarn('No tags found for card in channels view:', itemContainers[i]);
+								continue;
 							}
 
-						} else {
+							tagContainer = tagContainer.nextSibling;
+							if (tagContainer !== null) {
 
-							logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+								const tagsSelector 	= '.tw-tag__content div';
+								const tags 			= tagContainer.querySelectorAll(tagsSelector);
+								const tagsLength 	= tags.length;
+
+								if (tagsLength > 0) {
+
+									for (let n = 0; n < tagsLength; n++) {
+
+										const tagName = tags[n].textContent;
+
+										itemData.tags.push(tagName);
+									}
+
+								} else {
+
+									logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+								}
+
+							} else {
+
+								logWarn('No tags found for card in channels view:', itemContainers[i]);
+							}
 						}
 
-					} else {
-
-						logWarn('No tags found for card in categories view:', itemContainers[i]);
-					}
-
-				/* END: tags */
+					/* END: tags */
+				}
 
 				if (itemData !== null) {
 
@@ -1033,6 +1237,36 @@ function filterItems(items) {
 
 		break;
 
+		case 'categories':
+
+			if (typeof currentItemType !== 'string') {
+
+				logError('Current item type is illegal:', currentItemType);
+				return remainingItems;
+			}
+
+			for (let i = 0; i < itemsLength; i++) {
+
+				const entry = items[i];
+
+				if (
+					(isBlacklistedItem(entry.item, currentItemType) === true) ||
+					(isBlacklistedTag(entry.tags) === true)
+				 ) {
+
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted item:', entry.item, entry.node);
+					}
+
+				} else {
+
+					remainingItems.push(entry);
+				}
+			}
+
+		break;
+
 		case 'channels':
 
 			for (let i = 0; i < itemsLength; i++) {
@@ -1075,26 +1309,45 @@ function filterItems(items) {
 
 		break;
 
-		case 'categories':
-
-			if (typeof currentItemType !== 'string') {
-
-				logError('Current item type is illegal:', currentItemType);
-				return remainingItems;
-			}
+		case 'videos':
 
 			for (let i = 0; i < itemsLength; i++) {
 
 				const entry = items[i];
 
-				if (
-					(isBlacklistedItem(entry.item, currentItemType) === true) ||
-					(isBlacklistedTag(entry.tags) === true)
-				 ) {
+				if (isBlacklistedChannel(entry.item) === true) {
 
 					if (removeItem(entry.node) === true) {
 
-						logInfo('Blacklisted item:', entry.item, entry.node);
+						logInfo('Blacklisted channel:', entry.item, entry.node);
+					}
+
+				} else if (isBlacklistedTag(entry.tags) === true) {
+
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted by tag:', entry.tags, entry.node);
+					}
+
+				} else {
+
+					remainingItems.push(entry);
+				}
+			}
+
+		break;
+
+		case 'clips':
+
+			for (let i = 0; i < itemsLength; i++) {
+
+				const entry = items[i];
+
+				if (isBlacklistedChannel(entry.item) === true) {
+
+					if (removeItem(entry.node) === true) {
+
+						logInfo('Blacklisted channel:', entry.item, entry.node);
 					}
 
 				} else {
@@ -1262,6 +1515,8 @@ function attachHideButtons(items) {
 		break;
 
 		case 'channels':
+		case 'videos':
+		case 'clips':
 			hideItem.className 		= 'uttv-hide-item channel';
 			hideItem.textContent 	= 'X';
 			hideItem.title 			= chrome.i18n.getMessage('label_HideChannel');
@@ -1359,6 +1614,7 @@ function attachHideButtons(items) {
 			break;
 
 			case 'channels':
+			case 'videos':
 
 				tagContainer = items[i].node.parentNode;
 				if (tagContainer === null) {
@@ -1466,9 +1722,22 @@ function toggleHideButtonRendering() {
 function onHideItem() {
 	logTrace('invoking onHideItem()');
 
-	if (typeof currentItemType !== 'string') {
+	let itemType = currentItemType;
 
-		logError('Current item type is illegal:', currentItemType);
+	// merge item types
+	switch (itemType) {
+
+		case 'videos':
+		case 'clips':
+
+			itemType = 'channels';
+
+		break;
+	}
+
+	if (typeof itemType !== 'string') {
+
+		logError('Current item type is illegal:', itemType);
 		return;
 	}
 
@@ -1477,11 +1746,11 @@ function onHideItem() {
 	if ((typeof item !== 'string') || (item.length === 0)) { return; }
 
 	// update cache
-	if (storedBlacklistedItems[currentItemType] === undefined) {
+	if (storedBlacklistedItems[itemType] === undefined) {
 
-		storedBlacklistedItems[currentItemType] = {};
+		storedBlacklistedItems[itemType] = {};
 	}
-	storedBlacklistedItems[currentItemType][item] = 1;
+	storedBlacklistedItems[itemType][item] = 1;
 
 	// update storage
 	putBlacklistedItems(storedBlacklistedItems);
@@ -1490,6 +1759,17 @@ function onHideItem() {
 	if (removeItem(this) === true) {
 
 		logVerbose('Node removed due to item being blacklisted:', this);
+
+		switch (currentItemType) {
+
+			case 'videos':
+			case 'clips':
+
+				// trigger full filtering since the just blacklisted channel might be present in other items
+				filterDirectory();
+
+			break;
+		}
 	}
 }
 
@@ -1571,6 +1851,39 @@ function removeItem(node) {
 
 		break;
 
+		case 'categories':
+
+			topNode = node;
+
+			while (true) {
+
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
+
+				if (
+					(topNode.getAttribute('data-target') !== null) &&
+					(
+						(typeof topNode.getAttribute('style') === 'string') &&
+						(topNode.getAttribute('style').indexOf('order:') === 0)
+					)
+				) {
+
+					node.setAttribute('data-uttv-hidden', '');
+
+					topNode.style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+
 		case 'channels':
 
 			topNode = node;
@@ -1608,7 +1921,7 @@ function removeItem(node) {
 
 		break;
 
-		case 'categories':
+		case 'videos':
 
 			topNode = node;
 
@@ -1618,15 +1931,52 @@ function removeItem(node) {
 					(topNode === undefined) ||
 					(topNode === document.documentElement)
 				) {
+
 					logError('Could not find the expected parent node to remove item:', node);
 					break;
 				}
 
+				let attr = topNode.getAttribute('data-a-target');
 				if (
-					(topNode.getAttribute('data-target') !== null) &&
+					(attr !== null) &&
 					(
-						(typeof topNode.getAttribute('style') === 'string') &&
-						(topNode.getAttribute('style').indexOf('order:') === 0)
+						(typeof attr === 'string') &&
+						(attr.indexOf('video-tower-card-') === 0)
+					)
+				) {
+
+					node.setAttribute('data-uttv-hidden', '');
+
+					topNode.style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+
+		case 'clips':
+
+			topNode = node;
+
+			while (true) {
+
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
+
+				let attr = topNode.getAttribute('data-a-target');
+				if (
+					(attr !== null) &&
+					(
+						(typeof attr === 'string') &&
+						(attr.indexOf('clips-card-') === 0)
 					)
 				) {
 
@@ -1742,15 +2092,22 @@ function listenToScroll() {
 
 			break;
 
+			case 'categories':
+
+				itemsInDOM = mainNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+
+			break;
+
 			case 'channels':
 
 				itemsInDOM = mainNode.querySelectorAll('div.stream-thumbnail:not([style*="display"]), div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
 
 			break;
 
-			case 'categories':
+			case 'videos':
+			case 'clips':
 
-				itemsInDOM = mainNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+				itemsInDOM = mainNode.querySelectorAll('a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])').length;
 
 			break;
 		}

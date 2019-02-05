@@ -1,4 +1,4 @@
-﻿// jshint esversion: 6
+// jshint esversion: 6
 // jshint -W069
 
 // debug
@@ -202,7 +202,7 @@ function logWarn() {
 	args.unshift('UTTV WARN:');
 
 	// console.warn would show up in the extension overview
-	console.log.apply(console, args);
+	console.warn.apply(console, args);
 }
 
 function logError() {
