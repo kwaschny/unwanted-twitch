@@ -35,7 +35,7 @@
 	// number of items currently registered (used to detect changes)
 	let currentItemsCount = 0;
 
-	// currently detected slot type, one of: 'frontpage', 'categories', 'channels', 'videos', 'clips' or null
+	// currently detected slot type, one of: 'frontpage', 'categories', 'channels', 'videos', 'clips', 'following' or null
 	let currentItemType = getItemType(currentPage);
 
 	// collection of blacklisted items, serves as local cache
@@ -81,6 +81,12 @@ function getItemType(page) {
 
 		case '/directory/all':
 			return 'channels';
+
+		case '/directory/following':
+		case '/directory/following/live':
+		case '/directory/following/hosts':
+		case '/directory/following/games':
+			return 'following';
 
 		default:
 			if (RegExp('^/directory/(all|game)/').test(page) === true) {
@@ -420,6 +426,38 @@ function onPageChange(page) {
 				}
 
 			break;
+
+			case 'following':
+
+				indicator = mainNode.querySelector('a[data-a-target="preview-card-image-link"]');
+				if (indicator !== null) {
+
+					const placeholderNode = rootNode.querySelector('.tw-placeholder');
+					if (placeholderNode !== null) {
+
+						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+						return;
+					}
+
+					window.clearInterval(onPageChangeInterval);
+					pageLoads = false;
+					logTrace('polling stopped in onPageChange(): page loaded');
+
+					// invoke directory filter
+					filterDirectory();
+
+					// invoke recommendations filter
+					filterRecommendations();
+					observeRecommendations();
+				}
+
+			break;
+
+			default:
+
+				logError('Attempted to detect page loading for unhandled item type:', currentItemType, page);
+
+			break;
 		}
 
 		// prevent waiting infinitely for page load in case the content is unknown
@@ -444,6 +482,27 @@ function placeManagementButton() {
 
 	switch (currentItemType) {
 
+		case 'frontpage':
+		case 'following':
+			return false;
+
+		case 'categories':
+		case 'channels':
+
+			filtersAreaSelector = 'div.browse-header__filters, div.directory-header__filters';
+			filtersArea 		= mainNode.querySelector(filtersAreaSelector);
+
+			if (filtersArea !== null) {
+
+				return buildManagementButton(filtersArea);
+
+			} else {
+
+				logWarn('Filters not found. Expected:', filtersAreaSelector);
+			}
+
+		break;
+
 		case 'videos':
 		case 'clips':
 
@@ -466,17 +525,7 @@ function placeManagementButton() {
 
 		default:
 
-			filtersAreaSelector = 'div.browse-header__filters, div.directory-header__filters';
-			filtersArea 		= mainNode.querySelector(filtersAreaSelector);
-
-			if (filtersArea !== null) {
-
-				return buildManagementButton(filtersArea);
-
-			} else {
-
-				logWarn('Filters not found. Expected:', filtersAreaSelector);
-			}
+			logError('Attempted to place management button for unhandled item type:', currentItemType);
 
 		break;
 	}
@@ -1012,7 +1061,7 @@ function getItems() {
 					}
 
 					itemData = {
-						item: 		itemName.replace('/', ''),
+						item: 		extractItemName(itemName),
 						subItem: 	subItem,
 						tags: 		[],
 						isRerun: 	false,
@@ -1106,7 +1155,7 @@ function getItems() {
 					const itemName = itemNode.getAttribute('href');
 
 					itemData = {
-						item: 		itemName.replace('/', ''),
+						item: 		extractItemName(itemName),
 						subItem: 	null,
 						tags: 		[],
 						isRerun: 	false,
@@ -1161,12 +1210,153 @@ function getItems() {
 			}
 
 		break;
+
+		case 'following':
+
+			// items
+			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
+			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
+			itemContainersLength 	= itemContainers.length;
+
+			if (itemContainersLength === 0) {
+
+				logError('Item containers not found in directory container. Expected:', itemContainersSelector);
+				return [];
+			}
+
+			for (let i = 0; i < itemContainersLength; i++) {
+
+				let itemData = null;
+
+				// card
+				let itemName = itemContainers[i].getAttribute('href');
+				if ((typeof itemName === 'string') && (itemName.length > 0)) {
+
+					let subItem = null;
+
+					// try to find channel and category
+					let subNode = itemContainers[i].parentNode.parentNode;
+
+					itemName = subNode.querySelector('a[data-a-target="preview-card-channel-link"]');
+
+					subNode = subNode.querySelector('a[data-a-target="preview-card-game-link"]');
+					if (subNode !== null) {
+
+						subItem = subNode.textContent;
+					}
+
+					itemData = {
+						item: 		extractItemName(itemName),
+						subItem: 	extractItemName(subItem),
+						tags: 		[],
+						isRerun: 	false,
+						node: 		itemContainers[i]
+					};
+
+					/* BEGIN: tags */
+
+						let tagContainer = itemContainers[i].parentNode;
+						if (tagContainer === null) {
+
+							logWarn('No tags found for card in channels view:', itemContainers[i]);
+							continue;
+						}
+
+						tagContainer = tagContainer.nextSibling;
+						if (tagContainer !== null) {
+
+							const tagsSelector 	= '.tw-tag__content div';
+							const tags 			= tagContainer.querySelectorAll(tagsSelector);
+							const tagsLength 	= tags.length;
+
+							if (tagsLength > 0) {
+
+								for (let n = 0; n < tagsLength; n++) {
+
+									const tagName = tags[n].textContent;
+
+									itemData.tags.push(tagName);
+								}
+
+							} else {
+
+								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+							}
+
+						} else {
+
+							logWarn('No tags found for card in channels view:', itemContainers[i]);
+						}
+
+					/* END: tags */
+				}
+
+				if (itemData !== null) {
+
+					items.push(itemData);
+				}
+			}
+
+		break;
+
+		default:
+
+			logError('Attempted to get items for unhandled item type:', currentItemType);
+
+		break;
 	}
 
 	currentItemsCount = items.length;
 
-	logVerbose('Items found on the current page:', items);
+	if (items.length > 0) {
+
+		logVerbose('Items found on the current page:', items);
+
+	} else {
+
+		logWarn('No items found on the current page!');
+	}
+
 	return items;
+}
+
+/**
+ * Attempts to extract the item name from the provided node.
+ */
+function extractItemName(node) {
+
+	let buffer = node;
+
+	if (!buffer) {
+
+		return null;
+	}
+
+	if (buffer.nodeType === 1) {
+
+		buffer = node.getAttribute('href');
+		if (buffer === null) {
+
+			buffer = node.textContent;
+		}
+	}
+
+	if (typeof buffer === 'string') {
+
+		buffer = buffer.split('/');
+
+		for (let i = 0; i < buffer.length; i++) {
+
+			let value = buffer[i].trim();
+
+			if (value.length > 0) {
+
+				return value;
+			}
+		}
+	}
+
+	return null;
 }
 
 /**
@@ -1268,6 +1458,7 @@ function filterItems(items) {
 		break;
 
 		case 'channels':
+		case 'following':
 
 			for (let i = 0; i < itemsLength; i++) {
 
@@ -1355,6 +1546,12 @@ function filterItems(items) {
 					remainingItems.push(entry);
 				}
 			}
+
+		break;
+
+		default:
+
+			logError('Attempted to filter items for unhandled item type:', currentItemType);
 
 		break;
 	}
@@ -1453,7 +1650,7 @@ function filterRecommendations() {
 
 			for (let i = 0; i < recommAltLength; i++) {
 
-				let channelTitle = recommAlt[i].getAttribute('href').replace(/^\//, '');
+				let channelTitle = extractItemName(recommAlt[i]);
 
 				items.push({
 					channel: 	channelTitle,
@@ -1506,6 +1703,7 @@ function attachHideButtons(items) {
 	switch (currentItemType) {
 
 		case 'frontpage':
+		case 'following':
 			return;
 
 		case 'categories':
@@ -1523,6 +1721,8 @@ function attachHideButtons(items) {
 		break;
 
 		default:
+
+			logError('Attempted to attach hide buttons (items) for unhandled item type:', currentItemType);
 			return;
 	}
 
@@ -1675,6 +1875,12 @@ function attachHideButtons(items) {
 
 					logWarn('No tags found for card in channels view:', items[i].node);
 				}
+
+			break;
+
+			default:
+
+				logError('Attempted to attach hide buttons (tags) for unhandled item type:', currentItemType);
 
 			break;
 		}
@@ -1990,6 +2196,42 @@ function removeItem(node) {
 			}
 
 		break;
+
+		case 'following':
+
+			topNode = node;
+
+			while (true) {
+
+				if (
+					(topNode === undefined) ||
+					(topNode === document.documentElement)
+				) {
+
+					logError('Could not find the expected parent node to remove item:', node);
+					break;
+				}
+
+				if (
+					(topNode.classList.contains('preview-card') === true)
+				) {
+
+					node.setAttribute('data-uttv-hidden', '');
+
+					topNode.style.display = 'none';
+					return true;
+				}
+
+				topNode = topNode.parentNode;
+			}
+
+		break;
+
+		default:
+
+			logError('Attempted to remove item for unhandled item type:', currentItemType, node);
+
+		break;
 	}
 
 	return false;
@@ -2106,8 +2348,15 @@ function listenToScroll() {
 
 			case 'videos':
 			case 'clips':
+			case 'following':
 
 				itemsInDOM = mainNode.querySelectorAll('a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])').length;
+
+			break;
+
+			default:
+
+				logError('Attempted to check slots for unhandled item type:', currentItemType);
 
 			break;
 		}
