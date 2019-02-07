@@ -6,6 +6,7 @@
 
 	let rootNode;
 	let mainNode;
+	let initRun = false;
 
 	// determines if the directory filter is enabled
 	let enabled = true;
@@ -24,10 +25,9 @@
 
 	// interval handles for page load detection
 	let monitorPagesInterval;
-	let initInterval;
 	let onPageChangeInterval;
 	let onPageChangeCounter = 0;
-	let checkSlotsInterval;
+	let checkItemSlotsInterval;
 
 	// indicates that the filtering is in progress
 	let filterRunning = false;
@@ -89,7 +89,12 @@ function getItemType(page) {
 			return 'following';
 
 		default:
-			if (RegExp('^/directory/(all|game)/').test(page) === true) {
+			if (RegExp('^/directory/.+').test(page) === true) {
+
+				if (page.indexOf('/tags/') >= 0) {
+
+					return 'categories';
+				}
 
 				if (page.indexOf('/videos/') >= 0) {
 
@@ -194,40 +199,12 @@ function initExtensionState(callback) {
 function init() {
 	logTrace('invoking init()');
 
-	if (enabled === false) { return; }
+	if (initRun === true) {
 
-	const pageSupported = isSupportedPage(currentPage);
-
-	/* BEGIN: root */
-
-		const rootNodeSelector 	= '#root';
-		rootNode 				= document.querySelector(rootNodeSelector);
-
-		if (rootNode === null) {
-
-			logError('Root not found. Expected:', rootNodeSelector);
-			return;
-		}
-
-	/* END: root */
-
-	/* BEGIN: main */
-
-		const mainNodeSelector 	= 'main div.simplebar-scroll-content';
-		mainNode 				= document.querySelector(mainNodeSelector);
-
-		if (mainNode === null) {
-
-			logError('Main not found. Expected:', mainNodeSelector);
-			return;
-		}
-
-	/* END: main */
-
-	if (pageSupported === true) {
-
-		listenToScroll();
+		logWarn('Extension already initialized. Invocation of init() aborted.');
+		return;
 	}
+	initRun = true;
 
 	// prepare blacklist (regardless of the current page support)
 	getBlacklistedItems(function callback_getBlacklistedItems(blacklistedItems) {
@@ -240,46 +217,34 @@ function init() {
 		storedBlacklistedItems = blacklistedItems;
 		logInfo('Blacklist loaded:', blacklistedItems);
 
-		if (pageSupported === true) {
+		/* BEGIN: root */
 
-			pageLoads = true;
+			const rootNodeSelector 	= '#root';
+			rootNode 				= document.querySelector(rootNodeSelector);
 
-			// wait for page to load the DOM completely, the loading is deferred, so we need to wait for an indicator
-			const pageLoadMonitorInterval = 100;
-			window.clearInterval(initInterval);
-			initInterval = window.setInterval(function init_waitingForPageLoad() {
-				logTrace('polling started in init(): waiting for page to load');
+			if (rootNode === null) {
 
-				// this is the indicator we are looking for, the attribute is set once the page has fully loaded
-				const indicator = rootNode.getAttribute('data-a-page-loaded');
-				if (indicator !== null) {
+				logError('Root not found. Expected:', rootNodeSelector);
+				return;
+			}
 
-					const placeholderNode = rootNode.querySelector('.tw-placeholder');
-					if (placeholderNode !== null) {
+		/* END: root */
 
-						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-						return;
-					}
+		/* BEGIN: main */
 
-					window.clearInterval(initInterval);
-					pageLoads = false;
-					logTrace('polling stopped in init(): page loaded');
+			const mainNodeSelector 	= 'main div.simplebar-scroll-content';
+			mainNode 				= document.querySelector(mainNodeSelector);
 
-					placeManagementButton();
+			if (mainNode === null) {
 
-					// invoke directory filter
-					const remainingItems = filterDirectory();
+				logError('Main not found. Expected:', mainNodeSelector);
+				return;
+			}
 
-					// attach hide buttons to the remaining items
-					attachHideButtons(remainingItems);
+		/* END: main */
 
-					// invoke recommendations filter
-					filterRecommendations();
-					observeRecommendations();
-				}
-
-			}, pageLoadMonitorInterval);
-		}
+		// start processing
+		onPageChange(currentPage);
 	});
 }
 
@@ -289,19 +254,30 @@ function init() {
 function onPageChange(page) {
 	logTrace('invoking onPageChange($)', page);
 
-	if (enabled === false) { return; }
+	// prevent running multiple page changes at once
+	if (pageLoads === true) {
 
-	if (pageLoads === true) { return; }
+		logWarn('Attempted to run another page change while the current page is still loading.');
+		return;
+	}
 
-	if (isSupportedPage(page) === false) { return; }
+	if (isSupportedPage(page) === false) {
+
+		window.clearInterval(onPageChangeInterval);
+		logWarn('Stopped onPageChange() polling, because the current page IS NOT supported.');
+		return;
+	}
 
 	pageLoads = true;
+
+	// reset registered items
+	currentItemsCount = 0;
 
 	onPageChangeCounter 			= 0;
 	const pageLoadMonitorInterval 	= 100;
 	const pageLoadTimeout 			= (20000 / pageLoadMonitorInterval);
 
-	// wait for page to load the DOM completely, the loading is deferred, so we need to wait for the first slot
+	// wait for page to load the DOM completely, the loading is deferred, so we need to wait for the first item slot
 	window.clearInterval(onPageChangeInterval);
 	onPageChangeInterval = window.setInterval(function onPageChange_waitingForPageLoad() {
 		logTrace('polling started in onPageChange(): waiting for page to load');
@@ -361,6 +337,9 @@ function onPageChange(page) {
 					// invoke recommendations filter
 					filterRecommendations();
 					observeRecommendations();
+
+					// detect scrolling
+					listenToScroll();
 				}
 
 			break;
@@ -392,6 +371,9 @@ function onPageChange(page) {
 					// invoke recommendations filter
 					filterRecommendations();
 					observeRecommendations();
+
+					// detect scrolling
+					listenToScroll();
 				}
 
 			break;
@@ -423,6 +405,9 @@ function onPageChange(page) {
 					// invoke recommendations filter
 					filterRecommendations();
 					observeRecommendations();
+
+					// detect scrolling
+					listenToScroll();
 				}
 
 			break;
@@ -455,6 +440,8 @@ function onPageChange(page) {
 
 			default:
 
+				window.clearInterval(onPageChangeInterval);
+				pageLoads = false;
 				logError('Attempted to detect page loading for unhandled item type:', currentItemType, page);
 
 			break;
@@ -465,7 +452,7 @@ function onPageChange(page) {
 
 			window.clearInterval(onPageChangeInterval);
 			pageLoads = false;
-			logWarn('polling stopped in onPageChange(): page did not load within 20 seconds');
+			logWarn('Polling stopped in onPageChange(): Page did not load within 20 seconds.');
 		}
 
 	}, pageLoadMonitorInterval);
@@ -1107,17 +1094,9 @@ function getItems() {
 
 					/* BEGIN: check for rerun */
 
-						const streamTypeSelector 	= 'div.stream-type-indicator';
-						const streamTypeNode 		= itemContainers[i].querySelector(streamTypeSelector);
+						const streamRerunSelector = 'div.stream-type-indicator--rerun';
 
-						if (streamTypeNode !== null) {
-
-							itemData.isRerun = streamTypeNode.classList.contains('stream-type-indicator--rerun');
-
-						} else {
-
-							logWarn('No stream type indicator found for card in categories view:', itemContainers[i]);
-						}
+						itemData.isRerun = (itemContainers[i].querySelector(streamRerunSelector) !== null);
 
 					/* END: check for rerun */
 				}
@@ -2311,16 +2290,22 @@ function removeRecommendation(node, type) {
 function listenToScroll() {
 	logTrace('invoking listenToScroll()');
 
-	if (enabled === false) { return; }
-
 	const scrollChangeMonitoringInterval = 1000;
-	window.clearInterval(checkSlotsInterval);
-	checkSlotsInterval = window.setInterval(function checkSlots() {
+	window.clearInterval(checkItemSlotsInterval);
+	checkItemSlotsInterval = window.setInterval(function checkItemSlots() {
 
 		// prevent monitoring during page load
 		if (pageLoads === true) {
 
-			logWarn('Invocation of checkSlots() skipped, page load is in progress.');
+			logWarn('Invocation of checkItemSlots() aborted, page load is in progress.');
+			window.clearInterval(checkItemSlotsInterval);
+			return;
+		}
+
+		if (isSupportedPage(currentPage) === false) {
+
+			logWarn('Invocation of checkItemSlots() aborted, page IS NOT supported.');
+			window.clearInterval(checkItemSlotsInterval);
 			return;
 		}
 
@@ -2363,7 +2348,7 @@ function listenToScroll() {
 
 		if ((itemsInDOM > 0) && (itemsInDOM !== currentItemsCount)) {
 
-			// number of items changed, thus assuming that slots were added
+			// number of items changed, thus assuming that item slots were added
 			logVerbose('Scrolling detected!', '[in DOM: ' + itemsInDOM + ']', '[in MEM: ' + currentItemsCount + ']');
 			onScroll();
 		}
@@ -2470,11 +2455,15 @@ function observeRecommendations() {
 window.addEventListener('load', function callback_windowLoad() {
 	logTrace('event invoked: window.load()');
 
-	if (enabled === false) { return; }
-
 	// init extension's state
 	initExtensionState(function callback_initExtensionState(enabled, renderButtons) {
 		logTrace('callback invoked: initExtensionState($)', enabled, renderButtons);
+
+		if (enabled === false) {
+
+			logWarn('Page initialization aborted. Extension is not enabled.');
+			return;
+		}
 
 		logInfo('Page initialization for:', currentPage);
 		init();
@@ -2488,7 +2477,12 @@ const pageChangeMonitorInterval = 100;
 window.clearInterval(monitorPagesInterval);
 monitorPagesInterval = window.setInterval(function monitorPages() {
 
-	if (enabled === false) { return; }
+	if (enabled === false) {
+
+		window.clearInterval(monitorPagesInterval);
+		logWarn('Page monitoring aborted. Extension is not enabled.');
+		return;
+	}
 
 	if (window.location.pathname !== currentPage) {
 
@@ -2546,5 +2540,5 @@ chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request)
 		return;
 	}
 
-	logWarn('Unknown command received. The following command was ignored:', request);
+	logError('Unknown command received. The following command was ignored:', request);
 });
