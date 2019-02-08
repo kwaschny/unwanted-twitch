@@ -11,8 +11,26 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
-## Test Case: Blacklisting channels works
+## Test Case: Blacklisting live channels works
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all).
+- [ ] A label named "X" is on the top right corner of each cover.
+2. Click on one of the labels.
+- [ ] The cover disappeared without leaving behind an empty space.
+3. Reload the page.
+- [ ] The cover is no longer visible.
+
+## Test Case: Blacklisting channel videos works
+1. Click on one of the categories in [twitch.tv/directory](https://www.twitch.tv/directory).
+2. Select "Videos" in the filter dropdown.
+- [ ] A label named "X" is on the top right corner of each cover.
+2. Click on one of the labels.
+- [ ] The cover disappeared without leaving behind an empty space.
+3. Reload the page.
+- [ ] The cover is no longer visible.
+
+## Test Case: Blacklisting channel clips works
+1. Click on one of the categories in [twitch.tv/directory](https://www.twitch.tv/directory).
+2. Select "Clips" in the filter dropdown.
 - [ ] A label named "X" is on the top right corner of each cover.
 2. Click on one of the labels.
 - [ ] The cover disappeared without leaving behind an empty space.
@@ -37,11 +55,51 @@ If you load the add-on via `about:debugging`, make sure to close that tab or at 
 3. Reload the page.
 - [ ] The cover is no longer visible.
 
+## Test Case: Blacklisting tags works in channel videos directory
+1. Click on one of the categories in [twitch.tv/directory](https://www.twitch.tv/directory).
+2. Select "Videos" in the filter dropdown.
+- [ ] A label named "X" is on the right side (Firefox: at the bottom) of each tag label below the covers.
+3. Click on one of the labels.
+- [ ] A prompt asks you to confirm your action.
+- [ ] The cover (and any other cover with the same tag) disappeared without leaving behind an empty space.
+4. Reload the page.
+- [ ] The cover is no longer visible.
+
+## Test Case: Blacklisting works after picking a category tag in the search result
+1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
+2. Type in a game name in the topmost searchbar, that returns results with tags.
+3. Click on one of the game's tags.
+4. The directory view opens and shows a selection of categories with the selected tag. Make sure the resulting view contains blacklisted categories or tags.
+- [ ] Blacklisting channels and tags works.
+
+## Test Case: Blacklisting works after picking a channel tag in the search result
+1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
+2. Type in a language in the topmost searchbar, that returns results with tags.
+3. Click on one of the channel's tags.
+4. The directory view opens and shows a selection of channels with the selected tag. Make sure the resulting view contains blacklisted channels or tags.
+- [ ] Blacklisting channels and tags works.
+
 ## Test Case: Hiding reruns works in channels directory
 1. Open [twitch.tv/directory/all](https://www.twitch.tv/directory/all) and spot a stream rerun.
 2. Open the Blacklist management and enable "Hide Stream Reruns" by checking it.
 3. Reload the page.
 - [ ] The spotted stream rerun cover is no longer visible.
+
+## Test Case: Blacklisting works in "Following Overview"
+1. Open [twitch.tv/directory/directory/following](https://www.twitch.tv/directory/following).
+- [ ] Blacklisted channels, categories and tags are hidden.
+
+## Test Case: Blacklisting works in "Following Channels"
+1. Open [twitch.tv/directory/directory/live](https://www.twitch.tv/directory/live).
+- [ ] Blacklisted channels, categories and tags are hidden.
+
+## Test Case: Blacklisting works in "Following Hosts"
+1. Open [twitch.tv/directory/directory/hosts](https://www.twitch.tv/directory/hosts).
+- [ ] Blacklisted channels, categories and tags are hidden. (Note: The hosted channel will be blacklisted, not the hosting one.)
+
+## Test Case: Blacklisting works in "Following Categories"
+1. Open [twitch.tv/directory/directory/games](https://www.twitch.tv/directory/games).
+- [ ] Blacklisted categories are hidden.
 
 ## Test Case: Sidebar is filtered in categories directory
 1. Open [twitch.tv/directory](https://www.twitch.tv/directory).
