@@ -54,9 +54,9 @@ function isSupportedPage(page) {
 	const result = (itemType !== null);
 
 	if (result === true) {
-		logVerbose('Current page IS supported:', page);
+		logVerbose('Current page IS supported:', page, itemType);
 	} else {
-		logWarn('Current page IS NOT supported:', page);
+		logWarn('Current page IS NOT supported:', page, itemType);
 	}
 
 	return result;
@@ -91,7 +91,11 @@ function getItemType(page) {
 		default:
 			if (RegExp('^/directory/.+').test(page) === true) {
 
-				if (page.indexOf('/tags/') >= 0) {
+				if (page.indexOf('/all/tags/') >= 0) {
+
+					return 'channels';
+
+				} else if (page.indexOf('/tags/') >= 0) {
 
 					return 'categories';
 				}
