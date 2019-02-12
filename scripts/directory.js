@@ -1554,13 +1554,6 @@ function filterItems(items) {
 function filterSidebar() {
 	logTrace('invoking filterSidebar()');
 
-	switch (currentItemType) {
-
-		case 'frontpage':
-			logWarn('Sidebar not present on frontpage. Filtering aborted.');
-			return;
-	}
-
 	const itemsSelector 	= 'div.side-nav .side-nav-card:not([data-uttv-hidden])';
 	const items 			= rootNode.querySelectorAll(itemsSelector);
 	const itemsLength 		= items.length;
@@ -1643,7 +1636,7 @@ function filterSidebar() {
 
 	} else {
 
-		logWarn('Sidebar items not found. Expected:', itemsSelector, sidebarNode);
+		logWarn('Sidebar items not found. Expected:', itemsSelector);
 	}
 }
 
