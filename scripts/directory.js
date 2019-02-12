@@ -311,6 +311,10 @@ function onPageChange(page) {
 
 					// invoke directory filter
 					filterDirectory();
+
+					// invoke sidebar filter
+					filterSidebar();
+					observeSidebar();
 				}
 
 				break;
@@ -1554,13 +1558,6 @@ function filterItems(items) {
 function filterSidebar() {
 	logTrace('invoking filterSidebar()');
 
-	switch (currentItemType) {
-
-		case 'frontpage':
-			logWarn('Sidebar not present on frontpage. Filtering aborted.');
-			return;
-	}
-
 	const itemsSelector 	= 'div.side-nav .side-nav-card:not([data-uttv-hidden])';
 	const items 			= rootNode.querySelectorAll(itemsSelector);
 	const itemsLength 		= items.length;
@@ -1643,7 +1640,7 @@ function filterSidebar() {
 
 	} else {
 
-		logWarn('Sidebar items not found. Expected:', itemsSelector, sidebarNode);
+		logWarn('Sidebar items not found. Expected:', itemsSelector);
 	}
 }
 
@@ -2351,13 +2348,6 @@ function triggerScroll() {
  */
 function observeSidebar() {
 	logTrace('invoking observeSidebar()');
-
-	switch (currentItemType) {
-
-		case 'frontpage':
-			logWarn('Sidebar not present on frontpage. Observing aborted.');
-			return;
-	}
 
 	const targetSelector 	= 'div.side-nav';
 	const target 			= rootNode.querySelector(targetSelector);
