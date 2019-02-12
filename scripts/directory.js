@@ -6,6 +6,8 @@
 
 	let rootNode;
 	let mainNode;
+
+	// flag to prevent initialization more than once
 	let initRun = false;
 
 	// determines if the directory filter is enabled
@@ -338,9 +340,9 @@ function onPageChange(page) {
 					// attach hide buttons to the remaining items
 					attachHideButtons(remainingItems);
 
-					// invoke recommendations filter
-					filterRecommendations();
-					observeRecommendations();
+					// invoke sidebar filter
+					filterSidebar();
+					observeSidebar();
 
 					// detect scrolling
 					listenToScroll();
@@ -372,9 +374,9 @@ function onPageChange(page) {
 					// attach hide buttons to the remaining items
 					attachHideButtons(remainingItems);
 
-					// invoke recommendations filter
-					filterRecommendations();
-					observeRecommendations();
+					// invoke sidebar filter
+					filterSidebar();
+					observeSidebar();
 
 					// detect scrolling
 					listenToScroll();
@@ -406,9 +408,9 @@ function onPageChange(page) {
 					// attach hide buttons to the remaining items
 					attachHideButtons(remainingItems);
 
-					// invoke recommendations filter
-					filterRecommendations();
-					observeRecommendations();
+					// invoke sidebar filter
+					filterSidebar();
+					observeSidebar();
 
 					// detect scrolling
 					listenToScroll();
@@ -435,9 +437,9 @@ function onPageChange(page) {
 					// invoke directory filter
 					filterDirectory();
 
-					// invoke recommendations filter
-					filterRecommendations();
-					observeRecommendations();
+					// invoke sidebar filter
+					filterSidebar();
+					observeSidebar();
 				}
 
 			break;
@@ -1547,126 +1549,101 @@ function filterItems(items) {
 }
 
 /**
- * Removes all blacklisted items in the recommendation sidebar.
+ * Removes all blacklisted items in the sidebar.
  */
-function filterRecommendations() {
-	logTrace('invoking filterRecommendations()');
+function filterSidebar() {
+	logTrace('invoking filterSidebar()');
 
 	switch (currentItemType) {
 
 		case 'frontpage':
-			logWarn('Recommendations not present on frontpage. Filtering aborted.');
+			logWarn('Sidebar not present on frontpage. Filtering aborted.');
 			return;
 	}
 
-	const recommSelector 	= 'div[data-a-target="side-nav-bar"] div.simplebar-content div.tw-mg-b-2 div[data-a-target="side-nav-card-metadata"]';
-	const recomm 			= rootNode.querySelectorAll(recommSelector);
-	const recommLength 		= recomm.length;
+	const itemsSelector 	= 'div.side-nav .side-nav-card:not([data-uttv-hidden])';
+	const items 			= rootNode.querySelectorAll(itemsSelector);
+	const itemsLength 		= items.length;
 
-	let items = [];
+	if (itemsLength > 0) {
 
-	// expanded
-	if (recommLength > 0) {
+		let result = [];
 
-		for (let i = 0; i < recommLength; i++) {
+		for (let i = 0; i < itemsLength; i++) {
 
-			// channel
-			let channelTitle = recomm[i].querySelector('div[data-a-target="side-nav-title"]');
-			if (channelTitle !== null) {
+			let channel = null;
+			let category = null;
+			const isCollapsed = ((items[i].nodeName === 'A') && (items[i].classList.contains('side-nav-card')));
 
-				channelTitle = channelTitle.getAttribute('title');
-			}
+			if (isCollapsed) {
 
-			// category
-			let categoryTitle = recomm[i].querySelector('div[data-a-target="featured-channel-game-title"]');
-			if (categoryTitle !== null) {
-
-				categoryTitle = categoryTitle.getAttribute('title');
-			}
-
-			items.push({
-				channel: 	channelTitle,
-				category: 	categoryTitle,
-				node: 		recomm[i]
-			});
-		}
-
-		const itemsLength = items.length;
-
-		if (itemsLength > 0) {
-
-			for (let i = 0; i < itemsLength; i++) {
-
-				const entry = items[i];
-
-				if (isBlacklistedCategory(entry.category) === true) {
-
-					if (removeRecommendation(entry.node, 'expanded') === true) {
-
-						logInfo('Blacklisted recommendation:', entry.category);
-					}
-
-				} else if (isBlacklistedChannel(entry.channel) === true) {
-
-					if (removeRecommendation(entry.node, 'expanded') === true) {
-
-						logInfo('Blacklisted recommendation:', entry.channel);
-					}
-				}
-			}
-
-		} else {
-
-			logWarn('No recommendations (expanded) found.', recomm);
-		}
-
-	// collapsed
-	} else {
-
-		logWarn('Recommendations (expanded) not found. Expected:', recommSelector);
-
-		const recommAltSelector 	= 'div[data-test-selector="side-nav-card-collapsed"] a[href]';
-		const recommAlt 			= rootNode.querySelectorAll(recommAltSelector);
-		const recommAltLength 		= recommAlt.length;
-
-		if (recommAltLength > 0) {
-
-			for (let i = 0; i < recommAltLength; i++) {
-
-				let channelTitle = extractItemName(recommAlt[i]);
-
-				items.push({
-					channel: 	channelTitle,
-					node: 		recommAlt[i]
-				});
-			}
-
-			const itemsLength = items.length;
-
-			if (itemsLength > 0) {
-
-				for (let i = 0; i < itemsLength; i++) {
-
-					const entry = items[i];
-
-					if (isBlacklistedChannel(entry.channel) === true) {
-
-						if (removeRecommendation(entry.node, 'collapsed') === true) {
-
-							logInfo('Blacklisted recommendation:', entry.channel);
-						}
-					}
-				}
+				// channel
+				channel = extractItemName(items[i]);
 
 			} else {
 
-				logWarn('No recommendations (collapsed) found.', recomm);
+				// channel
+				channel = items[i].querySelector('a.side-nav-card__link');
+				if (channel !== null) {
+
+					channel = extractItemName(channel);
+				}
+
+				// category
+				category = items[i].querySelector('span[data-a-target="side-nav-game-title"]');
+				if (category !== null) {
+
+					category = extractItemName(category);
+				}
 			}
+
+			// prevent adding empty items
+			if ((channel === null) && (category === null)) {
+
+				continue;
+			}
+
+			result.push({
+				channel: 	channel,
+				category: 	category,
+				node: 		items[i]
+			});
+		}
+
+		const resultLength = result.length;
+
+		if (resultLength > 0) {
+
+			logVerbose('Sidebar items found on the current page:', result);
 
 		} else {
 
-			logWarn('Recommendations (collapsed) not found. Expected:', recommAltSelector);
+			logWarn('No sidebar items found on the current page!');
 		}
+
+		for (let i = 0; i < resultLength; i++) {
+
+			const entry = result[i];
+
+			if (isBlacklistedCategory(entry.category) === true) {
+
+				if (removeSidebarItem(entry.node) === true) {
+
+					logInfo('Blacklisted sidebar item:', entry.category);
+				}
+
+			} else if (isBlacklistedChannel(entry.channel) === true) {
+
+				if (removeSidebarItem(entry.node) === true) {
+
+					logInfo('Blacklisted sidebar item:', entry.channel);
+				}
+			}
+		}
+
+	} else {
+
+		logWarn('Sidebar items not found. Expected:', itemsSelector, sidebarNode);
 	}
 }
 
@@ -1959,6 +1936,8 @@ function onHideItem() {
 
 			break;
 		}
+
+		filterSidebar();
 	}
 }
 
@@ -2221,68 +2200,33 @@ function removeItem(node) {
 }
 
 /**
- * Removes the recommendation node from the DOM.
+ * Removes the sidebar item node from the DOM.
  */
-function removeRecommendation(node, type) {
-	logTrace('invoking removeRecommendation($, $)', node, type);
+function removeSidebarItem(node) {
+	logTrace('invoking removeSidebarItem($)', node);
 
 	let topNode = node;
 
-	switch (type) {
+	while (true) {
 
-		case 'expanded':
+		if (
+			(topNode === undefined) ||
+			(topNode === document.documentElement)
+		) {
+			logError('Could not find the expected parent node to remove item:', node);
+			break;
+		}
 
-			while (true) {
+		if (
+			(topNode.classList.length === 0)
+		) {
 
-				if (
-					(topNode === undefined) ||
-					(topNode === document.documentElement)
-				) {
-					logError('Could not find the expected parent node to remove item:', node);
-					break;
-				}
+			node.setAttribute('data-uttv-hidden', '');
+			topNode.style.display = 'none';
+			return true;
+		}
 
-				if (
-					(Object.keys(topNode.dataset).length === 0) &&
-					(topNode.classList.length === 0)
-				) {
-
-					node.setAttribute('data-uttv-hidden', '');
-					topNode.style.display = 'none';
-					return true;
-				}
-
-				topNode = topNode.parentNode;
-			}
-
-		break;
-
-		case 'collapsed':
-
-			while (true) {
-
-				if (
-					(topNode === undefined) ||
-					(topNode === document.documentElement)
-				) {
-					logError('Could not find the expected parent node to remove item:', node);
-					break;
-				}
-
-				if (
-					(topNode.getAttribute('data-test-selector') === 'side-nav-card-collapsed')
-				) {
-
-					node.setAttribute('data-uttv-hidden', '');
-					topNode.style.display = 'none';
-					return true;
-				}
-
-				topNode = topNode.parentNode;
-			}
-
-		break;
-
+		topNode = topNode.parentNode;
 	}
 
 	return false;
@@ -2403,15 +2347,15 @@ function triggerScroll() {
 }
 
 /**
- * Attaches the observer to the recommendations.
+ * Attaches the observer to the sidebar.
  */
-function observeRecommendations() {
-	logTrace('invoking observeRecommendations()');
+function observeSidebar() {
+	logTrace('invoking observeSidebar()');
 
 	switch (currentItemType) {
 
 		case 'frontpage':
-			logWarn('Recommendations not present on frontpage. Observing aborted.');
+			logWarn('Sidebar not present on frontpage. Observing aborted.');
 			return;
 	}
 
@@ -2420,17 +2364,17 @@ function observeRecommendations() {
 
 	if (target !== null) {
 
-		const observer = new MutationObserver(function callback_observeRecommendations() {
-			logTrace('callback invoked: observeRecommendations()');
+		const observer = new MutationObserver(function callback_observeSidebar() {
+			logTrace('callback invoked: observeSidebar()');
 
-			// trigger recommendations filter
-			filterRecommendations();
+			// trigger filter
+			filterSidebar();
 		});
 		observer.observe(target, { childList: true, subtree: true });
 
 	} else {
 
-		logWarn('Cannot observe recommendations. Expected:', targetSelector);
+		logWarn('Cannot observe sidebar. Expected:', targetSelector);
 	}
 }
 
