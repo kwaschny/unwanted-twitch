@@ -1,7 +1,7 @@
 ﻿{
 	"name": "Unwanted Twitch",
 	"short_name": "Unwanted TTV",
-	"version": "19.2.8",
+	"version": "19.2.12",
 	"description": "__MSG_app_Desc__",
 	"permissions": [ "https://www.twitch.tv/", "storage" ],
 	"default_locale": "en",
