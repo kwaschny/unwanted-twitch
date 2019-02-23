@@ -16,6 +16,9 @@
 	// determines if attached buttons are rendered/visible
 	let renderButtons = true;
 
+	// determines if followed channels shall be hidden
+	let hideFollowing = true;
+
 	// determines if stream reruns shall be hidden
 	let hideReruns = false;
 
@@ -129,6 +132,7 @@ function initExtensionState(callback) {
 	const stateKeys = [
 		'enabled',
 		'renderButtons',
+		'hideFollowing',
 		'hideReruns'
 	];
 
@@ -171,6 +175,25 @@ function initExtensionState(callback) {
 		} else {
 
 			logInfo('Extension\'s render buttons state unknown, assuming:', true);
+		}
+
+		// hideFollowing
+		if (typeof result['hideFollowing'] === 'boolean') {
+
+			hideFollowing = result['hideFollowing'];
+
+			if (result['hideFollowing'] === true) {
+
+				logVerbose('Extension\'s hide following state:', result['hideFollowing']);
+
+			} else {
+
+				logWarn('Extension\'s hide following state:', result['hideFollowing']);
+			}
+
+		} else {
+
+			logInfo('Extension\'s render hide following state unknown, assuming:', true);
 		}
 
 		// hideReruns
@@ -1449,41 +1472,48 @@ function filterItems(items) {
 		case 'channels':
 		case 'following':
 
-			for (let i = 0; i < itemsLength; i++) {
+			if ((currentItemType === 'following') && (hideFollowing === false)) {
 
-				const entry = items[i];
+				logInfo('Instructed to not hide followed channels on page!');
 
-				if (isBlacklistedChannel(entry.item) === true) {
+			} else {
 
-					if (removeItem(entry.node) === true) {
+				for (let i = 0; i < itemsLength; i++) {
 
-						logInfo('Blacklisted channel:', entry.item, entry.node);
+					const entry = items[i];
+
+					if (isBlacklistedChannel(entry.item) === true) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted channel:', entry.item, entry.node);
+						}
+
+					} else if (isBlacklistedCategory(entry.subItem) === true) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted category:', entry.subItem, entry.node);
+						}
+
+					} else if (isBlacklistedTag(entry.tags) === true) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted by tag:', entry.tags, entry.node);
+						}
+
+					} else if ( (hideReruns === true) && (entry.isRerun === true) ) {
+
+						if (removeItem(entry.node) === true) {
+
+							logInfo('Blacklisted for being a rerun:', entry.node);
+						}
+
+					} else {
+
+						remainingItems.push(entry);
 					}
-
-				} else if (isBlacklistedCategory(entry.subItem) === true) {
-
-					if (removeItem(entry.node) === true) {
-
-						logInfo('Blacklisted category:', entry.subItem, entry.node);
-					}
-
-				} else if (isBlacklistedTag(entry.tags) === true) {
-
-					if (removeItem(entry.node) === true) {
-
-						logInfo('Blacklisted by tag:', entry.tags, entry.node);
-					}
-
-				} else if ( (hideReruns === true) && (entry.isRerun === true) ) {
-
-					if (removeItem(entry.node) === true) {
-
-						logInfo('Blacklisted for being a rerun:', entry.node);
-					}
-
-				} else {
-
-					remainingItems.push(entry);
 				}
 			}
 
@@ -1558,7 +1588,19 @@ function filterItems(items) {
 function filterSidebar() {
 	logTrace('invoking filterSidebar()');
 
-	const itemsSelector 	= 'div.side-nav .side-nav-card:not([data-uttv-hidden])';
+	let itemsSelector;
+
+	if (hideFollowing === true) {
+
+		itemsSelector = 'div.side-nav .side-nav-card:not([data-uttv-hidden])';
+
+	} else {
+
+		logInfo('Instructed to not hide followed channels in sidebar!');
+
+		itemsSelector = 'div.side-nav div.tw-mg-b-2 .side-nav-card:not([data-uttv-hidden])';
+	}
+
 	const items 			= rootNode.querySelectorAll(itemsSelector);
 	const itemsLength 		= items.length;
 

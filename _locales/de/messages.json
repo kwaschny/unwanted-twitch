@@ -41,6 +41,9 @@
 	"blacklist_SettingsHeadline": {
 		"message": "Einstellungen"
 	},
+	"blacklist_SettingsHideFollowing": {
+		"message": "Auch Kanäle, denen man folgt, filtern"
+	},
 	"blacklist_SettingsHideReruns": {
 		"message": "Stream-Wiederholungen ausblenden"
 	},

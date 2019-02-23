@@ -208,6 +208,9 @@ function onSave() {
 	// storage mode (store in local storage only)
 	chrome.storage.local.set({ 'useLocalStorage': !useSyncStorageCheckbox.checked }, function() {
 
+		// hide following
+		storageSet({ 'hideFollowing': hideFollowingCheckbox.checked });
+
 		// hide reruns
 		storageSet({ 'hideReruns': hideRerunsCheckbox.checked });
 
@@ -357,6 +360,7 @@ let isModified = false;
 
 /* BEGIN: prepare elements */
 
+	const hideFollowingCheckbox 	= document.getElementById('hideFollowing');
 	const hideRerunsCheckbox 		= document.getElementById('hideReruns');
 	const useSyncStorageCheckbox 	= document.getElementById('useSyncStorage');
 
@@ -406,6 +410,7 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 
 /* BEGIN: button actions */
 
+	hideFollowingCheckbox.addEventListener('change', flashSaveButton);
 	hideRerunsCheckbox.addEventListener('change', flashSaveButton);
 	useSyncStorageCheckbox.addEventListener('change', flashSaveButton);
 
@@ -420,6 +425,7 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 /* BEGIN: localize */
 
 	document.querySelector('.settings h2').textContent 			= chrome.i18n.getMessage('blacklist_SettingsHeadline');
+	document.getElementById('label_hideFollowing').textContent 	= chrome.i18n.getMessage('blacklist_SettingsHideFollowing');
 	document.getElementById('label_hideReruns').textContent 	= chrome.i18n.getMessage('blacklist_SettingsHideReruns');
 	document.getElementById('label_useSyncStorage').textContent = chrome.i18n.getMessage('blacklist_SettingsSyncStorage');
 
@@ -480,6 +486,15 @@ storageGet(null, function(result) {
 	addItems(categories, 	blacklistedItems.categories);
 	addItems(channels, 		blacklistedItems.channels);
 	addItems(tags, 			blacklistedItems.tags);
+});
+
+// hide following
+storageGet('hideFollowing', function(result) {
+
+	hideFollowingCheckbox.checked = (
+		(typeof result.hideFollowing !== 'boolean') ||
+		(result.hideFollowing === true)
+	);
 });
 
 // hide reruns

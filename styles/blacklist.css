@@ -9,7 +9,8 @@
 
 	#blacklist .settings h2 {
 		color: #6441A4;
-		margin-bottom: 8px;
+		margin-bottom: 4px;
+		margin-top: -8px;
 	}
 
 		#blacklist .settings .left,
