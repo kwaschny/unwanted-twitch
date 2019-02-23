@@ -11,9 +11,10 @@
 - hide unwanted channels/streams
 - hide unwanted tags
 - hide stream reruns
+- filtering of followed channels can be deactivated (in settings)
 - toggle visibility of "hide" buttons (click on the extension icon to access)
-- share blacklists using import/export
-- blacklist is automatically synced between devices (optional)
+- share blacklists using import/export (in settings)
+- blacklist is automatically synced between devices (in settings, can be deactivated)
 - one-click-toggle to disable/enable extension (click on the extension icon to access)
 - compatible with BetterTTV (BTTV) and FrankerFaceZ (FFZ)
 - supports Twitch's Dark Mode
