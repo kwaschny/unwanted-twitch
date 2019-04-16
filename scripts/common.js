@@ -10,24 +10,11 @@
 // 5 = NONE
 const debug = 3;
 
-// lazy-load storage mode, serves as local cache
-let storageMode = null;
-
 /**
  * Returns (async) with the selected storage mode, either "sync" or "local".
  */
 function getStorageMode(callback) {
 	logTrace('invoking getStorageMode()');
-
-	if (storageMode !== null) {
-
-		if (typeof callback === 'function') {
-
-			callback(storageMode);
-		}
-
-		return;
-	}
 
 	let useSyncStorage = true;
 
