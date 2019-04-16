@@ -32,6 +32,7 @@
 			font-size: 11px;
 			margin-top: 8px;
 			opacity: 0.50;
+			visibility: hidden;
 		}
 
 	#blacklist .area {

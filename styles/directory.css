@@ -65,19 +65,26 @@
 
 /* BEGIN: dark theme */
 
-	body.tw-root--theme-dark .uttv-button div {
+	html.tw-root--theme-dark .uttv-button div,
+	body.dark-theme .uttv-button div {
+		background-color: transparent;
 		border-color: #4B367C;
 		color: #DAD8DE;
 	}
-		body.tw-root--theme-dark .uttv-button div:hover {
-			background-color: rgba(100, 65, 164, 0.20);
+		html.tw-root--theme-dark .uttv-button div:hover,
+		body.dark-theme .uttv-button div:hover {
+			background-color: hsla(0%, 100%, 0.05);
+			border-color: #6441A4;
+			color: #EFEEF1;
 		}
 
-	body.tw-root--theme-dark .uttv-hide-tag {
+	html.tw-root--theme-dark .uttv-hide-tag,
+	body.dark-theme .uttv-hide-tag {
 		border-color: #2C2541;
 		color: #DAD8DE;
 	}
-		body.tw-root--theme-dark .uttv-hide-tag:hover {
+		html.tw-root--theme-dark .uttv-hide-tag:hover,
+		body.dark-theme .uttv-hide-tag:hover {
 			background-color: #4B367C;
 		}
 

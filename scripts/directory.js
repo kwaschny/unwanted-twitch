@@ -1700,8 +1700,7 @@ function attachHideButtons(items) {
 
 	if (items.length === 0) { return; }
 
-	const ffWorkaround 	= isFirefox();
-	const attachedKey 	= 'data-uttv-hide-attached';
+	const attachedKey = 'data-uttv-hide-attached';
 
 	// button on items
 	let hideItem = document.createElement('div');
@@ -1791,18 +1790,7 @@ function attachHideButtons(items) {
 								}
 							});
 
-							// Firefox doesn't support click events within button tags
-							if (ffWorkaround === true) {
-
-								hideTagNode.classList.add('firefox');
-
-								// place next to the button element
-								tags[n].parentNode.parentNode.parentNode.appendChild(hideTagNode);
-
-							} else {
-
-								tags[n].parentNode.appendChild(hideTagNode);
-							}
+							tags[n].parentNode.appendChild(hideTagNode);
 						}
 
 
@@ -1856,18 +1844,7 @@ function attachHideButtons(items) {
 								}
 							});
 
-							// Firefox doesn't support click events within button tags
-							if (ffWorkaround === true) {
-
-								hideTagNode.classList.add('firefox');
-
-								// place next to the button element
-								tags[n].parentNode.parentNode.parentNode.appendChild(hideTagNode);
-
-							} else {
-
-								tags[n].parentNode.appendChild(hideTagNode);
-							}
+							tags[n].parentNode.appendChild(hideTagNode);
 						}
 
 

@@ -526,6 +526,8 @@ getStorageMode(function(mode) {
 
 			document.getElementById('storageSize_local').textContent = result.toLocaleString();
 		});
+
+		document.querySelector('.storage-stats').style.visibility = 'visible';
 	}
 
 /* END: stroage size */
