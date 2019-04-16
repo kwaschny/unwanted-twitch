@@ -1,16 +1,33 @@
 ﻿// jshint esversion: 6
 
 // forward all messages to content script
-function forwardMessageToTabs(request, tabs, isGlobal) {
+function forwardMessageToTabs(request, tabs) {
 
 	tabsLength = tabs.length;
 	for (let i = 0; i < tabsLength; i++) {
 
-		// causes an error when targeting about:x tabs, no workaround other than closing these tabs
-		chrome.tabs.sendMessage(tabs[i].id, request);
-
-		if (isGlobal === true) { break; }
+		forwardMessageToTab(request, tabs[i]);
 	}
+}
+function forwardMessageToTab(request, tab) {
+
+	if (tab.discarded === true) {
+
+		return false;
+	}
+	if (tab.hidden === true) {
+
+		return false;
+	}
+	if (tab.status !== 'complete') {
+
+		return false;
+	}
+
+	// causes an error when targeting about:x tabs, no workaround other than closing these tabs
+	chrome.tabs.sendMessage(tab.id, request);
+
+	return true;
 }
 chrome.runtime.onMessage.addListener(function(request) {
 
@@ -29,13 +46,10 @@ chrome.runtime.onMessage.addListener(function(request) {
 	// passthrough
 	} else {
 
-		// prevent forwarding a locking state multiple times
-		const isGlobal = (request && (typeof request.blacklistedItems === 'object'));
-
 		// since we cannot detect which tabs are on twitch.tv (would require "tabs" permission), we target all tabs
-		chrome.tabs.query({}, function(tabs) {
+		chrome.tabs.query({ windowType: 'normal' }, function(tabs) {
 
-			forwardMessageToTabs(request, tabs, isGlobal);
+			forwardMessageToTabs(request, tabs);
 		});
 	}
 });

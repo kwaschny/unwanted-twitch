@@ -283,6 +283,12 @@ function init() {
 function onPageChange(page) {
 	logTrace('invoking onPageChange($)', page);
 
+	if (initRun !== true) {
+
+		logWarn('Extension not yet initialized. Invocation of onPageChange() aborted.');
+		return;
+	}
+
 	// prevent running multiple page changes at once
 	if (pageLoads === true) {
 
@@ -2432,8 +2438,8 @@ function observeSidebar() {
 
 /* END: utility */
 
-window.addEventListener('load', function callback_windowLoad() {
-	logTrace('event invoked: window.load()');
+window.addEventListener('DOMContentLoaded', function callback_windowLoad() {
+	logTrace('event invoked: window.DOMContentLoaded()');
 
 	// init extension's state
 	initExtensionState(function callback_initExtensionState(enabled, renderButtons) {

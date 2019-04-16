@@ -11,14 +11,16 @@
 	},
 	"content_scripts": [
 		{
-			"matches": [ "https://www.twitch.tv/*" ],
-			"js": [
+			"matches": 	[ "https://www.twitch.tv/*" ],
+			"run_at": 	"document_start",
+			"js": 		[
 				"scripts/common.js",
 				"scripts/storage.js"
 			]
 		},
 		{
 			"matches": 	[ "https://www.twitch.tv/*" ],
+			"run_at": 	"document_start",
 			"js": 		[ "scripts/directory.js" ],
 			"css": 		[ "styles/directory.css" ]
 		}
