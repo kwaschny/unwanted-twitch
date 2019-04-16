@@ -4,8 +4,8 @@
 
 /* BEGIN: runtime variables */
 
-	let rootNode;
-	let mainNode;
+	let rootNode = null;
+	let mainNode = null;
 
 	// flag to prevent initialization more than once
 	let initRun = false;
@@ -254,23 +254,10 @@ function init() {
 			if (rootNode === null) {
 
 				logError('Root not found. Expected:', rootNodeSelector);
-				return;
+				rootNode = document;
 			}
 
 		/* END: root */
-
-		/* BEGIN: main */
-
-			const mainNodeSelector 	= 'main div.simplebar-scroll-content';
-			mainNode 				= document.querySelector(mainNodeSelector);
-
-			if (mainNode === null) {
-
-				logError('Main not found. Expected:', mainNodeSelector);
-				return;
-			}
-
-		/* END: main */
 
 		// start processing
 		onPageChange(currentPage);
@@ -317,173 +304,192 @@ function onPageChange(page) {
 	onPageChangeInterval = window.setInterval(function onPageChange_waitingForPageLoad() {
 		logTrace('polling started in onPageChange(): waiting for page to load');
 
-		let indicator;
 		onPageChangeCounter += 1;
 
-		switch (currentItemType) {
+		/* BEGIN: main */
 
-			case 'frontpage':
+			if (mainNode === null) {
 
-				indicator = mainNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
-				if (indicator !== null) {
+				const mainNodeSelector 	= 'main div.simplebar-scroll-content';
+				mainNode 				= document.querySelector(mainNodeSelector);
 
-					const placeholderNode = rootNode.querySelector('.tw-placeholder');
-					if (placeholderNode !== null) {
+				if (mainNode === null) {
 
-						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-						return;
+					logWarn('Main not found. Expected:', mainNodeSelector);
+				}
+			}
+
+		/* END: main */
+
+		if (mainNode !== null) {
+
+			let indicator;
+
+			switch (currentItemType) {
+
+				case 'frontpage':
+
+					indicator = mainNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
+					if (indicator !== null) {
+
+						const placeholderNode = rootNode.querySelector('.tw-placeholder');
+						if (placeholderNode !== null) {
+
+							logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+							return;
+						}
+
+						window.clearInterval(onPageChangeInterval);
+						pageLoads = false;
+						logTrace('polling stopped in onPageChange(): page loaded');
+
+						// invoke directory filter
+						filterDirectory();
+
+						// invoke sidebar filter
+						filterSidebar();
+						observeSidebar();
 					}
 
-					window.clearInterval(onPageChangeInterval);
-					pageLoads = false;
-					logTrace('polling stopped in onPageChange(): page loaded');
+					break;
 
-					// invoke directory filter
-					filterDirectory();
+				case 'categories':
+				case 'channels':
 
-					// invoke sidebar filter
-					filterSidebar();
-					observeSidebar();
-				}
+					indicator = mainNode.querySelector('div[data-target][style^="order:"]');
+					if (indicator !== null) {
+
+						const placeholderNode = rootNode.querySelector('.tw-placeholder');
+						if (placeholderNode !== null) {
+
+							logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+							return;
+						}
+
+						window.clearInterval(onPageChangeInterval);
+						pageLoads = false;
+						logTrace('polling stopped in onPageChange(): page loaded');
+
+						placeManagementButton();
+
+						// invoke directory filter
+						const remainingItems = filterDirectory();
+
+						// attach hide buttons to the remaining items
+						attachHideButtons(remainingItems);
+
+						// invoke sidebar filter
+						filterSidebar();
+						observeSidebar();
+
+						// detect scrolling
+						listenToScroll();
+					}
 
 				break;
 
-			case 'categories':
-			case 'channels':
+				case 'videos':
 
-				indicator = mainNode.querySelector('div[data-target][style^="order:"]');
-				if (indicator !== null) {
+					indicator = mainNode.querySelector('div[data-a-target^="video-tower-card-"]');
+					if (indicator !== null) {
 
-					const placeholderNode = rootNode.querySelector('.tw-placeholder');
-					if (placeholderNode !== null) {
+						const placeholderNode = rootNode.querySelector('.tw-placeholder');
+						if (placeholderNode !== null) {
 
-						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-						return;
+							logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+							return;
+						}
+
+						window.clearInterval(onPageChangeInterval);
+						pageLoads = false;
+						logTrace('polling stopped in onPageChange(): page loaded');
+
+						placeManagementButton();
+
+						// invoke directory filter
+						const remainingItems = filterDirectory();
+
+						// attach hide buttons to the remaining items
+						attachHideButtons(remainingItems);
+
+						// invoke sidebar filter
+						filterSidebar();
+						observeSidebar();
+
+						// detect scrolling
+						listenToScroll();
 					}
+
+				break;
+
+				case 'clips':
+
+					indicator = mainNode.querySelector('div[data-a-target^="clips-card-"]');
+					if (indicator !== null) {
+
+						const placeholderNode = rootNode.querySelector('.tw-placeholder');
+						if (placeholderNode !== null) {
+
+							logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+							return;
+						}
+
+						window.clearInterval(onPageChangeInterval);
+						pageLoads = false;
+						logTrace('polling stopped in onPageChange(): page loaded');
+
+						placeManagementButton();
+
+						// invoke directory filter
+						const remainingItems = filterDirectory();
+
+						// attach hide buttons to the remaining items
+						attachHideButtons(remainingItems);
+
+						// invoke sidebar filter
+						filterSidebar();
+						observeSidebar();
+
+						// detect scrolling
+						listenToScroll();
+					}
+
+				break;
+
+				case 'following':
+
+					indicator = mainNode.querySelector('a[data-a-target="preview-card-image-link"]');
+					if (indicator !== null) {
+
+						const placeholderNode = rootNode.querySelector('.tw-placeholder');
+						if (placeholderNode !== null) {
+
+							logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+							return;
+						}
+
+						window.clearInterval(onPageChangeInterval);
+						pageLoads = false;
+						logTrace('polling stopped in onPageChange(): page loaded');
+
+						// invoke directory filter
+						filterDirectory();
+
+						// invoke sidebar filter
+						filterSidebar();
+						observeSidebar();
+					}
+
+				break;
+
+				default:
 
 					window.clearInterval(onPageChangeInterval);
 					pageLoads = false;
-					logTrace('polling stopped in onPageChange(): page loaded');
+					logError('Attempted to detect page loading for unhandled item type:', currentItemType, page);
 
-					placeManagementButton();
-
-					// invoke directory filter
-					const remainingItems = filterDirectory();
-
-					// attach hide buttons to the remaining items
-					attachHideButtons(remainingItems);
-
-					// invoke sidebar filter
-					filterSidebar();
-					observeSidebar();
-
-					// detect scrolling
-					listenToScroll();
-				}
-
-			break;
-
-			case 'videos':
-
-				indicator = mainNode.querySelector('div[data-a-target^="video-tower-card-"]');
-				if (indicator !== null) {
-
-					const placeholderNode = rootNode.querySelector('.tw-placeholder');
-					if (placeholderNode !== null) {
-
-						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-						return;
-					}
-
-					window.clearInterval(onPageChangeInterval);
-					pageLoads = false;
-					logTrace('polling stopped in onPageChange(): page loaded');
-
-					placeManagementButton();
-
-					// invoke directory filter
-					const remainingItems = filterDirectory();
-
-					// attach hide buttons to the remaining items
-					attachHideButtons(remainingItems);
-
-					// invoke sidebar filter
-					filterSidebar();
-					observeSidebar();
-
-					// detect scrolling
-					listenToScroll();
-				}
-
-			break;
-
-			case 'clips':
-
-				indicator = mainNode.querySelector('div[data-a-target^="clips-card-"]');
-				if (indicator !== null) {
-
-					const placeholderNode = rootNode.querySelector('.tw-placeholder');
-					if (placeholderNode !== null) {
-
-						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-						return;
-					}
-
-					window.clearInterval(onPageChangeInterval);
-					pageLoads = false;
-					logTrace('polling stopped in onPageChange(): page loaded');
-
-					placeManagementButton();
-
-					// invoke directory filter
-					const remainingItems = filterDirectory();
-
-					// attach hide buttons to the remaining items
-					attachHideButtons(remainingItems);
-
-					// invoke sidebar filter
-					filterSidebar();
-					observeSidebar();
-
-					// detect scrolling
-					listenToScroll();
-				}
-
-			break;
-
-			case 'following':
-
-				indicator = mainNode.querySelector('a[data-a-target="preview-card-image-link"]');
-				if (indicator !== null) {
-
-					const placeholderNode = rootNode.querySelector('.tw-placeholder');
-					if (placeholderNode !== null) {
-
-						logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-						return;
-					}
-
-					window.clearInterval(onPageChangeInterval);
-					pageLoads = false;
-					logTrace('polling stopped in onPageChange(): page loaded');
-
-					// invoke directory filter
-					filterDirectory();
-
-					// invoke sidebar filter
-					filterSidebar();
-					observeSidebar();
-				}
-
-			break;
-
-			default:
-
-				window.clearInterval(onPageChangeInterval);
-				pageLoads = false;
-				logError('Attempted to detect page loading for unhandled item type:', currentItemType, page);
-
-			break;
+				break;
+			}
 		}
 
 		// prevent waiting infinitely for page load in case the content is unknown
