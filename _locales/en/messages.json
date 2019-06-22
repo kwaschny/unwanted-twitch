@@ -24,6 +24,9 @@
 	"alert_StorageThrottle": {
 		"message": "Unwanted Twitch:\nThe storage service is currently busy.\nPlease wait a few minutes, restart your browser and try again."
 	},
+	"alert_StorageIssue": {
+		"message": "Unwanted Twitch:\nThe storage service encountered an unexpected error.\nPlease wait a few minutes, restart your browser and try again."
+	},
 
 	"popup_ManageBlacklist": {
 		"message": "Manage Blacklist"

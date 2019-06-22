@@ -24,6 +24,9 @@
 	"alert_StorageThrottle": {
 		"message": "Unwanted Twitch:\nDer Synchronisierungsdienst ist derzeit überlastet.\nBitte warten Sie ein paar Minuten, starten den Browser neu und versuchen es dann noch einmal."
 	},
+	"alert_StorageIssue": {
+		"message": "Unwanted Twitch:\nBeim Synchronisierungsdienst ist ein unerwarteter Fehler aufgetreten.\nBitte warten Sie ein paar Minuten, starten den Browser neu und versuchen es dann noch einmal."
+	},
 
 	"popup_ManageBlacklist": {
 		"message": "Sperrliste verwalten"

@@ -45,6 +45,7 @@
 
 	// collection of blacklisted items, serves as local cache
 	let storedBlacklistedItems = {};
+	let backupBlacklistedItems = {};
 
 /* END: runtime variables */
 
@@ -244,6 +245,7 @@ function init() {
 
 		// cache blacklisted items from storage
 		storedBlacklistedItems = blacklistedItems;
+		backupBlacklistedItems = cloneBlacklistItems(blacklistedItems);
 		logInfo('Blacklist loaded:', blacklistedItems);
 
 		/* BEGIN: root */
@@ -656,9 +658,15 @@ function getBlacklistedItems(callback) {
 /**
  * Stores all blacklisted items in the storage.
  */
-function putBlacklistedItems(items, callback) {
+function putBlacklistedItems(items, callback, attemptRecovery) {
 	logTrace('invoking putBlacklistedItems($)', items);
 
+	if (attemptRecovery === false) {
+
+		logError('Restoring backup:', items);
+	}
+
+	// store new items in cache
 	storedBlacklistedItems = items;
 
 	let dataToStore 	= { 'blacklistedItems': items };
@@ -690,17 +698,33 @@ function putBlacklistedItems(items, callback) {
 				(typeof error.message === 'string')
 			) {
 
-				if (error.message.indexOf('QUOTA_BYTES') >= 0) {
+				if (attemptRecovery !== false) {
 
-					alert( chrome.i18n.getMessage('alert_StorageQuota') );
+					if (error.message.indexOf('QUOTA_BYTES') >= 0) {
 
-				} else if (error.message.indexOf('MAX_') >= 0) {
+						alert( chrome.i18n.getMessage('alert_StorageQuota') );
 
-					alert( chrome.i18n.getMessage('alert_StorageThrottle') );
+					} else if (error.message.indexOf('MAX_') >= 0) {
+
+						alert( chrome.i18n.getMessage('alert_StorageThrottle') );
+
+					} else {
+
+						alert( chrome.i18n.getMessage('alert_StorageIssue') );
+					}
+
+					// something went wrong, restore the backup
+					logError('Storage error encountered. Attempting to restore backup:', backupBlacklistedItems);
+					putBlacklistedItems(backupBlacklistedItems, callback, false);
+					return;
 				}
 
 			} else {
 
+				// update backup cache
+				backupBlacklistedItems = cloneBlacklistItems(items);
+
+				logVerbose('Successfully created backup of blacklist:', backupBlacklistedItems);
 				logInfo('Successfully added to blacklist:', items);
 			}
 

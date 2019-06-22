@@ -17,7 +17,7 @@ const storageMaxFragments = 100;
 function splitBlacklistItems(items) {
 	logTrace('invoking splitBlacklistItems($)', items);
 
-	const maxValuesPerFragment = 250;
+	const maxValuesPerFragment = 200;
 
 	let fragments 		= {};
 	let fragmentIndex 	= 0;

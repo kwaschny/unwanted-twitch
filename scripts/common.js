@@ -11,6 +11,14 @@
 const debug = 3;
 
 /**
+ * Returns a copy of the provided blacklist items.
+ */
+function cloneBlacklistItems(items) {
+
+	return JSON.parse( JSON.stringify(items) );
+}
+
+/**
  * Returns (async) with the selected storage mode, either "sync" or "local".
  */
 function getStorageMode(callback) {
