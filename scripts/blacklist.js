@@ -476,13 +476,6 @@ storageGet(null, function(result) {
 		blacklistedItems = mergeBlacklistFragments(result);
 	}
 
-	// backward compatibility: rename previous type "games" to "categories"
-	if (typeof blacklistedItems['games'] === 'object') {
-
-		blacklistedItems['categories'] = blacklistedItems['games'];
-		delete blacklistedItems['games'];
-	}
-
 	addItems(categories, 	blacklistedItems.categories);
 	addItems(channels, 		blacklistedItems.channels);
 	addItems(tags, 			blacklistedItems.tags);

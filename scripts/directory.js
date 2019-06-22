@@ -646,13 +646,6 @@ function getBlacklistedItems(callback) {
 			logVerbose('Successfully merged fragments to blacklist:', result, blacklistedItems);
 		}
 
-		// backward compatibility: rename previous type "games" to "categories"
-		if (typeof blacklistedItems['games'] === 'object') {
-
-			blacklistedItems['categories'] = blacklistedItems['games'];
-			delete blacklistedItems['games'];
-		}
-
 		if (typeof callback === 'function') {
 
 			callback(blacklistedItems);
@@ -665,10 +658,6 @@ function getBlacklistedItems(callback) {
  */
 function putBlacklistedItems(items, callback) {
 	logTrace('invoking putBlacklistedItems($)', items);
-
-	// backward compatibility: remove no longer existing item types to save storage space
-	delete items['communities'];
-	delete items['creative'];
 
 	storedBlacklistedItems = items;
 
