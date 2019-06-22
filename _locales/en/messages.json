@@ -19,7 +19,7 @@
 		"message": "Unwanted Twitch:\nYou are about to hide all categories and channels\nwith the following tag:"
 	},
 	"alert_StorageQuota": {
-		"message": "Unwanted Twitch:\nThe blacklist is full.\nYou cannot add more items."
+		"message": "Unwanted Twitch:\nThe blacklist is full. You cannot add more items if you want to keep synchronization enabled.\n\nDisable synchronization to add more items to the blacklist."
 	},
 	"alert_StorageThrottle": {
 		"message": "Unwanted Twitch:\nThe storage service is currently busy.\nPlease wait a few minutes, restart your browser and try again."
