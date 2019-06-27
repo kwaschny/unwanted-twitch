@@ -1118,7 +1118,7 @@ function getItems() {
 						tagContainer = tagContainer.nextSibling;
 						if (tagContainer !== null) {
 
-							const tagsSelector 	= '.tw-tag__content div';
+							const tagsSelector 	= '.tw-tag__content div, .subscriber-stream-tag';
 							const tags 			= tagContainer.querySelectorAll(tagsSelector);
 							const tagsLength 	= tags.length;
 
@@ -1831,7 +1831,7 @@ function attachHideButtons(items) {
 				tagContainer = tagContainer.nextSibling;
 				if (tagContainer !== null) {
 
-					const tagsSelector 	= '.tw-tag__content div';
+					const tagsSelector 	= '.tw-tag__content div, .subscriber-stream-tag';
 					const tags 			= tagContainer.querySelectorAll(tagsSelector);
 					const tagsLength 	= tags.length;
 
@@ -1856,7 +1856,14 @@ function attachHideButtons(items) {
 								}
 							});
 
-							tags[n].parentNode.appendChild(hideTagNode);
+							if (tags[n].classList.contains('subscriber-stream-tag')) {
+
+								tags[n].appendChild(hideTagNode);
+
+							} else {
+
+								tags[n].parentNode.appendChild(hideTagNode);
+							}
 						}
 
 
