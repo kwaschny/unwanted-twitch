@@ -2,28 +2,42 @@
 	display: none !important;
 }
 
-.uttv-button {
-	display: flex;
-	flex-direction: column;
-	font-size: 130%;
-	justify-content: flex-end;
-	padding: 0.5rem;
+.uttv-caption {
+	font-size: 1.2rem;
+	line-height: 1.5;
+	padding-left: 0.5rem;
+	padding-top: 1rem;
 }
 
-	.uttv-button div {
-		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAB3RJTUUH4ggDFiYvxTmVuQAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAJFSURBVHjaY1AXd9NOtF/4Nd151X98ONVp+f9kh8X/GNCBi3ZxWbLDkl9+Rs2zvQ3qJ/oY1E9Cx976tb2RllPPgAzBMCDBbt7rJPtFXwXYlbgZ8AAP3cpmkEswJFIcl/0HGSDJayAC4gtzqvEZy0e6gtjygpYy+jJBViC2p151Bw4DlqIYoCnhqR9nO/cZiG2rlhEXYTHpEIkGeOjF2cx+CDZANT0m3GLCPpIMUBV1Ugszn7AHxDZXivcNMG6dDw2DlnTn1YQNAAEmBjZGEM3MwMAIFVLP5pZ4t5yT6X8JE8NxIF8DLg814IsIpzofttDnAVq+hYv15yt2hv/vORj+P2Nh+L+FneGDBFAc4gKHpcAEsuRvhOXkI0B8VFfa38RaJTUCxHfUyj61g53172dGhv9vmZj+v2Vg+P8GiF8C8QZO5i9A7SYMQM3/Qa4AJZI0pxX/g0y71gDF/oD4xTzS/18CNT9jZv7/FKjpVULC/z8vXvx/W1v7/yaQn8nEcA3sBVBagGCQQSv+pzouB+OFDIz/nwJtvguytbv7//+/f///ePz4/6PAwP+3gGI9DAz/GLQkvAw0xN11gM6OAtkKTAOPDeXCHEDilQyMl+4BFT7u6voPAu+PH/9/HcgH4YtAgzMYGM7CAwtkCMgLlspJwUhhqLGdgeHdbWvr//cnTvx/DqjxPBBfAeLlQHFQ7DAQAlIMDNZrGBienwFqAlr3/yQQL2BgeCbIwGBJUDNSOhALYWBYUcHAcD+AgWEZkC8CSS8MjAAp/SWxILJBIQAAAABJRU5ErkJggg==');
-		background-position: 6px center;
-		background-repeat: no-repeat;
-		border: 1px solid #B19DD8;
-		border-radius: 6px;
-		color: #6441A4;
-		cursor: pointer;
-		display: block;
-		padding: 6px 8px 5px 26px;
+.uttv-button {
+	background-color: rgba(0, 0, 0, 0.1);
+	background-clip: padding-box;
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAB3RJTUUH4ggDFiYvxTmVuQAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAJFSURBVHjaY1AXd9NOtF/4Nd151X98ONVp+f9kh8X/GNCBi3ZxWbLDkl9+Rs2zvQ3qJ/oY1E9Cx976tb2RllPPgAzBMCDBbt7rJPtFXwXYlbgZ8AAP3cpmkEswJFIcl/0HGSDJayAC4gtzqvEZy0e6gtjygpYy+jJBViC2p151Bw4DlqIYoCnhqR9nO/cZiG2rlhEXYTHpEIkGeOjF2cx+CDZANT0m3GLCPpIMUBV1Ugszn7AHxDZXivcNMG6dDw2DlnTn1YQNAAEmBjZGEM3MwMAIFVLP5pZ4t5yT6X8JE8NxIF8DLg814IsIpzofttDnAVq+hYv15yt2hv/vORj+P2Nh+L+FneGDBFAc4gKHpcAEsuRvhOXkI0B8VFfa38RaJTUCxHfUyj61g53172dGhv9vmZj+v2Vg+P8GiF8C8QZO5i9A7SYMQM3/Qa4AJZI0pxX/g0y71gDF/oD4xTzS/18CNT9jZv7/FKjpVULC/z8vXvx/W1v7/yaQn8nEcA3sBVBagGCQQSv+pzouB+OFDIz/nwJtvguytbv7//+/f///ePz4/6PAwP+3gGI9DAz/GLQkvAw0xN11gM6OAtkKTAOPDeXCHEDilQyMl+4BFT7u6voPAu+PH/9/HcgH4YtAgzMYGM7CAwtkCMgLlspJwUhhqLGdgeHdbWvr//cnTvx/DqjxPBBfAeLlQHFQ7DAQAlIMDNZrGBienwFqAlr3/yQQL2BgeCbIwGBJUDNSOhALYWBYUcHAcD+AgWEZkC8CSS8MjAAp/SWxILJBIQAAAABJRU5ErkJggg==');
+	background-position: 6px center;
+	background-repeat: no-repeat;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 4px;
+	color: #322F37;
+	cursor: pointer;
+	display: inline-flex;
+	font-size: 1.2rem;
+	height: 3rem;
+	margin-top: 0.5rem;
+	outline: none;
+	padding: 0 1rem;
+	user-select: none;
+	white-space: nowrap;
+}
+	.uttv-button:hover {
+		background-color: rgba(0, 0, 0, 0.15);
+		border-color: rgba(0, 0, 0, 0.15);
 	}
-		.uttv-button div:hover {
-			background-color: rgba(100, 65, 164, 0.05);
-		}
+
+	.uttv-button div {
+		align-items: center;
+		display: flex;
+		padding-left: 20px;
+	}
 
 .uttv-hide-item {
 	background-color: #00000099;
@@ -65,27 +79,21 @@
 
 /* BEGIN: dark theme */
 
-	html.tw-root--theme-dark .uttv-button div,
-	body.dark-theme .uttv-button div {
-		background-color: transparent;
-		border-color: #4B367C;
-		color: #DAD8DE;
+	html.tw-root--theme-dark .uttv-button,
+	body.dark-theme .uttv-button {
+		background-color: hsla(0, 0%, 100%, 0.1);
+		border-color: hsla(0, 0%, 100%, 0.1);
+		color: #E5E3E8;
 	}
-		html.tw-root--theme-dark .uttv-button div:hover,
-		body.dark-theme .uttv-button div:hover {
-			background-color: hsla(0%, 100%, 0.05);
-			border-color: #6441A4;
-			color: #EFEEF1;
+		html.tw-root--theme-dark .uttv-button:hover,
+		body.dark-theme .uttv-button:hover {
+			background-color: hsla(0, 0%, 100%, 0.15);
+			border-color: hsla(0, 0%, 100%, 0.15);
 		}
 
 	html.tw-root--theme-dark .uttv-hide-tag,
 	body.dark-theme .uttv-hide-tag {
-		border-color: #2C2541;
-		color: #DAD8DE;
+		border-color: hsla(0, 0%, 100%, 0.05);
 	}
-		html.tw-root--theme-dark .uttv-hide-tag:hover,
-		body.dark-theme .uttv-hide-tag:hover {
-			background-color: #4B367C;
-		}
 
 /* END: dark theme */

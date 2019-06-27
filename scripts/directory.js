@@ -522,31 +522,13 @@ function placeManagementButton() {
 
 		case 'categories':
 		case 'channels':
+		case 'videos':
+		case 'clips':
 
 			filtersAreaSelector = 'div.browse-header__filters, div.directory-header__filters';
 			filtersArea 		= mainNode.querySelector(filtersAreaSelector);
 
 			if (filtersArea !== null) {
-
-				return buildManagementButton(filtersArea);
-
-			} else {
-
-				logWarn('Filters not found. Expected:', filtersAreaSelector);
-			}
-
-		break;
-
-		case 'videos':
-		case 'clips':
-
-			filtersAreaSelector = 'div.inline-dropdown, div.filter-dropdown-button';
-			filtersArea 		= mainNode.querySelectorAll(filtersAreaSelector);
-			filtersArea 		= ( (filtersArea.length > 0) ? filtersArea[filtersArea.length - 1] : null );
-
-			if (filtersArea !== null) {
-
-				filtersArea = filtersArea.parentNode.parentNode;
 
 				return buildManagementButton(filtersArea);
 
@@ -581,16 +563,24 @@ function buildManagementButton(areaNode) {
 
 	let container = document.createElement('div');
 	container.setAttribute('data-uttv-management', '');
-	container.className = 'uttv-button';
+
+	let caption = document.createElement('div');
+	caption.className = 'uttv-caption';
+	caption.textContent = 'Unwanted Twitch';
 
 	let button = document.createElement('div');
-	button.textContent = chrome.i18n.getMessage('label_Management');
+	button.className = 'uttv-button';
+
+	let buttonText = document.createElement('div');
+	buttonText.textContent = chrome.i18n.getMessage('label_Management');
 
 	button.addEventListener('click', function() {
 
 		chrome.runtime.sendMessage({ action: 'openBlacklist' });
 	});
 
+	container.appendChild(caption);
+	button.appendChild(buttonText);
 	container.appendChild(button);
 	areaNode.appendChild(container);
 
