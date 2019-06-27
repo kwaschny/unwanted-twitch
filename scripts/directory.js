@@ -351,6 +351,9 @@ function onPageChange(page) {
 						// invoke sidebar filter
 						filterSidebar();
 						observeSidebar();
+
+						// detect changes (delayed loading, clicking on "Show more")
+						listenToScroll();
 					}
 
 					break;
@@ -2034,16 +2037,10 @@ function removeItem(node) {
 				}
 
 				if (
-					topNode.classList.contains('tw-col-2') || 					// featured
-					topNode.classList.contains('anon-top-channels') || 			// top channels
-					topNode.classList.contains('list-animation__item-animate') 	// popular
+					topNode.classList.contains('shelf-card__impression-wrapper')
 				) {
 
 					node.setAttribute('data-uttv-hidden', '');
-
-					// don't hide topmost node because it causes the remaining items to scale/cover the full width,
-					// instead hide the first child node
-					topNode = topNode.children[0];
 
 					topNode.style.display = 'none';
 					return true;
