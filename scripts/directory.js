@@ -1869,6 +1869,10 @@ function attachHideButtons(items) {
 
 			break;
 
+			case 'clips':
+				// clips don't have tags
+			break;
+
 			default:
 
 				logError('Attempted to attach hide buttons (tags) for unhandled item type:', currentItemType);
