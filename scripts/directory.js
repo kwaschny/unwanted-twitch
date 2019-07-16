@@ -2214,7 +2214,7 @@ function removeItem(node) {
 				}
 
 				if (
-					(topNode.classList.contains('preview-card') === true)
+					(topNode.className === 'tw-mg-b-2')
 				) {
 
 					node.setAttribute('data-uttv-hidden', '');
