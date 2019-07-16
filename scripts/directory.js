@@ -1616,7 +1616,7 @@ function filterSidebar() {
 
 		logInfo('Instructed to not hide followed channels in sidebar!');
 
-		itemsSelector = 'div.side-nav div.tw-mg-b-2 .side-nav-card:not([data-uttv-hidden])';
+		itemsSelector = 'div.side-nav .recommended-channels .side-nav-card:not([data-uttv-hidden])';
 	}
 
 	const items 			= rootNode.querySelectorAll(itemsSelector);
