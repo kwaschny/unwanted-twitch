@@ -151,7 +151,7 @@ function initExtensionState(callback) {
 
 			} else {
 
-				logWarn('Extension\'s enabled state:', result['enabled']);
+				logVerbose('Extension\'s enabled state:', result['enabled']);
 			}
 
 		} else {
@@ -170,7 +170,7 @@ function initExtensionState(callback) {
 
 			} else {
 
-				logWarn('Extension\'s render buttons state:', result['renderButtons']);
+				logVerbose('Extension\'s render buttons state:', result['renderButtons']);
 			}
 
 		} else {
@@ -189,7 +189,7 @@ function initExtensionState(callback) {
 
 			} else {
 
-				logWarn('Extension\'s hide following state:', result['hideFollowing']);
+				logVerbose('Extension\'s hide following state:', result['hideFollowing']);
 			}
 
 		} else {
@@ -208,7 +208,7 @@ function initExtensionState(callback) {
 
 			} else {
 
-				logWarn('Extension\'s hide reruns state:', result['hideReruns']);
+				logVerbose('Extension\'s hide reruns state:', result['hideReruns']);
 			}
 
 		} else {
@@ -560,7 +560,7 @@ function buildManagementButton(areaNode) {
 	// prevent adding more than one button
 	if (areaNode.querySelector('div[data-uttv-management]') !== null) {
 
-		logWarn('Management button already added to filters area:', areaNode);
+		logInfo('Management button already added to filters area:', areaNode);
 		return false;
 	}
 
@@ -913,12 +913,12 @@ function getItems() {
 
 							} else {
 
-								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+								logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 							}
 
 						} else {
 
-							logWarn('No tags found for card in frontpage view:', itemSibling);
+							logInfo('No tags found for card in frontpage view:', itemSibling);
 						}
 
 					/* END: tags */
@@ -973,12 +973,12 @@ function getItems() {
 
 							} else {
 
-								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+								logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 							}
 
 						} else {
 
-							logWarn('No tags found for card in frontpage view:', itemSibling);
+							logInfo('No tags found for card in frontpage view:', itemSibling);
 						}
 
 					/* END: tags */
@@ -1046,12 +1046,12 @@ function getItems() {
 
 							} else {
 
-								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+								logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 							}
 
 						} else {
 
-							logWarn('No tags found for card in categories view:', itemContainers[i]);
+							logInfo('No tags found for card in categories view:', itemContainers[i]);
 						}
 
 					/* END: tags */
@@ -1111,7 +1111,7 @@ function getItems() {
 						let tagContainer = itemContainers[i].parentNode;
 						if (tagContainer === null) {
 
-							logWarn('No tags found for card in channels view:', itemContainers[i]);
+							logInfo('No tags found for card in channels view:', itemContainers[i]);
 							continue;
 						}
 
@@ -1133,12 +1133,12 @@ function getItems() {
 
 							} else {
 
-								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+								logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 							}
 
 						} else {
 
-							logWarn('No tags found for card in channels view:', itemContainers[i]);
+							logInfo('No tags found for card in channels view:', itemContainers[i]);
 						}
 
 					/* END: tags */
@@ -1199,7 +1199,7 @@ function getItems() {
 							let tagContainer = itemContainers[i].parentNode;
 							if (tagContainer === null) {
 
-								logWarn('No tags found for card in channels view:', itemContainers[i]);
+								logInfo('No tags found for card in channels view:', itemContainers[i]);
 								continue;
 							}
 
@@ -1221,12 +1221,12 @@ function getItems() {
 
 								} else {
 
-									logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+									logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 								}
 
 							} else {
 
-								logWarn('No tags found for card in channels view:', itemContainers[i]);
+								logInfo('No tags found for card in channels view:', itemContainers[i]);
 							}
 						}
 
@@ -1288,7 +1288,7 @@ function getItems() {
 						let tagContainer = itemContainers[i].parentNode;
 						if (tagContainer === null) {
 
-							logWarn('No tags found for card in channels view:', itemContainers[i]);
+							logInfo('No tags found for card in channels view:', itemContainers[i]);
 							continue;
 						}
 
@@ -1310,12 +1310,12 @@ function getItems() {
 
 							} else {
 
-								logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+								logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 							}
 
 						} else {
 
-							logWarn('No tags found for card in channels view:', itemContainers[i]);
+							logInfo('No tags found for card in channels view:', itemContainers[i]);
 						}
 
 					/* END: tags */
@@ -1808,12 +1808,12 @@ function attachHideButtons(items) {
 
 					} else {
 
-						logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+						logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 					}
 
 				} else {
 
-					logWarn('No tags found for card in categories view:', items[i].node);
+					logInfo('No tags found for card in categories view:', items[i].node);
 				}
 
 			break;
@@ -1824,7 +1824,7 @@ function attachHideButtons(items) {
 				tagContainer = items[i].node.parentNode;
 				if (tagContainer === null) {
 
-					logWarn('No tags found for card in channels view:', items[i].node);
+					logInfo('No tags found for card in channels view:', items[i].node);
 					continue;
 				}
 
@@ -1869,12 +1869,12 @@ function attachHideButtons(items) {
 
 					} else {
 
-						logWarn('Tags not found. Expected:', tagsSelector, tagContainer);
+						logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 					}
 
 				} else {
 
-					logWarn('No tags found for card in channels view:', items[i].node);
+					logInfo('No tags found for card in channels view:', items[i].node);
 				}
 
 			break;
