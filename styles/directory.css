@@ -10,27 +10,28 @@
 }
 
 .uttv-button {
-	background-color: rgba(0, 0, 0, 0.1);
+	background-color: rgba(0, 0, 0, 0.05);
 	background-clip: padding-box;
 	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAB3RJTUUH4ggDFiYvxTmVuQAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAJFSURBVHjaY1AXd9NOtF/4Nd151X98ONVp+f9kh8X/GNCBi3ZxWbLDkl9+Rs2zvQ3qJ/oY1E9Cx976tb2RllPPgAzBMCDBbt7rJPtFXwXYlbgZ8AAP3cpmkEswJFIcl/0HGSDJayAC4gtzqvEZy0e6gtjygpYy+jJBViC2p151Bw4DlqIYoCnhqR9nO/cZiG2rlhEXYTHpEIkGeOjF2cx+CDZANT0m3GLCPpIMUBV1Ugszn7AHxDZXivcNMG6dDw2DlnTn1YQNAAEmBjZGEM3MwMAIFVLP5pZ4t5yT6X8JE8NxIF8DLg814IsIpzofttDnAVq+hYv15yt2hv/vORj+P2Nh+L+FneGDBFAc4gKHpcAEsuRvhOXkI0B8VFfa38RaJTUCxHfUyj61g53172dGhv9vmZj+v2Vg+P8GiF8C8QZO5i9A7SYMQM3/Qa4AJZI0pxX/g0y71gDF/oD4xTzS/18CNT9jZv7/FKjpVULC/z8vXvx/W1v7/yaQn8nEcA3sBVBagGCQQSv+pzouB+OFDIz/nwJtvguytbv7//+/f///ePz4/6PAwP+3gGI9DAz/GLQkvAw0xN11gM6OAtkKTAOPDeXCHEDilQyMl+4BFT7u6voPAu+PH/9/HcgH4YtAgzMYGM7CAwtkCMgLlspJwUhhqLGdgeHdbWvr//cnTvx/DqjxPBBfAeLlQHFQ7DAQAlIMDNZrGBienwFqAlr3/yQQL2BgeCbIwGBJUDNSOhALYWBYUcHAcD+AgWEZkC8CSS8MjAAp/SWxILJBIQAAAABJRU5ErkJggg==');
 	background-position: 6px center;
 	background-repeat: no-repeat;
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	border-radius: 9000px;
 	color: #322F37;
 	cursor: pointer;
 	display: inline-flex;
 	font-size: 1.2rem;
+	font-weight: 600;
 	height: 3rem;
-	margin-top: 0.5rem;
+	margin: 0.5rem;
 	outline: none;
-	padding: 0 1rem;
+	padding: 0.75em 0.5rem;
 	user-select: none;
 	white-space: nowrap;
 }
 	.uttv-button:hover {
-		background-color: rgba(0, 0, 0, 0.15);
-		border-color: rgba(0, 0, 0, 0.15);
+		background-color: rgba(0, 0, 0, 0.10);
+		border-color: rgba(0, 0, 0, 0.10);
 	}
 
 	.uttv-button div {
@@ -39,9 +40,14 @@
 		padding-left: 20px;
 	}
 
+	.uttv-videos .uttv-button,
+	.uttv-clips .uttv-button {
+		margin: 0;
+	}
+
 .uttv-hide-item {
 	background-color: #00000099;
-	border-radius: 2px;
+	border-radius: 9000px;
 	color: #FFFFFF;
 	cursor: pointer;
 	font-size: 90%;
@@ -53,13 +59,12 @@
 	z-index: 2; /* 2+ required to be on top of Twitch Prime badge */
 }
 	.uttv-hide-item:hover {
-		background-color: #4B367C;
-		color: #EFEEF1;
+		background-color: #9147FF;
+		color: #FFFFFF;
 	}
 
 .uttv-hide-tag {
-	border: 1px solid #DAD8DE;
-	border-radius: 2px;
+	border-radius: 9000px;
 	cursor: pointer;
 	display: inline-block;
 	font-size: 90%;
@@ -68,8 +73,8 @@
 	user-select: none;
 }
 	.uttv-hide-tag:hover {
-		background-color: #4B367C;
-		color: #EFEEF1;
+		background-color: #9147FF;
+		color: #FFFFFF;
 	}
 	.uttv-hide-tag.firefox {
 		display: block;
@@ -79,21 +84,18 @@
 
 /* BEGIN: dark theme */
 
-	html.tw-root--theme-dark .uttv-button,
-	body.dark-theme .uttv-button {
-		background-color: hsla(0, 0%, 100%, 0.1);
-		border-color: hsla(0, 0%, 100%, 0.1);
-		color: #E5E3E8;
+	html.tw-root--theme-dark .uttv-button {
+		background-color: rgba(255, 255, 255, 0.15);
+		border-color: rgba(255, 255, 255, 0.15);
+		color: rgba(255, 255, 255, 0.7);
 	}
-		html.tw-root--theme-dark .uttv-button:hover,
-		body.dark-theme .uttv-button:hover {
-			background-color: hsla(0, 0%, 100%, 0.15);
-			border-color: hsla(0, 0%, 100%, 0.15);
+		html.tw-root--theme-dark .uttv-button:hover {
+			background-color: rgba(255, 255, 255, 0.30);
+			border-color: rgba(255, 255, 255, 0.30);
 		}
 
-	html.tw-root--theme-dark .uttv-hide-tag,
-	body.dark-theme .uttv-hide-tag {
-		border-color: hsla(0, 0%, 100%, 0.05);
+	html.tw-root--theme-dark .uttv-hide-tag {
+		border-color: rgba(255, 255, 255, 0.15);
 	}
 
 /* END: dark theme */

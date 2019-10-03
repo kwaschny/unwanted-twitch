@@ -11,7 +11,7 @@ body {
 }
 
 button {
-	background-color: #6441A4;
+	background-color: #9147FF;
 	border: 1px solid transparent;
 	border-radius: 2px;
 	color: #FFFFFF;
@@ -23,32 +23,32 @@ button {
 	width: 192px;
 }
 	button:hover {
-		background-color: #7D5BBE;
-		border-color: #7D5BBE;
+		background-color: #772CE8;
+		border-color: #772CE8;
 	}
 	button:focus {
 		border-color: #9A7FCC;
-		box-shadow: 0px 0px 6px 0px #7D5BBE;
+		box-shadow: 0px 0px 6px 0px #772CE8;
 	}
 	button:active {
-		border-color: #7D5BBE;
-		box-shadow: 0px 0px 6px 0px #7D5BBE;
+		border-color: #772CE8;
+		box-shadow: 0px 0px 6px 0px #772CE8;
 	}
 
 	button.lowlight {
-		background-color: #6B588D;
+		background-color: #9A75D1;
 	}
 		button.lowlight:hover {
-			background-color: #8472A7;
-			border-color: #8472A7;
+			background-color: #9147FF;
+			border-color: #9147FF;
 		}
 		button.lowlight:focus {
-			border-color: #A091BA;
-			box-shadow: 0px 0px 6px 0px #8472A7;
+			border-color: #9147FF;
+			box-shadow: 0px 0px 6px 0px #9147FF;
 		}
 		button.lowlight:active {
-			border-color: #8472A7;
-			box-shadow: 0px 0px 6px 0px #8472A7;
+			border-color: #9147FF;
+			box-shadow: 0px 0px 6px 0px #9147FF;
 		}
 
 	button.disabled {
@@ -69,7 +69,7 @@ button {
 
 	button.flashed {
 		border: 1px solid #FFFFFF;
-		box-shadow: 0px 0px 4px #7D5BBE, 0px 0px 4px #7D5BBE, 0px 0px 4px #7D5BBE, 0px 0px 4px #7D5BBE;
+		box-shadow: 0px 0px 4px #772CE8, 0px 0px 4px #772CE8, 0px 0px 4px #772CE8, 0px 0px 4px #772CE8;
 	}
 
 input {
@@ -92,7 +92,7 @@ table {
 	}
 
 	table th {
-		background-color: #6441A4;
+		background-color: #9147FF;
 		color: #FFFFFF;
 		padding-bottom: 8px;
 		padding-top: 8px;

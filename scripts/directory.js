@@ -23,7 +23,7 @@
 	let hideReruns = false;
 
 	// the current page being monitored
-	let currentPage = window.location.pathname;
+	let currentPage = getCurrentPage();
 
 	// indicates that a page load is in progress
 	let pageLoads = false;
@@ -48,6 +48,17 @@
 	let backupBlacklistedItems = {};
 
 /* END: runtime variables */
+
+/**
+ * Returns the current page.
+ */
+function getCurrentPage() {
+
+	// remove trailing slash
+	var result = window.location.pathname.replace(/\/$/, '');
+
+	return result;
+}
 
 /**
  * Returns if the current page is a supported directory.
@@ -90,6 +101,7 @@ function getItemType(page) {
 
 		case '/directory/following':
 		case '/directory/following/live':
+		case '/directory/following/videos':
 		case '/directory/following/hosts':
 		case '/directory/following/games':
 			return 'following';
@@ -525,15 +537,45 @@ function placeManagementButton() {
 
 		case 'categories':
 		case 'channels':
-		case 'videos':
-		case 'clips':
 
-			filtersAreaSelector = 'div.browse-header__filters, div.directory-header__filters';
+			filtersAreaSelector = 'div[data-a-target="tags-filter-dropdown"]';
 			filtersArea 		= mainNode.querySelector(filtersAreaSelector);
 
 			if (filtersArea !== null) {
 
-				return buildManagementButton(filtersArea);
+				return buildManagementButton(filtersArea.parentNode.parentNode);
+
+			} else {
+
+				logWarn('Filters not found. Expected:', filtersAreaSelector);
+			}
+
+		break;
+
+		case 'videos':
+
+			filtersAreaSelector = 'div.directory-game-videos-page__filters > div';
+			filtersArea 		= mainNode.querySelector(filtersAreaSelector);
+
+			if (filtersArea !== null) {
+
+				return buildManagementButton(filtersArea, 'uttv-videos');
+
+			} else {
+
+				logWarn('Filters not found. Expected:', filtersAreaSelector);
+			}
+
+		break;
+
+		case 'clips':
+
+			filtersAreaSelector = 'div.directory-game-clips-page__filters';
+			filtersArea 		= mainNode.querySelector(filtersAreaSelector);
+
+			if (filtersArea !== null) {
+
+				return buildManagementButton(filtersArea, 'uttv-clips');
 
 			} else {
 
@@ -555,7 +597,7 @@ function placeManagementButton() {
 /**
  * Builds a button to open the management area of UnwantedTwitch.
  */
-function buildManagementButton(areaNode) {
+function buildManagementButton(areaNode, className) {
 
 	// prevent adding more than one button
 	if (areaNode.querySelector('div[data-uttv-management]') !== null) {
@@ -567,9 +609,15 @@ function buildManagementButton(areaNode) {
 	let container = document.createElement('div');
 	container.setAttribute('data-uttv-management', '');
 
-	let caption = document.createElement('div');
-	caption.className = 'uttv-caption';
-	caption.textContent = 'Unwanted Twitch';
+	// container's class
+	if (Array.isArray(className)) {
+
+		className = className.join(' ');
+	}
+	if (typeof className === 'string') {
+
+		container.className = className;
+	}
 
 	let button = document.createElement('div');
 	button.className = 'uttv-button';
@@ -582,7 +630,6 @@ function buildManagementButton(areaNode) {
 		chrome.runtime.sendMessage({ action: 'openBlacklist' });
 	});
 
-	container.appendChild(caption);
 	button.appendChild(buttonText);
 	container.appendChild(button);
 	areaNode.appendChild(container);
@@ -1001,7 +1048,7 @@ function getItems() {
 		case 'categories':
 
 			// items
-			itemContainersSelector 	= 'a[data-a-target="tw-box-art-card-link"]:not([data-uttv-hidden])';
+			itemContainersSelector 	= 'div.tw-box-art-card[data-a-target^="card-"]:not([data-uttv-hidden])';
 			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
 
@@ -1016,7 +1063,8 @@ function getItems() {
 				let itemData = null;
 
 				// card
-				const itemName = itemContainers[i].getAttribute('aria-label');
+				let itemName = itemContainers[i].querySelector('div[data-a-target="tw-card-title"] h3[title]');
+				if (itemName !== null) { itemName = itemName.title; }
 				if ((typeof itemName === 'string') && (itemName.length > 0)) {
 
 					itemData = {
@@ -1028,10 +1076,10 @@ function getItems() {
 
 					/* BEGIN: tags */
 
-						const tagContainer = itemContainers[i].parentNode.parentNode.nextSibling;
+						const tagContainer = ( (itemContainers[i].children.length === 2) ? itemContainers[i].children[1] : null );
 						if (tagContainer !== null) {
 
-							const tagsSelector 	= '.tw-tag__content div';
+							const tagsSelector 	= 'div.tw-tag__content div';
 							const tags 			= tagContainer.querySelectorAll(tagsSelector);
 							const tagsLength 	= tags.length;
 
@@ -1243,88 +1291,175 @@ function getItems() {
 
 		case 'following':
 
-			// items
+			// channels
 			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
 			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
 
-			if (itemContainersLength === 0) {
+			if (itemContainersLength > 0) {
 
-				logError('Item containers not found in directory container. Expected:', itemContainersSelector);
-				return [];
-			}
+				for (let i = 0; i < itemContainersLength; i++) {
 
-			for (let i = 0; i < itemContainersLength; i++) {
+					let itemData = null;
 
-				let itemData = null;
+					// card
+					let itemName = itemContainers[i].getAttribute('href');
+					if ((typeof itemName === 'string') && (itemName.length > 0)) {
 
-				// card
-				let itemName = itemContainers[i].getAttribute('href');
-				if ((typeof itemName === 'string') && (itemName.length > 0)) {
+						let subItem = null;
 
-					let subItem = null;
+						// try to find channel and category
+						let subNode = itemContainers[i].parentNode.parentNode;
 
-					// try to find channel and category
-					let subNode = itemContainers[i].parentNode.parentNode;
+						itemName = subNode.querySelector('a[data-a-target="preview-card-channel-link"]');
 
-					itemName = subNode.querySelector('a[data-a-target="preview-card-channel-link"]');
+						subNode = subNode.querySelector('a[data-a-target="preview-card-game-link"]');
+						if (subNode !== null) {
 
-					subNode = subNode.querySelector('a[data-a-target="preview-card-game-link"]');
-					if (subNode !== null) {
-
-						subItem = subNode.textContent;
-					}
-
-					itemData = {
-						item: 		extractItemName(itemName),
-						subItem: 	extractItemName(subItem),
-						tags: 		[],
-						isRerun: 	false,
-						node: 		itemContainers[i]
-					};
-
-					/* BEGIN: tags */
-
-						let tagContainer = itemContainers[i].parentNode;
-						if (tagContainer === null) {
-
-							logInfo('No tags found for card in channels view:', itemContainers[i]);
-							continue;
+							subItem = subNode.textContent;
 						}
 
-						tagContainer = tagContainer.nextSibling;
-						if (tagContainer !== null) {
+						itemData = {
+							item: 		extractItemName(itemName),
+							subItem: 	extractItemName(subItem),
+							tags: 		[],
+							isRerun: 	false,
+							node: 		itemContainers[i]
+						};
 
-							const tagsSelector 	= '.tw-tag__content div';
-							const tags 			= tagContainer.querySelectorAll(tagsSelector);
-							const tagsLength 	= tags.length;
+						/* BEGIN: tags */
 
-							if (tagsLength > 0) {
+							let tagContainer = itemContainers[i].parentNode;
+							if (tagContainer === null) {
 
-								for (let n = 0; n < tagsLength; n++) {
+								logInfo('No tags found for card in Following view:', itemContainers[i]);
+								continue;
+							}
 
-									const tagName = tags[n].textContent;
+							tagContainer = tagContainer.nextSibling;
+							if (tagContainer !== null) {
 
-									itemData.tags.push(tagName);
+								const tagsSelector 	= '.tw-tag__content div';
+								const tags 			= tagContainer.querySelectorAll(tagsSelector);
+								const tagsLength 	= tags.length;
+
+								if (tagsLength > 0) {
+
+									for (let n = 0; n < tagsLength; n++) {
+
+										const tagName = tags[n].textContent;
+
+										itemData.tags.push(tagName);
+									}
+
+								} else {
+
+									logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
 								}
 
 							} else {
 
-								logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
+								logInfo('No tags found for card in Following view:', itemContainers[i]);
 							}
 
-						} else {
+						/* END: tags */
+					}
 
-							logInfo('No tags found for card in channels view:', itemContainers[i]);
+					if (itemData !== null) {
+
+						items.push(itemData);
+					}
+				}
+
+			} else {
+
+				logWarn('Channel containers not found in Following. Expected:', itemContainersSelector);
+			}
+
+			// videos
+			itemContainersSelector 	= 'div[data-a-target^="video-carousel-card-"]:not([data-uttv-hidden])';
+			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
+			itemContainersLength 	= itemContainers.length;
+
+			if (itemContainersLength > 0) {
+
+				for (let i = 0; i < itemContainersLength; i++) {
+
+					let itemData = null;
+
+					// card
+					let item = itemContainers[i].querySelector('div.preview-card__titles-wrapper');
+					if (item !== null) {
+
+						let subItem = null;
+
+						// try to find channel and category
+						let subNode = item.querySelector('div.preview-card-titles__subtitle-wrapper');
+
+						itemName = subNode.querySelector('a[data-a-target="preview-card-channel-link"]');
+
+						subNode = subNode.querySelector('a[data-a-target="preview-card-game-link"]');
+						if (subNode !== null) {
+
+							subItem = subNode.textContent;
 						}
 
-					/* END: tags */
+						itemData = {
+							item: 		extractItemName(itemName),
+							subItem: 	extractItemName(subItem),
+							tags: 		[],
+							isRerun: 	false,
+							node: 		itemContainers[i]
+						};
+
+						/* BEGIN: tags */
+
+							let tagContainer = itemContainers[i].parentNode;
+							if (tagContainer === null) {
+
+								logInfo('No tags found for card in channels view:', itemContainers[i]);
+								continue;
+							}
+
+							tagContainer = tagContainer.nextSibling;
+							if (tagContainer !== null) {
+
+								const tagsSelector 	= '.tw-tag__content div';
+								const tags 			= tagContainer.querySelectorAll(tagsSelector);
+								const tagsLength 	= tags.length;
+
+								if (tagsLength > 0) {
+
+									for (let n = 0; n < tagsLength; n++) {
+
+										const tagName = tags[n].textContent;
+
+										itemData.tags.push(tagName);
+									}
+
+								} else {
+
+									logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
+								}
+
+							} else {
+
+								logInfo('No tags found for card in channels view:', itemContainers[i]);
+							}
+
+						/* END: tags */
+					}
+
+					if (itemData !== null) {
+
+						items.push(itemData);
+					}
 				}
 
-				if (itemData !== null) {
+			// "live" view doesn't have any videos
+			} else if (getCurrentPage() !== '/directory/following/live') {
 
-					items.push(itemData);
-				}
+				logWarn('Video containers not found in Following. Expected:', itemContainersSelector);
 			}
 
 		break;
@@ -1647,7 +1782,7 @@ function filterSidebar() {
 				}
 
 				// category
-				category = items[i].querySelector('span[data-a-target="side-nav-game-title"]');
+				category = items[i].querySelector('[data-a-target="side-nav-game-title"]');
 				if (category !== null) {
 
 					category = extractItemName(category);
@@ -1774,10 +1909,10 @@ function attachHideButtons(items) {
 
 			case 'categories':
 
-				tagContainer = items[i].node.parentNode.parentNode.nextSibling;
+				tagContainer = ( (items[i].node.children.length === 2) ? items[i].node.children[1] : null );
 				if (tagContainer !== null) {
 
-					const tagsSelector 	= '.tw-tag__content div';
+					const tagsSelector 	= 'div.tw-tag__content div';
 					const tags 			= tagContainer.querySelectorAll(tagsSelector);
 					const tagsLength 	= tags.length;
 
@@ -2391,7 +2526,7 @@ function triggerScroll() {
 function observeSidebar() {
 	logTrace('invoking observeSidebar()');
 
-	const targetSelector 	= 'div.side-nav';
+	const targetSelector 	= 'div[data-a-target="side-nav-bar"]';
 	const target 			= rootNode.querySelector(targetSelector);
 
 	if (target !== null) {
@@ -2464,9 +2599,11 @@ monitorPagesInterval = window.setInterval(function monitorPages() {
 		return;
 	}
 
-	if (window.location.pathname !== currentPage) {
+	var page = getCurrentPage();
 
-		currentPage 	= window.location.pathname;
+	if (page !== currentPage) {
+
+		currentPage 	= page;
 		currentItemType = getItemType(currentPage);
 
 		logInfo('Page changed to:', currentPage);
