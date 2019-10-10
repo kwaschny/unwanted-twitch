@@ -2443,7 +2443,7 @@ function listenToScroll() {
 
 			case 'categories':
 
-				itemsInDOM = mainNode.querySelectorAll('div[data-target="directory-container"] div[data-target][style^="order:"]:not([style*="display"])').length;
+				itemsInDOM = mainNode.querySelectorAll('div[data-target="directory-page__card-container"] div[data-a-target^="card-"]:not([data-uttv-hidden])').length;
 
 			break;
 
