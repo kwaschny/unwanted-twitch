@@ -1858,7 +1858,7 @@ function attachHideButtons(items) {
 			return;
 
 		case 'categories':
-			hideItem.className 		= 'uttv-hide-item category';
+			hideItem.className 		= 'uttv-hide-item uttv-category';
 			hideItem.textContent 	= 'X';
 			hideItem.title 			= chrome.i18n.getMessage('label_HideCategory');
 		break;
@@ -1866,7 +1866,7 @@ function attachHideButtons(items) {
 		case 'channels':
 		case 'videos':
 		case 'clips':
-			hideItem.className 		= 'uttv-hide-item channel';
+			hideItem.className 		= 'uttv-hide-item uttv-channel';
 			hideItem.textContent 	= 'X';
 			hideItem.title 			= chrome.i18n.getMessage('label_HideChannel');
 		break;
