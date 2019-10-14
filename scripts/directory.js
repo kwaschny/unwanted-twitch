@@ -2442,7 +2442,7 @@ function triggerScroll() {
 function observeSidebar() {
 	logTrace('invoking observeSidebar()');
 
-	const targetSelector 	= 'div[data-a-target="side-nav-bar"]';
+	const targetSelector 	= 'div[data-a-target^="side-nav-bar"]';
 	const target 			= rootNode.querySelector(targetSelector);
 
 	if (target !== null) {
