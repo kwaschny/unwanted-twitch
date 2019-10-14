@@ -495,6 +495,9 @@ function onPageChange(page) {
 						// invoke sidebar filter
 						filterSidebar();
 						observeSidebar();
+
+						// detect expanding sections
+						listenToScroll();
 					}
 
 				break;
@@ -1291,7 +1294,6 @@ function getItems() {
 
 		case 'following':
 
-			// channels
 			itemContainersSelector 	= 'a[data-a-target="preview-card-image-link"]:not([data-uttv-hidden])';
 			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
 			itemContainersLength 	= itemContainers.length;
@@ -1374,92 +1376,6 @@ function getItems() {
 			} else {
 
 				logWarn('Channel containers not found in Following. Expected:', itemContainersSelector);
-			}
-
-			// videos
-			itemContainersSelector 	= 'div[data-a-target^="video-carousel-card-"]:not([data-uttv-hidden])';
-			itemContainers 			= mainNode.querySelectorAll(itemContainersSelector);
-			itemContainersLength 	= itemContainers.length;
-
-			if (itemContainersLength > 0) {
-
-				for (let i = 0; i < itemContainersLength; i++) {
-
-					let itemData = null;
-
-					// card
-					let item = itemContainers[i].querySelector('div.preview-card__titles-wrapper');
-					if (item !== null) {
-
-						let subItem = null;
-
-						// try to find channel and category
-						let subNode = item.querySelector('div.preview-card-titles__subtitle-wrapper');
-
-						itemName = subNode.querySelector('a[data-a-target="preview-card-channel-link"]');
-
-						subNode = subNode.querySelector('a[data-a-target="preview-card-game-link"]');
-						if (subNode !== null) {
-
-							subItem = subNode.textContent;
-						}
-
-						itemData = {
-							item: 		extractItemName(itemName),
-							subItem: 	extractItemName(subItem),
-							tags: 		[],
-							isRerun: 	false,
-							node: 		itemContainers[i]
-						};
-
-						/* BEGIN: tags */
-
-							let tagContainer = itemContainers[i].parentNode;
-							if (tagContainer === null) {
-
-								logInfo('No tags found for card in channels view:', itemContainers[i]);
-								continue;
-							}
-
-							tagContainer = tagContainer.nextSibling;
-							if (tagContainer !== null) {
-
-								const tagsSelector 	= '.tw-tag__content div';
-								const tags 			= tagContainer.querySelectorAll(tagsSelector);
-								const tagsLength 	= tags.length;
-
-								if (tagsLength > 0) {
-
-									for (let n = 0; n < tagsLength; n++) {
-
-										const tagName = tags[n].textContent;
-
-										itemData.tags.push(tagName);
-									}
-
-								} else {
-
-									logInfo('Tags not found. Expected:', tagsSelector, tagContainer);
-								}
-
-							} else {
-
-								logInfo('No tags found for card in channels view:', itemContainers[i]);
-							}
-
-						/* END: tags */
-					}
-
-					if (itemData !== null) {
-
-						items.push(itemData);
-					}
-				}
-
-			// "live" view doesn't have any videos
-			} else if (getCurrentPage() !== '/directory/following/live') {
-
-				logWarn('Video containers not found in Following. Expected:', itemContainersSelector);
 			}
 
 		break;
@@ -2349,7 +2265,7 @@ function removeItem(node) {
 				}
 
 				if (
-					(topNode.className === 'tw-mg-b-2')
+					(topNode.className === 'preview-card')
 				) {
 
 					node.setAttribute('data-uttv-hidden', '');
