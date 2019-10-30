@@ -505,7 +505,7 @@ getStorageMode(function(mode) {
 	useSyncStorageCheckbox.checked = (mode === 'sync');
 });
 
-/* BEGIN: stroage size */
+/* BEGIN: storage size */
 
 	// getBytesInUse() is not supported by Firefox
 	if (isFirefox() === false) {
@@ -523,14 +523,14 @@ getStorageMode(function(mode) {
 		document.querySelector('.storage-stats').style.visibility = 'visible';
 	}
 
-/* END: stroage size */
+/* END: storage size */
 
 // report storage contents
 if (debug <= 1) {
 
 	chrome.storage.sync.get(null, function(result) {
 
-		logVerbose('stroage.sync:', result);
+		logVerbose('storage.sync:', result);
 	});
 
 	chrome.storage.local.get(null, function(result) {
