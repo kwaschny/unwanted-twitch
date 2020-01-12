@@ -712,69 +712,76 @@ function putBlacklistedItems(items, callback, attemptRecovery) {
 	// store new items in cache
 	storedBlacklistedItems = items;
 
-	let dataToStore 	= { 'blacklistedItems': items };
-	const requiredSize 	= measureStoredSize(dataToStore);
+	let dataToStore = { 'blacklistedItems': items };
 
-	if (requiredSize > storageSyncMaxSize) {
+	getStorageMode(function(mode) {
 
-		logWarn('Blacklist to store (' + requiredSize + ') exceeds the maximum storage size per item (' + storageSyncMaxSize + '). Splitting required...');
-		dataToStore = splitBlacklistItems(items);
-		logVerbose('Splitting of blacklist completed:', dataToStore);
-	}
+		if (mode === 'sync') {
 
-	const keysToRemove = [ 'blacklistedItems' ];
-	for (let i = 0; i < (storageMaxFragments - 1); i++) {
+			const requiredSize 	= measureStoredSize(dataToStore);
 
-		keysToRemove.push('blItemsFragment' + i);
-	}
+			if (requiredSize > storageSyncMaxSize) {
 
-	storageRemove(keysToRemove, function callback_storageRemove() {
-		logTrace('callback invoked: storageRemove($)', keysToRemove);
+				logWarn('Blacklist to store (' + requiredSize + ') exceeds the maximum storage size per item (' + storageSyncMaxSize + '). Splitting required...');
+				dataToStore = splitBlacklistItems(items);
+				logVerbose('Splitting of blacklist completed:', dataToStore);
+			}
+		}
 
-		storageSet(dataToStore, function callback_storageSet(error) {
-			logTrace('callback invoked: storageSet($)', dataToStore);
+		const keysToRemove = [ 'blacklistedItems' ];
+		for (let i = 0; i < (storageMaxFragments - 1); i++) {
 
-			// inform user about storage quota
-			if (
-				(error !== null) &&
-				(error.message !== undefined) &&
-				(typeof error.message === 'string')
-			) {
+			keysToRemove.push('blItemsFragment' + i);
+		}
 
-				if (attemptRecovery !== false) {
+		storageRemove(keysToRemove, function callback_storageRemove() {
+			logTrace('callback invoked: storageRemove($)', keysToRemove);
 
-					if (error.message.indexOf('QUOTA_BYTES') >= 0) {
+			storageSet(dataToStore, function callback_storageSet(error) {
+				logTrace('callback invoked: storageSet($)', dataToStore);
 
-						alert( chrome.i18n.getMessage('alert_StorageQuota') );
+				// inform user about storage quota
+				if (
+					(error !== null) &&
+					(error.message !== undefined) &&
+					(typeof error.message === 'string')
+				) {
 
-					} else if (error.message.indexOf('MAX_') >= 0) {
+					if (attemptRecovery !== false) {
 
-						alert( chrome.i18n.getMessage('alert_StorageThrottle') );
+						if (error.message.indexOf('QUOTA_BYTES') >= 0) {
 
-					} else {
+							alert( chrome.i18n.getMessage('alert_StorageQuota') );
 
-						alert( chrome.i18n.getMessage('alert_StorageIssue') );
+						} else if (error.message.indexOf('MAX_') >= 0) {
+
+							alert( chrome.i18n.getMessage('alert_StorageThrottle') );
+
+						} else {
+
+							alert( chrome.i18n.getMessage('alert_StorageIssue') );
+						}
+
+						// something went wrong, restore the backup
+						logError('Storage error encountered. Attempting to restore backup:', backupBlacklistedItems);
+						putBlacklistedItems(backupBlacklistedItems, callback, false);
+						return;
 					}
 
-					// something went wrong, restore the backup
-					logError('Storage error encountered. Attempting to restore backup:', backupBlacklistedItems);
-					putBlacklistedItems(backupBlacklistedItems, callback, false);
-					return;
+				} else {
+
+					// update backup cache
+					backupBlacklistedItems = cloneBlacklistItems(items);
+
+					logVerbose('Successfully created backup of blacklist:', backupBlacklistedItems);
+					logInfo('Successfully added to blacklist:', items);
 				}
 
-			} else {
+				if (typeof callback === 'function') {
 
-				// update backup cache
-				backupBlacklistedItems = cloneBlacklistItems(items);
-
-				logVerbose('Successfully created backup of blacklist:', backupBlacklistedItems);
-				logInfo('Successfully added to blacklist:', items);
-			}
-
-			if (typeof callback === 'function') {
-
-				callback(items);
-			}
+					callback(items);
+				}
+			});
 		});
 	});
 }
@@ -2086,7 +2093,7 @@ function removeItem(node) {
 			while (true) {
 
 				if (
-					(topNode === undefined) ||
+					(!topNode) ||
 					(topNode === document.documentElement)
 				) {
 
@@ -2116,7 +2123,7 @@ function removeItem(node) {
 			while (true) {
 
 				if (
-					(topNode === undefined) ||
+					(!topNode) ||
 					(topNode === document.documentElement)
 				) {
 					logError('Could not find the expected parent node to remove item:', node);
@@ -2149,7 +2156,7 @@ function removeItem(node) {
 			while (true) {
 
 				if (
-					(topNode === undefined) ||
+					(!topNode) ||
 					(topNode === document.documentElement)
 				) {
 
@@ -2186,7 +2193,7 @@ function removeItem(node) {
 			while (true) {
 
 				if (
-					(topNode === undefined) ||
+					(!topNode) ||
 					(topNode === document.documentElement)
 				) {
 
@@ -2221,7 +2228,7 @@ function removeItem(node) {
 			while (true) {
 
 				if (
-					(topNode === undefined) ||
+					(!topNode) ||
 					(topNode === document.documentElement)
 				) {
 
@@ -2256,7 +2263,7 @@ function removeItem(node) {
 			while (true) {
 
 				if (
-					(topNode === undefined) ||
+					(!topNode) ||
 					(topNode === document.documentElement)
 				) {
 
@@ -2300,7 +2307,7 @@ function removeSidebarItem(node) {
 	while (true) {
 
 		if (
-			(topNode === undefined) ||
+			(!topNode) ||
 			(topNode === document.documentElement)
 		) {
 			logError('Could not find the expected parent node to remove item:', node);

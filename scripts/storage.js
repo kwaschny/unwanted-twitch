@@ -28,7 +28,11 @@ function splitBlacklistItems(items) {
 		if (!items.hasOwnProperty(type)) { continue; }
 
 		// max. fragments reached?
-		if (fragmentIndex >= storageSyncMaxKeys) { break; }
+		if (fragmentIndex >= storageSyncMaxKeys) {
+
+			logError('Exceeding storage limit: storageSyncMaxKeys (' + storageSyncMaxKeys + '). Splitting aborted.');
+			break;
+		}
 
 		let key = ('blItemsFragment' + fragmentIndex);
 		if (fragments[key] === undefined) { fragments[key] = {}; }
@@ -54,7 +58,11 @@ function splitBlacklistItems(items) {
 			}
 
 			// max. fragments reached?
-			if (fragmentIndex >= storageSyncMaxKeys) { break; }
+			if (fragmentIndex >= storageSyncMaxKeys) {
+
+				logError('Exceeding storage limit: storageSyncMaxKeys (' + storageSyncMaxKeys + '). Splitting aborted.');
+				break;
+			}
 
 			let slice 		= values.slice(sliceOffset, (sliceOffset + Math.min(remainingSpace, maxValuesPerFragment)));
 			let sliceLength = slice.length;

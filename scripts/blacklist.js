@@ -1,6 +1,12 @@
 ﻿// jshint esversion: 6
 // jshint -W069
 
+/* BEGIN: runtime cache */
+
+	_getMessage_blacklist_Remove = chrome.i18n.getMessage('blacklist_Remove');
+
+/* END: runtime cache */
+
 function createItemRow(key) {
 
 	let row = document.createElement('tr');
@@ -12,7 +18,7 @@ function createItemRow(key) {
 	let cell2 = document.createElement('td');
 
 	let button = document.createElement('button');
-	button.textContent = chrome.i18n.getMessage('blacklist_Remove');
+	button.textContent = _getMessage_blacklist_Remove; // from runtime cache
 	button.setAttribute('data-key', key);
 	button.addEventListener('click', onRemoveItem);
 

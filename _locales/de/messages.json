@@ -19,7 +19,7 @@
 		"message": "Unwanted Twitch:\nSie sind dabei alle Kategorien und Kanäle\nmit folgendem Tag auszublenden:"
 	},
 	"alert_StorageQuota": {
-		"message": "Unwanted Twitch:\nDie Sperrliste ist voll. Es können keine weiteren Einträge hinzugefügt werden, solange die Synchronisierung stattfinden soll.\n\nDeaktivieren Sie die Synchronisierung, um weitere Einträge hinzufügen zu können."
+		"message": "Unwanted Twitch:\nDie Sperrliste ist voll. Es können keine weiteren Einträge hinzugefügt werden, solange die Synchronisierung stattfinden soll.\n\nDeaktivieren Sie die Synchronisierung in der Cloud, um weitere Einträge hinzufügen zu können."
 	},
 	"alert_StorageThrottle": {
 		"message": "Unwanted Twitch:\nDer Synchronisierungsdienst ist derzeit überlastet.\nBitte warten Sie ein paar Minuten, starten den Browser neu und versuchen es dann noch einmal."
