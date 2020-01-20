@@ -176,51 +176,56 @@ function storageClear(callback) {
 
 function logTrace() {
 
-	if (debug > 0) { return; }
+	if (debug > 0) { return null; }
 
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift('UTTV TRACE:');
 
 	console.log.apply(console, args);
+	return null;
 }
 
 function logVerbose() {
 
-	if (debug > 1) { return; }
+	if (debug > 1) { return null; }
 
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift('UTTV VERBOSE:');
 
 	console.log.apply(console, args);
+	return null;
 }
 
 function logInfo() {
 
-	if (debug > 2) { return; }
+	if (debug > 2) { return null; }
 
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift('UTTV INFO:');
 
 	console.log.apply(console, args);
+	return null;
 }
 
 function logWarn() {
 
-	if (debug > 3) { return; }
+	if (debug > 3) { return null; }
 
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift('UTTV WARN:');
 
 	// console.warn would show up in the extension overview
 	console.warn.apply(console, args);
+	return null;
 }
 
 function logError() {
 
-	if (debug > 4) { return; }
+	if (debug > 4) { return null; }
 
 	var args = Array.prototype.slice.call(arguments);
 	args.unshift('UTTV ERROR:');
 
 	console.error.apply(console, args);
+	return null;
 }

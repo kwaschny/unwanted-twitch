@@ -45,7 +45,7 @@
 		"message": "Einstellungen"
 	},
 	"blacklist_SettingsHideFollowing": {
-		"message": "Auch Kanäle, denen man folgt, filtern"
+		"message": "Auch auf der \"Du Folgst\" Seite filtern"
 	},
 	"blacklist_SettingsHideReruns": {
 		"message": "Stream-Wiederholungen ausblenden"
