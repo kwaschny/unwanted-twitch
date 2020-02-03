@@ -60,7 +60,7 @@
 		</table>
 	</div><!--
 
-	--><div class="area center">
+	--><div class="area center-left">
 		<table>
 			<thead>
 				<th colspan="2">
@@ -81,7 +81,7 @@
 		</table>
 	</div><!--
 
-	--><div class="area right">
+	--><div class="area center-right">
 		<table>
 			<thead>
 				<th colspan="2">
@@ -93,6 +93,28 @@
 				<tr class="input">
 					<td>
 						<input type="text" placeholder="Name of Tag to blacklist" />
+					</td>
+					<td>
+						<button type="button" class="add">Add</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div><!--
+
+	--><div class="area right">
+		<table>
+			<thead>
+				<th colspan="2">
+					<span id="column_Titles">Blacklisted Titles</span> <span class="count"></span>
+					<button type="button" class="clear">Remove All</button>
+				</th>
+			</thead>
+			<tbody id="table_titles">
+				<tr class="input">
+					<td>
+						<input type="text" placeholder="Pattern in Title to blacklist" /><br>
+						<span id="titles_explained" class="hint">Show supported patterns...</span>
 					</td>
 					<td>
 						<button type="button" class="add">Add</button>

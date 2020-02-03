@@ -62,6 +62,9 @@
 	"blacklist_Tags": {
 		"message": "Ausgeblendete Tags"
 	},
+	"blacklist_Titles": {
+		"message": "Ausgeblendete Titel"
+	},
 	"blacklist_CategoriesInput": {
 		"message": "Name der auszublendenen Kategorie"
 	},
@@ -70,6 +73,15 @@
 	},
 	"blacklist_TagsInput": {
 		"message": "Name des auszublendenen Tags"
+	},
+	"blacklist_TitlesInput": {
+		"message": "Muster im auszublendenen Titel"
+	},
+	"blacklist_TitlesExplainedLabel": {
+		"message": "Erklärung zu unterstützten Mustern..."
+	},
+	"blacklist_TitlesExplainedText": {
+		"message": "Alle Muster ignorieren Groß- und Kleinschreibung!\nNachfolgende Muster können verwendet werden:\n\n'Übertragung ohne Titel'\n(Der Titel des Kanals muss exakt übereinstimmen.)\n\nWiederholung\n(Der Titel des Kanals enthält das angegebene Wort an einer beliebigen Stelle.)\n\n/^Live/\n(Regulärer Ausdruck: RegEx innerhalb der Slashes, hier: Titel des Kanals beginnt mit dem Wort \"Live\".)"
 	},
 	"blacklist_Empty": {
 		"message": "Noch kein Eintrag vorhanden."

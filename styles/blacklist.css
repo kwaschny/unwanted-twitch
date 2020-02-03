@@ -39,13 +39,12 @@
 		display: inline-block;
 		margin-bottom: 64px;
 		vertical-align: top;
-		width: 33%;
+		width: 24.5%;
 	}
-		#blacklist .area.left {
-			margin-right: 0.5%;
-		}
-		#blacklist .area.right {
-			margin-left: 0.5%;
+		#blacklist .area.left,
+		#blacklist .area.center-left,
+		#blacklist .area.center-right {
+			margin-right: 0.66%;
 		}
 
 		#blacklist .area th {
@@ -104,6 +103,14 @@
 			#blacklist .actions button:last-child {
 				margin-right: 0px;
 			}
+
+	#blacklist .hint {
+		color: #9147FF;
+		cursor: pointer;
+		display: inline-block;
+		font-size: 70%;
+		margin-top: 4px;
+	}
 
 #blacklist #clearStorages {
 	font-size: 11px;

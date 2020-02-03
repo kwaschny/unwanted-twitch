@@ -37,7 +37,7 @@ function splitBlacklistItems(items) {
 		let key = ('blItemsFragment' + fragmentIndex);
 		if (fragments[key] === undefined) { fragments[key] = {}; }
 
-		let values 			= Object.keys(items[type]);
+		let values 			= ( Array.isArray(items[type]) ? items[type] : Object.keys(items[type]) );
 		let valuesLength 	= values.length;
 
 		let sliceOffset 	= 0;
@@ -99,16 +99,33 @@ function mergeBlacklistFragments(fragments) {
 		for (let type in fragment) {
 			if (!fragment.hasOwnProperty(type)) { continue; }
 
-			if (result[type] === undefined) {
+			if (type === 'titles') {
 
-				result[type] = {};
-			}
+				if (result[type] === undefined) {
 
-			const itemList 			= fragment[type];
-			const itemListLength 	= itemList.length;
-			for (let n = 0; n < itemListLength; n++) {
+					result[type] = [];
+				}
 
-				result[type][itemList[n]] = 1;
+				const itemList 			= fragment[type];
+				const itemListLength 	= itemList.length;
+				for (let n = 0; n < itemListLength; n++) {
+
+					result[type].push(itemList[n]);
+				}
+
+			} else {
+
+				if (result[type] === undefined) {
+
+					result[type] = {};
+				}
+
+				const itemList 			= fragment[type];
+				const itemListLength 	= itemList.length;
+				for (let n = 0; n < itemListLength; n++) {
+
+					result[type][itemList[n]] = 1;
+				}
 			}
 		}
 

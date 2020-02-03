@@ -69,9 +69,6 @@ function addItems(table, items) {
 
 		let key = sortedKeys[i];
 
-		// prevent adding the same key more than once
-		if (itemExists(table, key) === true) { continue; }
-
 		fragment.appendChild(
 			createItemRow(key)
 		);
@@ -99,10 +96,9 @@ function clearItems(table) {
 function itemExists(table, key) {
 
 	key = key.toLowerCase();
+	const presentKeys = gatherKeysArray(table, true);
 
-	const presentKeys = gatherKeys(table, true);
-
-	return (presentKeys[key] !== undefined);
+	return (presentKeys.indexOf(key) >= 0);
 }
 
 function onAddItem(row) {
@@ -121,6 +117,30 @@ function onAddItem(row) {
 	} else {
 
 		itemToAdd = itemToAdd.replace(/[\s]{2,}/g, ' ');
+	}
+
+	// convert quotes in title patterns
+	if (table.id === 'table_titles') {
+
+		itemToAdd = itemToAdd.replace(/^"/, '\'');
+		itemToAdd = itemToAdd.replace(/"$/, '\'');
+
+		if (
+			(itemToAdd.substr(0, 1) === '/') &&
+			(itemToAdd.substr(itemToAdd.length -1, 1) === '/')
+		) {
+
+			try {
+
+				new RegExp(
+					itemToAdd.substring(1, itemToAdd.length -1)
+				);
+
+			} catch (e) {
+
+				alert('The entered regular expression pattern is invalid.');
+			}
+		}
 	}
 
 	// store manually added keys as all-lowercase
@@ -187,7 +207,7 @@ function handleItemCount(table) {
 	return count;
 }
 
-function gatherKeys(table, allLowerCase) {
+function gatherKeysMap(table, allLowerCase) {
 
 	let result = {};
 
@@ -208,6 +228,27 @@ function gatherKeys(table, allLowerCase) {
 
 	return result;
 }
+function gatherKeysArray(table, allLowerCase) {
+
+	let result = [];
+
+	let nodes = table.querySelectorAll('[data-key]');
+	const nodesLength = nodes.length;
+
+	for (let i = 0; i < nodesLength; i++) {
+
+		let key = nodes[i].getAttribute('data-key');
+
+		if (allLowerCase === true) {
+
+			key = key.toLowerCase();
+		}
+
+		result.push(key);
+	}
+
+	return result;
+}
 
 function onSave() {
 
@@ -224,9 +265,10 @@ function onSave() {
 
 			let items = {};
 
-			items.categories 	= gatherKeys(categories);
-			items.channels 		= gatherKeys(channels);
-			items.tags 			= gatherKeys(tags);
+			items.categories 	= gatherKeysMap(categories);
+			items.channels 		= gatherKeysMap(channels);
+			items.tags 			= gatherKeysMap(tags);
+			items.titles 		= gatherKeysArray(titles);
 
 			// store via content script to reflect changes immediately
 			chrome.runtime.sendMessage({
@@ -289,6 +331,11 @@ function onImport() {
 						addItems(tags, deserializedImport.tags);
 					}
 
+					if ( Array.isArray(deserializedImport.titles) ) {
+
+						addItems(titles, deserializedImport.titles);
+					}
+
 					processed = true;
 
 				} else {
@@ -328,9 +375,10 @@ function onExport() {
 
 	let result = {};
 
-	result.categories 	= Object.keys( gatherKeys(categories) );
-	result.channels 	= Object.keys( gatherKeys(channels)   );
-	result.tags 		= Object.keys( gatherKeys(tags)       );
+	result.categories 	= gatherKeysArray(categories);
+	result.channels 	= gatherKeysArray(channels);
+	result.tags 		= gatherKeysArray(tags);
+	result.titles 		= gatherKeysArray(titles);
 
 	const serializedBlacklist = JSON.stringify(result);
 
@@ -361,6 +409,13 @@ function flashSaveButton(interval) {
 	}, interval);
 }
 
+function onTitlesExplained() {
+
+	alert(
+		chrome.i18n.getMessage('blacklist_TitlesExplainedText')
+	);
+}
+
 // indicates if there are changes to save
 let isModified = false;
 
@@ -373,6 +428,8 @@ let isModified = false;
 	const categories 				= document.getElementById('table_categories');
 	const channels 					= document.getElementById('table_channels');
 	const tags 						= document.getElementById('table_tags');
+	const titles 					= document.getElementById('table_titles');
+	const titlesExplained 			= document.getElementById('titles_explained');
 
 	const saveButton 				= document.getElementById('save');
 	const cancelButton 				= document.getElementById('cancel');
@@ -420,6 +477,8 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	hideRerunsCheckbox.addEventListener('change', flashSaveButton);
 	useSyncStorageCheckbox.addEventListener('change', flashSaveButton);
 
+	titlesExplained.addEventListener('click', onTitlesExplained);
+
 	saveButton.addEventListener('click', onSave);
 	cancelButton.addEventListener('click', onCancel);
 
@@ -438,6 +497,9 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	document.getElementById('column_Categories').textContent 	= chrome.i18n.getMessage('blacklist_Categories');
 	document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
 	document.getElementById('column_Tags').textContent 			= chrome.i18n.getMessage('blacklist_Tags');
+	document.getElementById('column_Titles').textContent 		= chrome.i18n.getMessage('blacklist_Titles');
+
+	titlesExplained.textContent = chrome.i18n.getMessage('blacklist_TitlesExplainedLabel');
 
 	document.querySelectorAll('button.clear').forEach(function(e) {
 
@@ -459,6 +521,10 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	document.querySelectorAll('#table_tags tr.input input').forEach(function(e) {
 
 		e.placeholder = chrome.i18n.getMessage('blacklist_TagsInput');
+	});
+	document.querySelectorAll('#table_titles tr.input input').forEach(function(e) {
+
+		e.placeholder = chrome.i18n.getMessage('blacklist_TitlesInput');
 	});
 
 	saveButton.textContent 		= chrome.i18n.getMessage('blacklist_Save');
@@ -485,6 +551,7 @@ storageGet(null, function(result) {
 	addItems(categories, 	blacklistedItems.categories);
 	addItems(channels, 		blacklistedItems.channels);
 	addItems(tags, 			blacklistedItems.tags);
+	addItems(titles, 		blacklistedItems.titles);
 });
 
 // hide following

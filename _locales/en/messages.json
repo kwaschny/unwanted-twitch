@@ -62,6 +62,9 @@
 	"blacklist_Tags": {
 		"message": "Blacklisted Tags"
 	},
+	"blacklist_Titles": {
+		"message": "Blacklisted Titles"
+	},
 	"blacklist_CategoriesInput": {
 		"message": "Name of Category to blacklist"
 	},
@@ -70,6 +73,15 @@
 	},
 	"blacklist_TagsInput": {
 		"message": "Name of Tag to blacklist"
+	},
+	"blacklist_TitlesInput": {
+		"message": "Pattern in Title to blacklist"
+	},
+	"blacklist_TitlesExplainedLabel": {
+		"message": "Supported patterns explained..."
+	},
+	"blacklist_TitlesExplainedText": {
+		"message": "All patterns are case-insensitive!\nThe following patterns are supported:\n\n'Untitled Broadcast'\n(The channel's title matches exactly.)\n\nRerun\n(The channel's title contains the specified word.)\n\n/^Live/\n(Regular expression: RegEx must be within the slashes, here: Channel's title starts with the word \"Live\".)"
 	},
 	"blacklist_Empty": {
 		"message": "Nothing blacklisted yet."

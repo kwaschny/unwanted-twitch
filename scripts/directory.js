@@ -776,11 +776,35 @@
 			name: 		'',
 			category: 	'',
 			tags: 		[],
+			title: 		'',
 			rerun: 		false,
 			node: 		node
 		};
 
 		let buffer;
+
+		/* BEGIN: title */
+
+			buffer = node;
+
+			if (
+				buffer.parentNode &&
+				buffer.parentNode.nextSibling
+			) {
+
+				buffer = buffer.parentNode.nextSibling.querySelector('a[data-a-target="preview-card-title-link"]');
+
+				if (buffer) {
+
+					result.title = buffer.textContent.trim();
+
+				} else {
+
+					logVerbose('Unable to determine title of channel.', node);
+				}
+			}
+
+		/* END: title */
 
 		/* BEGIN: name */
 
@@ -869,6 +893,7 @@
 			name: 		'',
 			category: 	'',
 			tags: 		[],
+			title: 		'',
 			rerun: 		false,
 			node: 		node
 		};
@@ -979,6 +1004,7 @@
 			name: 		'',
 			category: 	'',
 			tags: 		[],
+			title: 		'',
 			rerun: 		false,
 			node: 		node
 		};
@@ -1110,6 +1136,51 @@
 			if (blacklistedByTag) { return true; }
 
 		/* END: blacklisted by tag */
+
+		/* BEGIN: blacklisted by title */
+
+			if ((item.title.length > 0) && (storedBlacklistedItems['titles'].length > 0)) {
+
+				const itemTitleL = item.title.toLowerCase();
+
+				const titles 		= storedBlacklistedItems['titles'];
+				const titlesLength 	= titles.length;
+
+				for (let i = 0; i < titlesLength; i++) {
+
+					// matching will be case-insensitive either way
+					const title = titles[i].toLowerCase();
+
+					if (title.length === 0) { continue; }
+
+					let firstChar 	= title.substr(0, 1);
+					let lastChar 	= title.substr(title.length -1, 1);
+
+					// exact match
+					if ((firstChar === '\'') && (lastChar === '\'')) {
+
+						const exactTitle = title.substring(1, (title.length -1));
+
+						if (itemTitleL === exactTitle) { return true; }
+
+					// regular expression
+					} else if ((firstChar === '/') && (lastChar === '/')) {
+
+						const regex = new RegExp(
+							title.substring(1, (title.length -1)), 'i'
+						);
+
+						if (regex.test(itemTitleL) === true) { return true; }
+
+					// loose match
+					} else {
+
+						if (itemTitleL.indexOf(title) >= 0) { return true; }
+					}
+				}
+			}
+
+		/* END: blacklisted by title */
 
 		// blacklisted for being a rerun
 		if (hideReruns && (item.rerun === true)) { return true; }
@@ -2084,26 +2155,42 @@
 	function initBlacklistedItems(collection) {
 		logTrace('invoking initBlacklistedItems($)', collection);
 
-		const itemTypes = [
+		const itemTypesAsObject = [
 			'categories',
 			'channels',
 			'tags'
 		];
+		const itemTypesAsArray = [
+			'titles'
+		];
 
+		// base container
 		if (typeof collection !== 'object') {
 
 			collection = {};
 		}
 
-		// prepare all item types in collection
-		const itemTypesLength = itemTypes.length;
-		for (let i = 0; i < itemTypesLength; i++) {
+		// prepare all item types in collection (object)
+		const itemTypesAsObjectLength = itemTypesAsObject.length;
+		for (let i = 0; i < itemTypesAsObjectLength; i++) {
 
-			let itemType = itemTypes[i];
+			let itemType = itemTypesAsObject[i];
 
 			if (collection[itemType] === undefined) {
 
 				collection[itemType] = {};
+			}
+		}
+
+		// prepare all item types in collection (array)
+		const itemTypesAsArrayLength = itemTypesAsArray.length;
+		for (let i = 0; i < itemTypesAsArrayLength; i++) {
+
+			let itemType = itemTypesAsArray[i];
+
+			if (collection[itemType] === undefined) {
+
+				collection[itemType] = [];
 			}
 		}
 
