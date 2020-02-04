@@ -269,6 +269,8 @@
 	function observeSidebar() {
 		logTrace('invoking observeSidebar()');
 
+		const observerCooldown = 500;
+
 		const targetSelector 	= '[data-a-target^="side-nav-bar"]';
 		const target 			= rootNode.querySelector(targetSelector);
 
@@ -279,7 +281,10 @@
 
 				// force cooldown to avoid processing multiple mutations at once
 				const timeElapsed = (new Date() - lastSidebarChange);
-				if (timeElapsed < 1000) { return; }
+				if (timeElapsed < observerCooldown) {
+
+					return logVerbose('Skipping sidebar mutation, because it was fired within the ' + observerCooldown + ' ms cooldown.');
+				}
 
 				lastSidebarChange = new Date();
 
@@ -1748,6 +1753,10 @@
 		if (isSupportedPage(page) === false) {
 
 			stopPageChangePolling();
+
+			// try to observe sidebar anyway
+			observeSidebar();
+
 			return logWarn('Stopped onPageChange($) polling, because the current page is not supported.', page);
 		}
 
