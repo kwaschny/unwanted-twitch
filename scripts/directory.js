@@ -68,10 +68,7 @@
 		// renderButtons
 		if (typeof request['renderButtons'] === 'boolean') {
 
-			renderButtons = request['renderButtons'];
-			storageSet({ 'renderButtons': renderButtons });
-
-			toggleHideButtonsVisibility();
+			toggleHideButtonsVisibility(request['renderButtons']);
 			return;
 		}
 
@@ -1530,8 +1527,17 @@
 	/**
 	 * Toggles visibility state of all present hide buttons in the directory of the current page. Returns all present hide buttons.
 	 */
-	function toggleHideButtonsVisibility() {
-		logTrace('invoking toggleHideButtonsVisibility()');
+	function toggleHideButtonsVisibility(state) {
+		logTrace('invoking toggleHideButtonsVisibility($)', state);
+
+		if (typeof state !== 'boolean') {
+
+			throw new Error('Argument "state" is illegal. Expected a boolean.');
+		}
+
+		// store state globally
+		renderButtons = state;
+		storageSet({ 'renderButtons': renderButtons });
 
 		const buttonsSelector 	= '.uttv-hide-item, .uttv-hide-tag';
 		const buttons 			= mainNode.querySelectorAll(buttonsSelector);
@@ -1701,15 +1707,27 @@
 		button.className = 'uttv-button';
 
 		let buttonText = document.createElement('div');
+		buttonText.className = 'uttv-manage';
 		buttonText.textContent = chrome.i18n.getMessage('label_Management');
 
-		// click action
-		button.addEventListener('click', function() {
+		// click action for label
+		buttonText.addEventListener('click', function() {
 
 			chrome.runtime.sendMessage({ action: 'openBlacklist' });
 		});
 
+		let buttonToggle = document.createElement('div');
+		buttonToggle.className = 'uttv-toggle';
+		buttonToggle.textContent = '👁';
+
+		// click action for eye symbol
+		buttonToggle.addEventListener('click', function() {
+
+			toggleHideButtonsVisibility(!renderButtons);
+		});
+
 		button.appendChild(buttonText);
+		button.appendChild(buttonToggle);
 		container.appendChild(button);
 
 		if (position === 'append') {
