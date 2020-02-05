@@ -1,0 +1,34 @@
+﻿Ausblenden von Streams, Spielen, Kategorien, Kanälen und Tags auf: twitch.tv
+
+Funktionen
+- Kategorien ausblenden
+- Kanäle ausblenden
+- Tags ausblenden
+- Stream-Wiederholungen ausblenden
+- Streams aufgrund ihres Titels ausblenden
+- Filterung auf der "Du folgst"-Seite kann deaktiviert werden (unter Einstellungen)
+- Sichtbarkeit der "X"-Buttons umschaltbar
+- Sperrliste im- und exportierbar (unter Einstellungen)
+- Sperrliste synchronisiert sich automatisch mit allen Geräten (unter Einstellungen, kann deaktiviert werden)
+- bequemes Ein- und Ausschalten der Erweiterung
+- kompatibel mit BetterTTV (BTTV) und FrankerFaceZ (FFZ)
+- unterstützt Twitchs dunklen Modus
+
+Unterstütze Seiten
+- Durchsuchen: Kategorien
+- Durchsuchen: Live-Kanäle
+- Kategorie: Live-Kanäle
+- Kategorie: Videos
+- Kategorie: Clips
+- Startseite/Entdecken
+- Du folgst
+- Seitenleiste (nur Filterung, keine Buttons zum Sperren)
+
+Unterstütze die fortlaufende Weiterentwicklung dieser Erweiterung
+Ich arbeite an diesem Projekt in meiner Freizeit. Und obwohl ich selbst twitch.tv nicht mehr sonderlich häufig schaue, möchte ich Leuten das Ausblenden von Inhalten, an denen sie nicht interessiert sind, weiterhin ermöglichen. Solange Twitch also keine eigene Lösung dafür bietet, werde ich an dieser Erweiterung arbeiten und es mit allen zukünftigen Änderungen auf twitch.tv kompatibel machen. Wenn du mich dabei unterstützen möchtest, erzähle anderen davon und/oder ziehe eine kleine Spende in Betracht (https://www.paypal.me/devservice/5eur). ❤️
+
+Zu diesem Projekt beitragen
+Egal ob du regulärer Nutzer oder selbst Entwickler bist, schau bei GitHub vorbei, um weitere Informationen zu erhalten, wie du dem Projekt helfen kannst (https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md).
+
+Hinweis
+Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Sollte die Erweiterung nicht mehr funktionieren, sollte das Problem gemeldet und die Erweiterung bis zum nächsten Update deaktiviert werden.
