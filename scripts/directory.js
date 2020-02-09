@@ -96,7 +96,56 @@
 		// blacklistedItems
 		if (typeof request.blacklistedItems === 'object') {
 
-			putBlacklistedItems(request.blacklistedItems);
+			const items 	= request.blacklistedItems;
+			const cacheOnly = (request.storage === false);
+
+			if (cacheOnly) {
+
+				logInfo('Synchronizing new blacklist.', items);
+
+				// store new items in cache
+				storedBlacklistedItems = items;
+
+			} else {
+
+				if (
+					(typeof request.dispatcherIndex !== 'number') ||
+					(request.dispatcherIndex <= 0)
+				) {
+
+					logInfo('Storing new blacklist.', items);
+
+					putBlacklistedItems(items);
+
+				} else {
+
+					logInfo('Ignoring request to store new blacklist, because the request is already being processed by another tab.', request);
+				}
+			}
+
+			// invoke directory filter
+			if (
+				(currentPageType !== 'following') ||
+				(hideFollowing === true)
+			) {
+
+				filterDirectory();
+
+			} else {
+
+				filterDirectory('recommended');
+			}
+
+			// invoke sidebar filter
+			if (hideFollowing === true) {
+
+				filterSidebar();
+
+			} else {
+
+				filterSidebar('recommended');
+			}
+
 			return;
 		}
 
@@ -2075,28 +2124,6 @@
 
 			logVerbose('Removed item in directory due to being blacklisted:', item);
 
-			if (
-				(currentPageType !== 'following') ||
-				(hideFollowing === true)
-			) {
-
-				filterDirectory();
-
-			} else {
-
-				filterDirectory('recommended');
-			}
-
-			// invoke sidebar filter
-			if (hideFollowing === true) {
-
-				filterSidebar();
-
-			} else {
-
-				filterSidebar('recommended');
-			}
-
 			return true;
 		}
 
@@ -2123,18 +2150,6 @@
 		if (removeDirectoryItem(item) === true) {
 
 			logVerbose('Removed item in directory due to being blacklisted via tag:', item, tag);
-
-			if (
-				(currentPageType !== 'following') ||
-				(hideFollowing === true)
-			) {
-
-				filterDirectory();
-
-			} else {
-
-				filterDirectory('recommended');
-			}
 
 			return true;
 		}
@@ -2262,8 +2277,11 @@
 			logError('Restoring backup:', items);
 		}
 
-		// store new items in cache
-		storedBlacklistedItems = items;
+		// prepare backup of current items
+		const backupItems = cloneBlacklistItems(items);
+
+		// synchronize new items among tabs
+		syncBlacklistedItems(items);
 
 		let dataToStore = { 'blacklistedItems': items };
 
@@ -2324,7 +2342,7 @@
 					} else {
 
 						// update backup cache
-						backupBlacklistedItems = cloneBlacklistItems(items);
+						backupBlacklistedItems = backupItems;
 
 						logVerbose('Created backup of blacklist:', backupBlacklistedItems);
 						logInfo('Added to blacklist:', items);
@@ -2337,6 +2355,14 @@
 				});
 			});
 		});
+	}
+
+	/**
+	 * Informs all tabs (including the one that invokes this function) about the provided items in order to keep them synchronized.
+	 */
+	function syncBlacklistedItems(items) {
+
+		chrome.runtime.sendMessage({ blacklistedItems: items, storage: false });
 	}
 
 /* END: blacklist */

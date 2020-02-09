@@ -6,6 +6,7 @@ function forwardMessageToTabs(request, tabs) {
 	tabsLength = tabs.length;
 	for (let i = 0; i < tabsLength; i++) {
 
+		request.dispatcherIndex = i;
 		forwardMessageToTab(request, tabs[i]);
 	}
 }
