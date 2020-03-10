@@ -2109,6 +2109,13 @@
 	function onHideItem(item) {
 		logTrace('invoking onHideItem($)', item);
 
+		if (item.name.length === 0) {
+
+			logError('Unable to hide item in directory. The name could not be determined:', item);
+
+			return false;
+		}
+
 		// update cache
 		if (storedBlacklistedItems[item.type] === undefined) {
 
@@ -2135,6 +2142,13 @@
 	 */
 	function onHideTag(item, tag) {
 		logTrace('invoking onHideTag($, $)', item, tag);
+
+		if (tag.name.length === 0) {
+
+			logError('Unable to hide tag in directory. The name could not be determined:', tag);
+
+			return false;
+		}
 
 		// update cache
 		if (storedBlacklistedItems['tags'] === undefined) {
