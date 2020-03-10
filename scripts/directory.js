@@ -833,17 +833,24 @@
 		};
 
 		let buffer;
+		let parent = node.closest('article');
+
+		if (parent === null) {
+
+			return logError('Unable to determine parent node of provided channel node.', node);
+		}
 
 		/* BEGIN: title */
 
-			buffer = node;
+			buffer = parent.querySelector('a[data-a-target="preview-card-title-link"]');
 
-			if (
-				buffer.parentNode &&
-				buffer.parentNode.nextSibling
-			) {
+			if (buffer) {
 
-				buffer = buffer.parentNode.nextSibling.querySelector('a[data-a-target="preview-card-title-link"]');
+				result.title = buffer.textContent.trim();
+
+			} else {
+
+				buffer = parent.querySelector('.tw-media-card-meta__title h3');
 
 				if (buffer) {
 
@@ -859,60 +866,43 @@
 
 		/* BEGIN: name */
 
-			buffer = node;
+			buffer = parent.querySelector('a[data-a-target="preview-card-channel-link"]');
 
-			if (
-				buffer.parentNode &&
-				buffer.parentNode.nextSibling
-			) {
+			if (buffer) {
 
-				buffer = buffer.parentNode.nextSibling.querySelector('a[data-a-target="preview-card-channel-link"]');
+				result.name = buffer.textContent;
 
-				if (buffer) {
+			} else {
 
-					result.name = buffer.textContent;
-
-				} else {
-
-					return logError('Unable to determine name of channel.', node);
-				}
+				return logError('Unable to determine name of channel.', node);
 			}
 
 		/* END: name */
 
 		/* BEGIN: category */
 
-			buffer = node;
+			buffer = parent.querySelector('a[data-a-target="preview-card-game-link"]');
 
-			if (
-				buffer.parentNode &&
-				buffer.parentNode.nextSibling
-			) {
+			if (buffer) {
 
-				buffer = buffer.parentNode.nextSibling.querySelector('a[data-a-target="preview-card-game-link"]');
+				result.category = buffer.textContent;
 
-				if (buffer) {
+			} else if (findCategory) {
 
-					result.category = buffer.textContent;
-
-				} else if (findCategory) {
-
-					logVerbose('Unable to determine category of channel.', node);
-				}
+				logVerbose('Unable to determine category of channel.', node);
 			}
 
 		/* END: category */
 
 		/* BEGIN: tags */
 
-			buffer = node;
+			buffer = parent.querySelector('.tw-media-card-meta__links');
 
-			if (
-				buffer.parentNode &&
-				buffer.parentNode.nextSibling
-			) {
+			if (buffer) {
 
-				const tags = readTags(buffer.parentNode.nextSibling);
+				buffer = buffer.nextSibling;
+
+				const tags = readTags(buffer);
 				for (let i = 0; i < tags.length; i++) {
 
 					result.tags.push(
