@@ -1123,31 +1123,39 @@
 
 		/* BEGIN: blacklisted by name */
 
-			// also check all-lowercase spelling
-			const itemName 	= item.name;
-			const itemNameL = itemName.toLowerCase();
+			if (item.name.length > 0) {
 
-			const blacklistedByName = (
-				(storedBlacklistedItems[item.type][itemName]  !== undefined) ||
-				(storedBlacklistedItems[item.type][itemNameL] !== undefined)
-			);
+				// also check all-lowercase spelling
+				const itemName 	= item.name;
+				const itemNameL = itemName.toLowerCase();
 
-			if (blacklistedByName) { return true; }
+				const blacklistedByName = (
+					(storedBlacklistedItems[item.type][itemName]  !== undefined) ||
+					(storedBlacklistedItems[item.type][itemNameL] !== undefined)
+				);
+
+				if (blacklistedByName) { return true; }
+
+			}
 
 		/* END: blacklisted by name */
 
 		/* BEGIN: blacklisted by category */
 
-			// also check all-lowercase spelling
-			const categoryName 	= item.category;
-			const categoryNameL = categoryName.toLowerCase();
+			if (item.category.length > 0) {
 
-			const blacklistedByCategory = (
-				(storedBlacklistedItems['categories'][categoryName]  !== undefined) ||
-				(storedBlacklistedItems['categories'][categoryNameL] !== undefined)
-			);
+				// also check all-lowercase spelling
+				const categoryName 	= item.category;
+				const categoryNameL = categoryName.toLowerCase();
 
-			if (blacklistedByCategory) { return true; }
+				const blacklistedByCategory = (
+					(storedBlacklistedItems['categories'][categoryName]  !== undefined) ||
+					(storedBlacklistedItems['categories'][categoryNameL] !== undefined)
+				);
+
+				if (blacklistedByCategory) { return true; }
+
+			}
 
 		/* END: blacklisted by category */
 
@@ -1159,6 +1167,8 @@
 			for (let i = 0; i < tagsLength; i++) {
 
 				const tag = item.tags[i];
+
+				if (tag.name.length === 0) { continue; }
 
 				// also check all-lowercase spelling
 				const tagName 	= tag.name;
@@ -2283,6 +2293,12 @@
 
 		// prepare backup of current items
 		const backupItems = cloneBlacklistItems(items);
+
+		// clean up bug, see https://github.com/kwaschny/unwanted-twitch/issues/29
+		delete items['categories'][''];
+		delete items['channels'][''];
+		delete items['tags'][''];
+		delete items['titles'][''];
 
 		// synchronize new items among tabs
 		syncBlacklistedItems(items);
