@@ -1002,7 +1002,7 @@
 
 		let tags = [];
 
-		if (!node) { return result; }
+		if (!node) { return tags; }
 
 		const tagsSelector 	= '[data-a-target]';
 		const nodes 		= node.querySelectorAll(tagsSelector);
