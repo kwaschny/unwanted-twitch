@@ -6,29 +6,24 @@ function forwardMessageToTabs(request, tabs) {
 	tabsLength = tabs.length;
 	for (let i = 0; i < tabsLength; i++) {
 
-		request.dispatcherIndex = i;
+		// force dispatch to every tab since we cannot identify them
+		request.dispatcherIndex = -1;
 		forwardMessageToTab(request, tabs[i]);
 	}
 }
 function forwardMessageToTab(request, tab) {
 
-	if (tab.discarded === true) {
-
-		return false;
-	}
-	if (tab.hidden === true) {
-
-		return false;
-	}
-	if (tab.status !== 'complete') {
-
-		return false;
+	if (
+		(tab.discarded === true) ||
+		(tab.hidden === true) ||
+		(tab.status !== 'complete')
+	) {
+		return;
 	}
 
-	// causes an error when targeting about:x tabs, no workaround other than closing these tabs
+	// yields error message for each tab that doesn't match the manifest's "content_scripts": Could not establish connection. Receiving end does not exist.
+	// it is safe to ignore this
 	chrome.tabs.sendMessage(tab.id, request);
-
-	return true;
 }
 chrome.runtime.onMessage.addListener(function(request) {
 
