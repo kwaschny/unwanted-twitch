@@ -8,7 +8,7 @@
 // 3 = WARN, ERROR
 // 4 = ERROR
 // 5 = NONE
-const debug = 3;
+const debug = 1;
 
 /**
  * Returns a copy of the provided blacklist items.
