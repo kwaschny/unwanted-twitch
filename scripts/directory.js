@@ -1278,10 +1278,7 @@
 						(topNode.className === 'tw-mg-b-2') ||
 						(
 							topNode.classList.contains('tw-transition') &&
-							topNode.classList.contains('tw-transition--duration-long') &&
-							topNode.classList.contains('tw-transition--enter-done') &&
-							topNode.classList.contains('tw-transition__slide-over-top') &&
-							topNode.classList.contains('tw-transition__slide-over-top--enter-done')
+							topNode.classList.contains('tw-transition__slide-over-top')
 						) ||
 						(
 							(topNode.getAttribute('data-target') !== null) &&
@@ -1327,7 +1324,6 @@
 						(topNode.className === 'tw-mg-b-2') ||
 						(
 							topNode.classList.contains('tw-transition') &&
-							topNode.classList.contains('tw-transition--duration-long') &&
 							topNode.classList.contains('tw-transition__slide-over-top')
 						) ||
 						(topNode.classList.contains('stream-thumbnail')) ||
