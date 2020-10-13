@@ -1866,42 +1866,38 @@
 
 					case 'frontpage':
 
-						indicator = mainNode.querySelector('div.anon-front__content-section, div.tw-mg-3');
-						if (indicator !== null) {
+						const placeholderNode = rootNode.querySelector('.tw-placeholder');
+						if (placeholderNode !== null) {
 
-							const placeholderNode = rootNode.querySelector('.tw-placeholder');
-							if (placeholderNode !== null) {
-
-								logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-								return;
-							}
-
-							stopPageChangePolling();
-							logTrace('polling stopped in onPageChange(): page loaded');
-
-							addManagementButton();
-
-							// invoke directory filter
-							const remainingItems = filterDirectory();
-
-							// attach hide buttons to the remaining items
-							attachHideButtons(remainingItems);
-
-							// invoke sidebar filter
-							if (hideFollowing === true) {
-
-								filterSidebar();
-								observeSidebar();
-
-							} else {
-
-								filterSidebar('recommended');
-								observeSidebar('recommended');
-							}
-
-							// detect changes (delayed loading, clicking on "Show more")
-							listenToScroll();
+							logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
+							return;
 						}
+
+						stopPageChangePolling();
+						logTrace('polling stopped in onPageChange(): page loaded');
+
+						addManagementButton();
+
+						// invoke directory filter
+						const remainingItems = filterDirectory();
+
+						// attach hide buttons to the remaining items
+						attachHideButtons(remainingItems);
+
+						// invoke sidebar filter
+						if (hideFollowing === true) {
+
+							filterSidebar();
+							observeSidebar();
+
+						} else {
+
+							filterSidebar('recommended');
+							observeSidebar('recommended');
+						}
+
+						// detect changes (delayed loading, clicking on "Show more")
+						listenToScroll();
 
 						break;
 
