@@ -745,7 +745,14 @@
 		}
 
 		// "!" will be replaced with prefix, "%" will be replaced with suffix
-		selector = '!a[data-a-target="followed-channel"]%, !a[data-a-target="recommended-channel"]%, !a.side-nav-card%';
+		selector = [
+
+			'!a[data-a-id^="followed-channel-"]%',
+			'!a[data-a-id^="recommended-channel-"]%',
+			'!a[data-a-id^="popular-channel-"]%',
+			'!a.side-nav-card%'
+
+		].join(', ');
 
 		// replace selector wildcards
 		if (typeof selector === 'string') {
