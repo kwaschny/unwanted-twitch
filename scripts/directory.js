@@ -1283,10 +1283,7 @@
 					// order by vague to most specific selector
 					if (
 						(topNode.className === 'tw-mg-b-2') ||
-						(
-							topNode.classList.contains('tw-transition') &&
-							topNode.classList.contains('tw-transition__slide-over-top')
-						) ||
+						topNode.classList.contains('tw-transition') ||
 						(
 							(topNode.getAttribute('data-target') !== null) &&
 							(
@@ -1329,11 +1326,8 @@
 					// order by vague to most specific selector
 					if (
 						(topNode.className === 'tw-mg-b-2') ||
-						(
-							topNode.classList.contains('tw-transition') &&
-							topNode.classList.contains('tw-transition__slide-over-top')
-						) ||
-						(topNode.classList.contains('stream-thumbnail')) ||
+						topNode.classList.contains('tw-transition') ||
+						topNode.classList.contains('stream-thumbnail') ||
 						(
 							(topNode.getAttribute('data-target') !== null) &&
 							(
