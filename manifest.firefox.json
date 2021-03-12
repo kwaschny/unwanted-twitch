@@ -1,38 +1,45 @@
 ﻿{
 	"name": "Unwanted Twitch",
 	"short_name": "Unwanted TTV",
-	"version": "20.11.2",
+	"version": "21.3.11",
 	"description": "__MSG_app_Desc__",
-	"permissions": [ "https://www.twitch.tv/", "storage" ],
+	"permissions": [
+		"https://www.twitch.tv/",
+		"storage"
+	],
 	"default_locale": "en",
 	"background": {
-		"scripts": [ "scripts/background.js" ]
+		"scripts": [
+			"scripts/background.js"
+		]
 	},
 	"content_scripts": [
 		{
-			"matches": 	[ "https://www.twitch.tv/*" ],
-			"run_at": 	"document_start",
-			"js": 		[
+			"matches": [
+				"https://www.twitch.tv/*"
+			],
+			"run_at": "document_start",
+			"js": [
 				"scripts/common.js",
-				"scripts/storage.js"
+				"scripts/storage.js",
+				"scripts/directory.js"
+			],
+			"css": [
+				"styles/directory.css"
 			]
-		},
-		{
-			"matches": 	[ "https://www.twitch.tv/*" ],
-			"run_at": 	"document_start",
-			"js": 		[ "scripts/directory.js" ],
-			"css": 		[ "styles/directory.css" ]
 		}
 	],
 	"page_action": {
-		"show_matches": 	[ "https://www.twitch.tv/*" ],
-		"default_icon": 	"images/icon32.png",
-		"default_popup": 	"views/popup.html"
+		"show_matches": [
+			"https://www.twitch.tv/*"
+		],
+		"default_icon": "images/icon32.png",
+		"default_popup": "views/popup.html"
 	},
 	"icons": {
-		 "16": "images/icon16.png",
-		 "32": "images/icon32.png",
-		 "48": "images/icon48.png",
+		"16": "images/icon16.png",
+		"32": "images/icon32.png",
+		"48": "images/icon48.png",
 		"128": "images/icon128.png"
 	},
 	"manifest_version": 2,
