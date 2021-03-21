@@ -725,11 +725,11 @@
 		}
 
 		const modes = {
-			'visible': 		{ prefix: '', 						suffix: ':not([data-uttv-hidden])' 		},
-			'hidden': 		{ prefix: '', 						suffix: '[data-uttv-hidden]' 			},
-			'unprocessed': 	{ prefix: '', 						suffix: ':not([data-uttv-processed])' 	},
-			'processed': 	{ prefix: '', 						suffix: '[data-uttv-processed]' 		},
-			'recommended': 	{ prefix: '.recommended-channels ', suffix: ':not([data-uttv-hidden])' 		}
+			'visible': 		{ prefix: '', suffix: ':not([data-uttv-hidden])' 	},
+			'hidden': 		{ prefix: '', suffix: '[data-uttv-hidden]' 			},
+			'unprocessed': 	{ prefix: '', suffix: ':not([data-uttv-processed])' },
+			'processed': 	{ prefix: '', suffix: '[data-uttv-processed]' 		},
+			'recommended': 	{ prefix: '', suffix: ':not([data-uttv-hidden])' 	}
 		};
 
 		let selector;
@@ -767,6 +767,37 @@
 		const sidebarNode 		= rootNode.querySelector(sidebarSelector);
 
 		if (sidebarNode !== null) {
+
+			// if there are two or more sections in the sidebar, the second section is for recommended channels
+			if (mode === 'recommended') {
+
+				const sidebarSectionsSelector 	= '.side-nav-section';
+				const sidebarSectionsNodes 		= sidebarNode.querySelectorAll(sidebarSectionsSelector);
+
+				logVerbose('Looking for recommended channels section in sidebar.', sidebarSectionsSelector);
+
+				let sidebarLabel = null;
+				if (sidebarSectionsNodes.length === 1) {
+
+					sidebarLabel = sidebarSectionsNodes[0].getAttribute('aria-label');
+
+				} else if (sidebarSectionsNodes.length >= 2) {
+
+					sidebarLabel = sidebarSectionsNodes[1].getAttribute('aria-label');
+
+				} else {
+
+					logVerbose('Unable to determine recommended channels section.');
+				}
+
+				if (sidebarLabel !== null) {
+
+					logVerbose('Determined recommended channels section to be:', sidebarLabel, sidebarSectionsNodes);
+
+					// prefix selector with more specific section
+					selector = ('.side-nav-section[aria-label="' + sidebarLabel + '"] ' + selector);
+				}
+			}
 
 			nodes 				= sidebarNode.querySelectorAll(selector);
 			const nodesLength 	= nodes.length;
