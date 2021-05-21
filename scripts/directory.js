@@ -888,7 +888,7 @@
 
 			} else {
 
-				buffer = parent.querySelector('.tw-media-card-meta__title h3');
+				buffer = parent.querySelector('[class*="ScCoreLink"] h3');
 
 				if (buffer) {
 
