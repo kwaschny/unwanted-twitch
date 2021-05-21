@@ -387,7 +387,13 @@
 				return;
 			}
 
-			const nodes 		= getDirectoryItemNodes('unprocessed');
+			let mode = 'unprocessed';
+			if (hideFollowing === false) {
+
+				mode = 'recommended';
+			}
+
+			const nodes = getDirectoryItemNodes(mode);
 			const nodesLength 	= nodes.length;
 
 			// when there are unprocessed items in the directory, assume that the user scrolled down
