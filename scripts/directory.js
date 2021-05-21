@@ -934,11 +934,16 @@
 
 		/* BEGIN: tags */
 
-			buffer = parent.querySelector('.tw-media-card-meta__links');
-
+			buffer = parent.querySelector('[class*="ScTextWrapper"]');
 			if (buffer) {
 
-				buffer = buffer.nextSibling;
+				if (buffer.children.length === 3) {
+
+					buffer = buffer.children[2];
+				}
+			}
+
+			if (buffer) {
 
 				const tags = readTags(buffer);
 				for (let i = 0; i < tags.length; i++) {
