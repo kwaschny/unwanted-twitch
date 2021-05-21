@@ -431,6 +431,14 @@
 		return false;
 	}
 
+	/**
+	 * Returns if the current document invokes the FFZ extension.
+	 */
+	function isFFZ() {
+
+		return (document.getElementById('ffz-script') !== null);
+	}
+
 /* END: page state */
 
 /* BEGIN: filter operations */
@@ -1543,6 +1551,11 @@
 				default:
 
 					return logError('Unable to attach hide button to card, because the item type is unhandled:', item);
+			}
+
+			if ( isFFZ() ) {
+
+				hideItem.className += ' uttv-ffz';
 			}
 
 			if (renderButtons === false) {

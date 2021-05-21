@@ -82,6 +82,9 @@
 	user-select: none;
 	z-index: 2; /* 2+ required to be on top of Twitch Prime badge */
 }
+	.uttv-hide-item.uttv-ffz {
+		top: 34px;
+	}
 	.uttv-hide-item:hover {
 		background-color: #9147FF;
 		color: #FFFFFF;
