@@ -1365,6 +1365,16 @@
 						topNode.classList.contains('tw-transition') ||
 						topNode.classList.contains('stream-thumbnail') ||
 						(
+							(topNode.getAttribute('data-a-target') !== null) &&
+							(typeof topNode.getAttribute('data-a-target') === 'string') &&
+							(topNode.getAttribute('data-a-target').indexOf('video-tower-card') >= 0)
+						) ||
+						(
+							(topNode.getAttribute('data-a-target') !== null) &&
+							(typeof topNode.getAttribute('data-a-target') === 'string') &&
+							(topNode.getAttribute('data-a-target').indexOf('clips-card') >= 0)
+						) ||
+						(
 							(topNode.getAttribute('data-target') !== null) &&
 							(
 								(typeof topNode.getAttribute('style') === 'string') &&
