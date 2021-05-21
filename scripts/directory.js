@@ -1312,7 +1312,7 @@
 
 							item.node.setAttribute('data-uttv-hidden', '');
 
-							topNodes[topNodes.length - 1].style.display = 'none';
+							topNodes[topNodes.length - 1].style.cssText += '; display: none !important;';
 							return true;
 
 						} else {
@@ -1355,7 +1355,7 @@
 
 							item.node.setAttribute('data-uttv-hidden', '');
 
-							topNodes[topNodes.length - 1].style.display = 'none';
+							topNodes[topNodes.length - 1].style.cssText += '; display: none !important;';
 							return true;
 
 						} else {
@@ -1441,11 +1441,11 @@
 
 							if (nodeToRemove.classList.contains('side-nav-card')) {
 
-								nodeToRemove.parentNode.parentNode.style.display = 'none';
+								nodeToRemove.parentNode.parentNode.style.cssText += '; display: none !important;';
 
 							} else {
 
-								nodeToRemove.style.display = 'none';
+								nodeToRemove.style.cssText += '; display: none !important;';
 							}
 
 							return true;
