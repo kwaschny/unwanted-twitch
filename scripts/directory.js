@@ -432,7 +432,7 @@
 	/**
 	 * Returns if the current document invokes the FFZ extension.
 	 */
-	function isFFZ() {
+	function usingFFZ() {
 
 		return (document.getElementById('ffz-script') !== null);
 	}
@@ -1543,19 +1543,28 @@
 				break;
 
 				case 'channels':
+
 					hideItem.className 		= 'uttv-hide-item uttv-channel';
 					hideItem.textContent 	= 'X';
 					hideItem.title 			= chrome.i18n.getMessage('label_HideChannel');
+
+					// offset the "X" button on live channels when FFZ is used (to prevent overlap with stream runtime)
+					if ( usingFFZ() ) {
+
+						const isLive = /^\/[^\/]+\/?$/.test(
+							item.node.getAttribute('href')
+						);
+
+						if (isLive) {
+
+							hideItem.className += ' uttv-ffz';
+						}
+					}
 				break;
 
 				default:
 
 					return logError('Unable to attach hide button to card, because the item type is unhandled:', item);
-			}
-
-			if ( isFFZ() ) {
-
-				hideItem.className += ' uttv-ffz';
 			}
 
 			if (renderButtons === false) {
