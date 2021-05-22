@@ -1,7 +1,7 @@
 ﻿{
 	"name": "Unwanted Twitch",
 	"short_name": "Unwanted TTV",
-	"version": "21.5.21",
+	"version": "21.5.22",
 	"description": "__MSG_app_Desc__",
 	"permissions": [
 		"https://www.twitch.tv/",
