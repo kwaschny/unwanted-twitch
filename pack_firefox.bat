@@ -28,3 +28,5 @@ del %target%
 :: clean up
 del "%dir%\manifest.json"
 del "%dir%\scripts\background.js"
+
+pause
