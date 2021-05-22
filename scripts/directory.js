@@ -133,7 +133,11 @@
 
 			} else {
 
+				// invoke directory filter for recommended section
 				filterDirectory('recommended');
+
+				// mark remaining items as being processed
+				filterDirectory('unprocessed', false);
 			}
 
 			// invoke sidebar filter
@@ -440,7 +444,7 @@
 	/**
 	 * Filters directory on the current page. Returns the remaining (not blacklisted) items.
 	 */
-	function filterDirectory(mode = 'visible') {
+	function filterDirectory(mode = 'visible', remove = true) {
 		logTrace('invoking filterDirectory()');
 
 		// prevent filtering more than once at the same time
@@ -453,7 +457,7 @@
 		directoryFilterRunning = true;
 
 		const items 			= getDirectoryItems(mode);
-		const remainingItems 	= filterDirectoryItems(items);
+		const remainingItems 	= filterDirectoryItems(items, remove);
 
 		directoryFilterRunning = false;
 
@@ -474,7 +478,7 @@
 	/**
 	 * Filters the provided items and returns the remaining (not blacklisted) items.
 	 */
-	function filterDirectoryItems(items) {
+	function filterDirectoryItems(items, remove = true) {
 		logTrace('invoking filterDirectoryItems($)', items);
 
 		let remainingItems = [];
@@ -486,6 +490,8 @@
 
 			// mark item node as being processed
 			item.node.setAttribute('data-uttv-processed', '');
+
+			if (remove === false) { continue; }
 
 			if (isBlacklistedItem(item) === true) {
 
@@ -2126,8 +2132,11 @@
 
 									logInfo('Filtering is disabled on the current page due to user preference.');
 
-									// invoke directory filter
+									// invoke directory filter for recommended section
 									const remainingItems = filterDirectory('recommended');
+
+									// mark remaining items as being processed
+									filterDirectory('unprocessed', false);
 
 									// attach hide buttons
 									attachHideButtons(remainingItems);
@@ -2253,7 +2262,11 @@
 
 		} else {
 
+			// invoke directory filter for recommended section
 			remainingItems = filterDirectory('recommended');
+
+			// mark remaining items as being processed
+			filterDirectory('unprocessed', false);
 		}
 
 		attachHideButtons(remainingItems);
