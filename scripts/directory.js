@@ -1325,7 +1325,7 @@
 
 						} else {
 
-							logError('Could not find the expected parent node to remove item:', item);
+							logError('Could not find the expected parent node to remove category item:', item);
 							break;
 						}
 					}
@@ -1368,7 +1368,7 @@
 
 						} else {
 
-							logError('Could not find the expected parent node to remove item:', item);
+							logError('Could not find the expected parent node to remove channel item:', item);
 							break;
 						}
 					}
@@ -1380,6 +1380,7 @@
 						(topNode.className === 'tw-mg-b-2') ||
 						topNode.classList.contains('tw-transition') ||
 						topNode.classList.contains('stream-thumbnail') ||
+						topNode.classList.contains('live-channel-card') ||
 						(
 							(aTarget !== null) &&
 							(typeof aTarget === 'string') &&
@@ -1460,7 +1461,7 @@
 
 						} else {
 
-							logError('Could not find the expected parent node to remove item:', item);
+							logError('Could not find the expected parent node to remove sidebar channel item:', item);
 							break;
 						}
 					}
