@@ -3,12 +3,14 @@
 ## Report bugs
 Something doesn't work or is not working anymore? Please [create a bug report (issue) here on GitHub](https://github.com/kwaschny/unwanted-twitch/issues) and let me know. Put as much information as possible in the report. Please try to answer the following questions:
 
-- What browser and what version are you using?
-- Are you using other extensions that affect the Twitch website?
+- What browser and what version of it are you using?
+- What version of Unwanted Twitch are you using?
+- Are you using other extensions that might affect the Twitch website?
 - Does disabling all the other extensions (except Unwanted Twitch) help with the problem?
 - What are the steps to reproduce the problem?
 - If applicable: Can you show a screenshot of the issue?
 - If applicable: Can you share the export of your blacklist?
+- Advanced users: Share the console messages and stacktrace. **How to**: Open the developer toolbar pressing `F12` and keep it open. Reload the page you are having the issue on by pressing `F5`. Switch to the `Console` tab in the developer toolbar. Check for warnings/errors starting with `UTTV:` (consider using the filter), click on them to expand the stacktrace. Include a screenshot of it in your report.
 
 ## Suggest improvements and/or new features
 Do you have suggestions to improve the extension? [Create an issue here on GitHub](https://github.com/kwaschny/unwanted-twitch/issues) and I will comment and tag it accordingly. Please don't be offended if your request is declined or not being worked on immediately. I have a day job and can only spend so much time on free software projects like this one.
