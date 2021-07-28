@@ -95,7 +95,7 @@
 	cursor: pointer;
 	display: inline-block;
 	font-size: 90%;
-	padding: 2px 6px;
+	padding: 0px 6px;
 	user-select: none;
 }
 	.uttv-hide-tag:hover {
