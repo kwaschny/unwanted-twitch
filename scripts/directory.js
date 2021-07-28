@@ -902,7 +902,7 @@
 
 			} else {
 
-				buffer = parent.querySelector('[class*="ScCoreLink"] h3');
+				buffer = parent.querySelector('h3[title]');
 
 				if (buffer) {
 
@@ -948,18 +948,11 @@
 
 		/* BEGIN: tags */
 
-			buffer = parent.querySelector('[class*="ScTextWrapper"]');
-			if (buffer) {
-
-				if (buffer.children.length === 3) {
-
-					buffer = buffer.children[2];
-				}
-			}
+			buffer = parent.querySelector('.tw-tag[data-a-target]');
 
 			if (buffer) {
 
-				const tags = readTags(buffer);
+				const tags = readTags(buffer.parentNode.parentNode);
 				for (let i = 0; i < tags.length; i++) {
 
 					result.tags.push(
@@ -1332,7 +1325,6 @@
 
 					// order by vague to most specific selector
 					if (
-						(topNode.className === 'tw-mg-b-2') ||
 						topNode.classList.contains('tw-transition') ||
 						(
 							(topNode.getAttribute('data-target') !== null) &&
@@ -1377,7 +1369,6 @@
 
 					// order by vague to most specific selector
 					if (
-						(topNode.className === 'tw-mg-b-2') ||
 						topNode.classList.contains('tw-transition') ||
 						topNode.classList.contains('stream-thumbnail') ||
 						topNode.classList.contains('live-channel-card') ||
