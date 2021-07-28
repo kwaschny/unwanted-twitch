@@ -20,15 +20,22 @@ Supported pages
 - Game: Live Channels
 - Game: Videos
 - Game: Clips
-- Frontpage/Discover
+- Frontpage/Discover (carousel is not filtered)
 - Following
 - Sidebar (filtering only, no buttons to add items to the blacklist)
+- you can still access any blacklisted content via direct link
 
-Support the continuous development of this extension
-I am working on this extension in my spare time. And although I don't watch twitch.tv that much anymore, I still want people to be able to hide content they are not interested in. So as long as Twitch doesn't offer a native way to achieve that, I will continue developing this extension and make it work with future updates to the twitch.tv website. If you want to support me, feel free to spread the word and/or consider donating (https://www.paypal.me/devservice/5eur). ❤️
+Note about breaking changes on twitch.tv
+Twitch is infamous for changing their website without further notice, which may break this extension over night (usually on Tuesdays). Twitch also serves different canary builds (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, report the issue¹ (you can also send me an e-mail or DM me on Twitter) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on the GitHub commits² or follow me on Twitter³ to receive news regarding new versions. Please avoid leaving a 1-star review as this will neither help the case nor increase my mood. Thank you. 🙂
+
+Support the ongoing development of this extension
+I am working on this extension in my spare time. And although I don't watch twitch.tv that much anymore, I still want people to be able to hide content they are not interested in. So as long as Twitch doesn't offer a native way to achieve that, I will continue developing this extension and make it work with future updates to the twitch.tv website. If you want to support me, feel free to spread the word and/or consider a tip⁴. ❤️
 
 Contributing to this extension
-Regardless if you are a regular user or a developer yourself, check out the contribution page on GitHub for information about how you can help this project (https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md).
+Regardless if you are a regular user or a developer yourself, check out the contribution page on GitHub for information about how you can help this project⁵.
 
-Notice
-Twitch is infamous for changing their website without further notice, which may break this extension over night. If you notice pages no longer working properly, disable the extension, report the issue and wait for an update.
+¹ https://github.com/kwaschny/unwanted-twitch/issues
+² https://github.com/kwaschny/unwanted-twitch/commits/master
+³ https://twitter.com/Kwaschny
+⁴ https://www.paypal.me/devservice/5eur
+⁵ https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md

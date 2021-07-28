@@ -20,15 +20,16 @@
 - Kategorie: Live-Kanäle
 - Kategorie: Videos
 - Kategorie: Clips
-- Startseite/Entdecken
+- Startseite/Entdecken (keine Filterung im Karussell)
 - Du folgst
 - Seitenleiste (nur Filterung, keine Buttons zum Sperren)
+- Bereiche können weiterhin via Direktlink besucht werden
+
+<b>Hinweis bzgl. Änderungen auf twitch.tv</b>
+Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann (meist dienstags). Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, <a href="https://github.com/kwaschny/unwanted-twitch/issues">bitte das Problem melden</a> und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen. Also entweder <a href="https://github.com/kwaschny/unwanted-twitch/commits/master">auf GitHub vorbeischauen</a> oder <a href="https://twitter.com/Kwaschny">mir auf Twitter folgen</a>, um über neue Versionen informiert zu bleiben. Bitte hinterlasst dafür keine 1-Stern-Bewertungen, denn das hilft weder der Sache noch meinem Gemüt. Danke. 🙂
 
 <b>Unterstütze die fortlaufende Weiterentwicklung dieser Erweiterung</b>
-Ich arbeite an diesem Projekt in meiner Freizeit. Und obwohl ich selbst twitch.tv nicht mehr sonderlich häufig schaue, möchte ich Leuten das Ausblenden von Inhalten, an denen sie nicht interessiert sind, weiterhin ermöglichen. Solange Twitch also keine eigene Lösung dafür bietet, werde ich an dieser Erweiterung arbeiten und es mit allen zukünftigen Änderungen auf twitch.tv kompatibel machen. Wenn du mich dabei unterstützen möchtest, erzähle anderen davon und/oder ziehe <a href="https://www.paypal.me/devservice/5eur">eine kleine Spende in Betracht</a>. ❤️
+Ich arbeite an diesem Projekt in meiner Freizeit. Und obwohl ich selbst twitch.tv nicht mehr sonderlich häufig schaue, möchte ich Leuten das Ausblenden von Inhalten, an denen sie nicht interessiert sind, weiterhin ermöglichen. Solange Twitch also keine eigene Lösung dafür bietet, werde ich an dieser Erweiterung arbeiten und es mit allen zukünftigen Änderungen auf twitch.tv kompatibel machen. Wenn du mich dabei unterstützen möchtest, erzähle anderen davon und/oder ziehe <a href="https://www.paypal.me/devservice/5eur">ein kleines Trinkgeld in Betracht</a>. ❤️
 
 <b>Zu diesem Projekt beitragen</b>
 Egal ob du regulärer Nutzer oder selbst Entwickler bist, <a href="https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md">schau bei GitHub vorbei, um weitere Informationen zu erhalten, wie du dem Projekt helfen kannst</a>.
-
-<b>Hinweis</b>
-Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Sollte die Erweiterung nicht mehr funktionieren, sollte das Problem gemeldet und die Erweiterung bis zum nächsten Update deaktiviert werden.

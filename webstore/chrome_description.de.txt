@@ -20,15 +20,22 @@ Unterstütze Seiten
 - Kategorie: Live-Kanäle
 - Kategorie: Videos
 - Kategorie: Clips
-- Startseite/Entdecken
+- Startseite/Entdecken (keine Filterung im Karussell)
 - Du folgst
 - Seitenleiste (nur Filterung, keine Buttons zum Sperren)
+- Bereiche können weiterhin via Direktlink besucht werden
+
+Hinweis bzgl. Änderungen auf twitch.tv
+Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann (meist dienstags). Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, bitte das Problem melden¹ und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen. Also entweder auf GitHub vorbeischauen² oder mir auf Twitter folgen³, um über neue Versionen informiert zu bleiben. Bitte hinterlasst dafür keine 1-Stern-Bewertungen, denn das hilft weder der Sache noch meinem Gemüt. Danke. 🙂
 
 Unterstütze die fortlaufende Weiterentwicklung dieser Erweiterung
-Ich arbeite an diesem Projekt in meiner Freizeit. Und obwohl ich selbst twitch.tv nicht mehr sonderlich häufig schaue, möchte ich Leuten das Ausblenden von Inhalten, an denen sie nicht interessiert sind, weiterhin ermöglichen. Solange Twitch also keine eigene Lösung dafür bietet, werde ich an dieser Erweiterung arbeiten und es mit allen zukünftigen Änderungen auf twitch.tv kompatibel machen. Wenn du mich dabei unterstützen möchtest, erzähle anderen davon und/oder ziehe eine kleine Spende in Betracht (https://www.paypal.me/devservice/5eur). ❤️
+Ich arbeite an diesem Projekt in meiner Freizeit. Und obwohl ich selbst twitch.tv nicht mehr sonderlich häufig schaue, möchte ich Leuten das Ausblenden von Inhalten, an denen sie nicht interessiert sind, weiterhin ermöglichen. Solange Twitch also keine eigene Lösung dafür bietet, werde ich an dieser Erweiterung arbeiten und es mit allen zukünftigen Änderungen auf twitch.tv kompatibel machen. Wenn du mich dabei unterstützen möchtest, erzähle anderen davon und/oder ziehe ein kleines Trinkgeld in Betracht⁴. ❤️
 
 Zu diesem Projekt beitragen
-Egal ob du regulärer Nutzer oder selbst Entwickler bist, schau bei GitHub vorbei, um weitere Informationen zu erhalten, wie du dem Projekt helfen kannst (https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md).
+Egal ob du regulärer Nutzer oder selbst Entwickler bist, schau bei GitHub vorbei, um weitere Informationen zu erhalten, wie du dem Projekt helfen kannst⁵.
 
-Hinweis
-Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Sollte die Erweiterung nicht mehr funktionieren, sollte das Problem gemeldet und die Erweiterung bis zum nächsten Update deaktiviert werden.
+¹ https://github.com/kwaschny/unwanted-twitch/issues
+² https://github.com/kwaschny/unwanted-twitch/commits/master
+³ https://twitter.com/Kwaschny
+⁴ https://www.paypal.me/devservice/5eur
+⁵ https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md
