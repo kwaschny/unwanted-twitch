@@ -54,8 +54,8 @@ function addItems(table, items) {
 		return handleItemCount(table);
 	}
 
-	let sortedKeys 			= ( Array.isArray(items) ? items : Object.keys(items) );
-	const sortedKeysLength 	= sortedKeys.length;
+	let sortedKeys         = ( Array.isArray(items) ? items : Object.keys(items) );
+	const sortedKeysLength = sortedKeys.length;
 
 	// sort items (case insensitive)
 	sortedKeys = sortedKeys.sort(function (a, b) {
@@ -80,8 +80,8 @@ function addItems(table, items) {
 
 function clearItems(table) {
 
-	const rows 			= table.querySelectorAll('tr.item');
-	const rowsLength 	= rows.length;
+	const rows       = table.querySelectorAll('tr.item');
+	const rowsLength = rows.length;
 
 	for (let i = (rowsLength - 1); i >= 0; i--) {
 
@@ -159,7 +159,7 @@ function onAddItem(row) {
 
 function onRemoveItem() {
 
-	const row 	= this.parentNode.parentNode;
+	const row   = this.parentNode.parentNode;
 	const table = row.parentNode;
 
 	row.remove();
@@ -265,10 +265,10 @@ function onSave() {
 
 			let items = {};
 
-			items.categories 	= gatherKeysMap(categories);
-			items.channels 		= gatherKeysMap(channels);
-			items.tags 			= gatherKeysMap(tags);
-			items.titles 		= gatherKeysArray(titles);
+			items.categories = gatherKeysMap(categories);
+			items.channels   = gatherKeysMap(channels);
+			items.tags       = gatherKeysMap(tags);
+			items.titles     = gatherKeysArray(titles);
 
 			// store via content script to reflect changes immediately
 			chrome.runtime.sendMessage({
@@ -375,10 +375,10 @@ function onExport() {
 
 	let result = {};
 
-	result.categories 	= gatherKeysArray(categories);
-	result.channels 	= gatherKeysArray(channels);
-	result.tags 		= gatherKeysArray(tags);
-	result.titles 		= gatherKeysArray(titles);
+	result.categories = gatherKeysArray(categories);
+	result.channels   = gatherKeysArray(channels);
+	result.tags       = gatherKeysArray(tags);
+	result.titles     = gatherKeysArray(titles);
 
 	const serializedBlacklist = JSON.stringify(result);
 
@@ -421,21 +421,21 @@ let isModified = false;
 
 /* BEGIN: prepare elements */
 
-	const hideFollowingCheckbox 	= document.getElementById('hideFollowing');
-	const hideRerunsCheckbox 		= document.getElementById('hideReruns');
-	const useSyncStorageCheckbox 	= document.getElementById('useSyncStorage');
+	const hideFollowingCheckbox  = document.getElementById('hideFollowing');
+	const hideRerunsCheckbox     = document.getElementById('hideReruns');
+	const useSyncStorageCheckbox = document.getElementById('useSyncStorage');
 
-	const categories 				= document.getElementById('table_categories');
-	const channels 					= document.getElementById('table_channels');
-	const tags 						= document.getElementById('table_tags');
-	const titles 					= document.getElementById('table_titles');
-	const titlesExplained 			= document.getElementById('titles_explained');
+	const categories      = document.getElementById('table_categories');
+	const channels        = document.getElementById('table_channels');
+	const tags            = document.getElementById('table_tags');
+	const titles          = document.getElementById('table_titles');
+	const titlesExplained = document.getElementById('titles_explained');
 
-	const saveButton 				= document.getElementById('save');
-	const cancelButton 				= document.getElementById('cancel');
+	const saveButton   = document.getElementById('save');
+	const cancelButton = document.getElementById('cancel');
 
-	const importButton 				= document.getElementById('import');
-	const exportButton 				= document.getElementById('export');
+	const importButton = document.getElementById('import');
+	const exportButton = document.getElementById('export');
 
 /* END: prepare elements */
 
@@ -489,15 +489,15 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 
 /* BEGIN: localize */
 
-	document.querySelector('.settings h2').textContent 			= chrome.i18n.getMessage('blacklist_SettingsHeadline');
-	document.getElementById('label_hideFollowing').textContent 	= chrome.i18n.getMessage('blacklist_SettingsHideFollowing');
-	document.getElementById('label_hideReruns').textContent 	= chrome.i18n.getMessage('blacklist_SettingsHideReruns');
+	document.querySelector('.settings h2').textContent          = chrome.i18n.getMessage('blacklist_SettingsHeadline');
+	document.getElementById('label_hideFollowing').textContent  = chrome.i18n.getMessage('blacklist_SettingsHideFollowing');
+	document.getElementById('label_hideReruns').textContent     = chrome.i18n.getMessage('blacklist_SettingsHideReruns');
 	document.getElementById('label_useSyncStorage').textContent = chrome.i18n.getMessage('blacklist_SettingsSyncStorage');
 
-	document.getElementById('column_Categories').textContent 	= chrome.i18n.getMessage('blacklist_Categories');
-	document.getElementById('column_Channels').textContent 		= chrome.i18n.getMessage('blacklist_Channels');
-	document.getElementById('column_Tags').textContent 			= chrome.i18n.getMessage('blacklist_Tags');
-	document.getElementById('column_Titles').textContent 		= chrome.i18n.getMessage('blacklist_Titles');
+	document.getElementById('column_Categories').textContent = chrome.i18n.getMessage('blacklist_Categories');
+	document.getElementById('column_Channels').textContent   = chrome.i18n.getMessage('blacklist_Channels');
+	document.getElementById('column_Tags').textContent       = chrome.i18n.getMessage('blacklist_Tags');
+	document.getElementById('column_Titles').textContent     = chrome.i18n.getMessage('blacklist_Titles');
 
 	titlesExplained.textContent = chrome.i18n.getMessage('blacklist_TitlesExplainedLabel');
 
@@ -527,11 +527,11 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 		e.placeholder = chrome.i18n.getMessage('blacklist_TitlesInput');
 	});
 
-	saveButton.textContent 		= chrome.i18n.getMessage('blacklist_Save');
-	cancelButton.textContent 	= chrome.i18n.getMessage('blacklist_Cancel');
+	saveButton.textContent   = chrome.i18n.getMessage('blacklist_Save');
+	cancelButton.textContent = chrome.i18n.getMessage('blacklist_Cancel');
 
-	importButton.textContent 	= chrome.i18n.getMessage('blacklist_Import');
-	exportButton.textContent 	= chrome.i18n.getMessage('blacklist_Export');
+	importButton.textContent = chrome.i18n.getMessage('blacklist_Import');
+	exportButton.textContent = chrome.i18n.getMessage('blacklist_Export');
 
 /* END: localize */
 
@@ -548,10 +548,10 @@ storageGet(null, function(result) {
 		blacklistedItems = mergeBlacklistFragments(result);
 	}
 
-	addItems(categories, 	blacklistedItems.categories);
-	addItems(channels, 		blacklistedItems.channels);
-	addItems(tags, 			blacklistedItems.tags);
-	addItems(titles, 		blacklistedItems.titles);
+	addItems(categories, blacklistedItems.categories);
+	addItems(channels,   blacklistedItems.channels);
+	addItems(tags,       blacklistedItems.tags);
+	addItems(titles,     blacklistedItems.titles);
 });
 
 // hide following

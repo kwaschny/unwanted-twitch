@@ -9,8 +9,8 @@ function getState(callback) {
 
 	storageGet([ 'enabled', 'renderButtons' ], function(response) {
 
-		let enabled 		= true;
-		let renderButtons 	= true;
+		let enabled       = true;
+		let renderButtons = true;
 
 		// enabled
 		if (typeof response.enabled === 'boolean') {
@@ -64,9 +64,9 @@ function toggleButtonsToggle() {
 }
 
 // prepare elements
-const blacklistManagerButton 	= document.getElementById('open_blacklist');
-const stateToggleButton 		= document.getElementById('toggle_extension');
-const buttonsToggleButton 		= document.getElementById('toggle_buttons');
+const blacklistManagerButton = document.getElementById('open_blacklist');
+const stateToggleButton      = document.getElementById('toggle_extension');
+const buttonsToggleButton    = document.getElementById('toggle_buttons');
 
 // button actions
 blacklistManagerButton.addEventListener('click', openBlacklist);
@@ -74,9 +74,9 @@ stateToggleButton.addEventListener('click', toggleExtension);
 buttonsToggleButton.addEventListener('change', toggleButtonsToggle);
 
 // localize
-blacklistManagerButton.textContent 									= chrome.i18n.getMessage('popup_ManageBlacklist');
-stateToggleButton.textContent 										= chrome.i18n.getMessage('popup_DisableExtension');
-buttonsToggleButton.parentNode.querySelector('label').textContent 	= chrome.i18n.getMessage('popup_ToggleButtons');
+blacklistManagerButton.textContent                                = chrome.i18n.getMessage('popup_ManageBlacklist');
+stateToggleButton.textContent                                     = chrome.i18n.getMessage('popup_DisableExtension');
+buttonsToggleButton.parentNode.querySelector('label').textContent = chrome.i18n.getMessage('popup_ToggleButtons');
 
 // initialize state
 getState(function onGetState(enabled, renderButtons) {

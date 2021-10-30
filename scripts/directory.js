@@ -41,8 +41,8 @@
 	let pageLoads = false;
 
 	// semaphore for filter progress
-	let directoryFilterRunning 	= false;
-	let sidebarFilterRunning 	= false;
+	let directoryFilterRunning = false;
+	let sidebarFilterRunning   = false;
 
 	// last time the sidebar filtering was triggered by the observer
 	let lastSidebarChange = new Date();
@@ -96,7 +96,7 @@
 		// blacklistedItems
 		if (typeof request.blacklistedItems === 'object') {
 
-			const items 	= request.blacklistedItems;
+			const items     = request.blacklistedItems;
 			const cacheOnly = (request.storage === false);
 
 			if (cacheOnly) {
@@ -186,8 +186,8 @@
 			logTrace('invoking isSupportedPage($)', page);
 		}
 
-		const pageType 	= getPageType(page);
-		const result 	= (pageType !== null);
+		const pageType = getPageType(page);
+		const result   = (pageType !== null);
 
 		if (traceThis) {
 
@@ -290,7 +290,7 @@
 		// location path change = view/page changed
 		if (page !== currentPage) {
 
-			currentPage 	= page;
+			currentPage     = page;
 			currentPageType = getPageType(page);
 
 			logInfo('Page changed to:', currentPage);
@@ -321,8 +321,8 @@
 
 		const observerCooldown = 500;
 
-		const targetSelector 	= '[data-a-target^="side-nav-bar"]';
-		const target 			= rootNode.querySelector(targetSelector);
+		const targetSelector = '[data-a-target^="side-nav-bar"]';
+		const target         = rootNode.querySelector(targetSelector);
 
 		if (target !== null) {
 
@@ -391,8 +391,8 @@
 				return;
 			}
 
-			const nodes 		= getDirectoryItemNodes('unprocessed');
-			const nodesLength 	= nodes.length;
+			const nodes       = getDirectoryItemNodes('unprocessed');
+			const nodesLength = nodes.length;
 
 			// when there are unprocessed items in the directory, assume that the user scrolled down
 			if (nodesLength > 0) {
@@ -411,7 +411,7 @@
 		logTrace('invoking triggerScroll()');
 
 		const scrollbarNodeSelector = '.simplebar-content.root-scrollable__content';
-		const scrollbarNode 		= rootNode.querySelector(scrollbarNodeSelector);
+		const scrollbarNode         = rootNode.querySelector(scrollbarNodeSelector);
 
 		if (scrollbarNode !== null) {
 
@@ -456,8 +456,8 @@
 
 		directoryFilterRunning = true;
 
-		const items 			= getDirectoryItems(mode);
-		const remainingItems 	= filterDirectoryItems(items, remove);
+		const items          = getDirectoryItems(mode);
+		const remainingItems = filterDirectoryItems(items, remove);
 
 		directoryFilterRunning = false;
 
@@ -527,8 +527,8 @@
 
 		sidebarFilterRunning = true;
 
-		const items 			= getSidebarItems(mode);
-		const remainingItems 	= filterSidebarItems(items);
+		const items          = getSidebarItems(mode);
+		const remainingItems = filterSidebarItems(items);
 
 		sidebarFilterRunning = false;
 
@@ -582,8 +582,8 @@
 
 		const items = [];
 
-		const itemNodes 		= getDirectoryItemNodes(mode);
-		const itemNodesLength 	= itemNodes.length;
+		const itemNodes       = getDirectoryItemNodes(mode);
+		const itemNodesLength = itemNodes.length;
 
 		for (let i = 0; i < itemNodesLength; i++) {
 
@@ -621,11 +621,11 @@
 		}
 
 		const modes = {
-			'visible': 		{ prefix: '', 			suffix: ':not([data-uttv-hidden])' 		},
-			'hidden': 		{ prefix: '', 			suffix: '[data-uttv-hidden]' 			},
-			'unprocessed': 	{ prefix: '', 			suffix: ':not([data-uttv-processed])' 	},
-			'processed': 	{ prefix: '', 			suffix: '[data-uttv-processed]' 		},
-			'recommended': 	{ prefix: '.find-me ', 	suffix: ':not([data-uttv-processed])' 	}
+			'visible':     { prefix: '',          suffix: ':not([data-uttv-hidden])'    },
+			'hidden':      { prefix: '',          suffix: '[data-uttv-hidden]'          },
+			'unprocessed': { prefix: '',          suffix: ':not([data-uttv-processed])' },
+			'processed':   { prefix: '',          suffix: '[data-uttv-processed]'       },
+			'recommended': { prefix: '.find-me ', suffix: ':not([data-uttv-processed])' }
 		};
 
 		let selector;
@@ -677,8 +677,8 @@
 			selector = selector.replace(/%/g, subSelector.suffix);
 		}
 
-		const nodes 		= mainNode.querySelectorAll(selector);
-		const nodesLength 	= nodes.length;
+		const nodes       = mainNode.querySelectorAll(selector);
+		const nodesLength = nodes.length;
 
 		if (nodesLength > 0) {
 
@@ -700,8 +700,8 @@
 
 		const items = [];
 
-		const itemNodes 		= getSidebarItemNodes(mode);
-		const itemNodesLength 	= itemNodes.length;
+		const itemNodes       = getSidebarItemNodes(mode);
+		const itemNodesLength = itemNodes.length;
 
 		for (let i = 0; i < itemNodesLength; i++) {
 
@@ -739,11 +739,11 @@
 		}
 
 		const modes = {
-			'visible': 		{ prefix: '', suffix: ':not([data-uttv-hidden])' 	},
-			'hidden': 		{ prefix: '', suffix: '[data-uttv-hidden]' 			},
-			'unprocessed': 	{ prefix: '', suffix: ':not([data-uttv-processed])' },
-			'processed': 	{ prefix: '', suffix: '[data-uttv-processed]' 		},
-			'recommended': 	{ prefix: '', suffix: ':not([data-uttv-hidden])' 	}
+			'visible':     { prefix: '', suffix: ':not([data-uttv-hidden])'    },
+			'hidden':      { prefix: '', suffix: '[data-uttv-hidden]'          },
+			'unprocessed': { prefix: '', suffix: ':not([data-uttv-processed])' },
+			'processed':   { prefix: '', suffix: '[data-uttv-processed]'       },
+			'recommended': { prefix: '', suffix: ':not([data-uttv-hidden])'    }
 		};
 
 		let selector;
@@ -777,16 +777,16 @@
 
 		let nodes = [];
 
-		const sidebarSelector 	= '[data-a-target^="side-nav-bar"]';
-		const sidebarNode 		= rootNode.querySelector(sidebarSelector);
+		const sidebarSelector = '[data-a-target^="side-nav-bar"]';
+		const sidebarNode     = rootNode.querySelector(sidebarSelector);
 
 		if (sidebarNode !== null) {
 
 			// if there are two or more sections in the sidebar, the second section is for recommended channels
 			if (mode === 'recommended') {
 
-				const sidebarSectionsSelector 	= '.side-nav-section';
-				const sidebarSectionsNodes 		= sidebarNode.querySelectorAll(sidebarSectionsSelector);
+				const sidebarSectionsSelector = '.side-nav-section';
+				const sidebarSectionsNodes    = sidebarNode.querySelectorAll(sidebarSectionsSelector);
 
 				logVerbose('Looking for recommended channels section in sidebar.', sidebarSectionsSelector);
 
@@ -813,8 +813,8 @@
 				}
 			}
 
-			nodes 				= sidebarNode.querySelectorAll(selector);
-			const nodesLength 	= nodes.length;
+			nodes             = sidebarNode.querySelectorAll(selector);
+			const nodesLength = nodes.length;
 
 			if (nodesLength > 0) {
 
@@ -875,13 +875,13 @@
 		logTrace('invoking readChannel($, $, $)', node, findCategory, findTags);
 
 		let result = {
-			type: 		'channels',
-			name: 		'',
-			category: 	'',
-			tags: 		[],
-			title: 		'',
-			rerun: 		false,
-			node: 		node
+			type:     'channels',
+			name:     '',
+			category: '',
+			tags:     [],
+			title:    '',
+			rerun:    false,
+			node:     node
 		};
 
 		let buffer;
@@ -980,13 +980,13 @@
 		logTrace('invoking readCategory($, $)', node, findTags);
 
 		let result = {
-			type: 		'categories',
-			name: 		'',
-			category: 	'',
-			tags: 		[],
-			title: 		'',
-			rerun: 		false,
-			node: 		node
+			type:     'categories',
+			name:     '',
+			category: '',
+			tags:     [],
+			title:    '',
+			rerun:    false,
+			node:     node
 		};
 
 		let buffer;
@@ -999,7 +999,7 @@
 				buffer = buffer.querySelector('h2');
 				if (buffer !== null) {
 
-					result.name 	= buffer.textContent;
+					result.name     = buffer.textContent;
 					result.category = result.name;
 
 				} else {
@@ -1054,16 +1054,16 @@
 
 		if (!node) { return tags; }
 
-		const tagsSelector 	= '[data-a-target]';
-		const nodes 		= node.querySelectorAll(tagsSelector);
-		const nodesLength 	= nodes.length;
+		const tagsSelector = '[data-a-target]';
+		const nodes        = node.querySelectorAll(tagsSelector);
+		const nodesLength  = nodes.length;
 
 		if (nodesLength > 0) {
 
 			for (let i = 0; i < nodesLength; i++) {
 
-				const tagNode 	= nodes[i];
-				const tagName 	= tagNode.getAttribute('data-a-target');
+				const tagNode = nodes[i];
+				const tagName = tagNode.getAttribute('data-a-target');
 
 				if (!tagName) { continue; }
 
@@ -1091,13 +1091,13 @@
 		logTrace('invoking readSidebarItem($, $)', node, findCategory);
 
 		let result = {
-			type: 		'channels',
-			name: 		'',
-			category: 	'',
-			tags: 		[],
-			title: 		'',
-			rerun: 		false,
-			node: 		node
+			type:     'channels',
+			name:     '',
+			category: '',
+			tags:     [],
+			title:    '',
+			rerun:    false,
+			node:     node
 		};
 
 		let buffer;
@@ -1176,7 +1176,7 @@
 			if (item.name.length > 0) {
 
 				// also check all-lowercase spelling
-				const itemName 	= item.name;
+				const itemName  = item.name;
 				const itemNameL = itemName.toLowerCase();
 
 				const blacklistedByName = (
@@ -1195,7 +1195,7 @@
 			if (item.category.length > 0) {
 
 				// also check all-lowercase spelling
-				const categoryName 	= item.category;
+				const categoryName  = item.category;
 				const categoryNameL = categoryName.toLowerCase();
 
 				const blacklistedByCategory = (
@@ -1221,8 +1221,8 @@
 				if (tag.name.length === 0) { continue; }
 
 				// also check all-lowercase spelling
-				const tagName 	= tag.name;
-				const tagNameL 	= tagName.toLowerCase();
+				const tagName  = tag.name;
+				const tagNameL = tagName.toLowerCase();
 
 				if (
 					(storedBlacklistedItems['tags'][tagName]  !== undefined) ||
@@ -1244,8 +1244,8 @@
 
 				const itemTitleL = item.title.toLowerCase();
 
-				const titles 		= storedBlacklistedItems['titles'];
-				const titlesLength 	= titles.length;
+				const titles       = storedBlacklistedItems['titles'];
+				const titlesLength = titles.length;
 
 				for (let i = 0; i < titlesLength; i++) {
 
@@ -1254,8 +1254,8 @@
 
 					if (title.length === 0) { continue; }
 
-					let firstChar 	= title.substr(0, 1);
-					let lastChar 	= title.substr(title.length -1, 1);
+					let firstChar = title.substr(0, 1);
+					let lastChar  = title.substr(title.length -1, 1);
 
 					// exact match
 					if ((firstChar === '\'') && (lastChar === '\'')) {
@@ -1295,8 +1295,8 @@
 	function removeDirectoryItem(item) {
 		logTrace('invoking removeDirectoryItem($)', item);
 
-		const topNodes 	= [];
-		let topNode 	= item.node;
+		const topNodes = [];
+		let topNode    = item.node;
 
 		switch (item.type) {
 
@@ -1419,8 +1419,8 @@
 	function removeSidebarItem(item) {
 		logTrace('invoking removeSidebarItem($)', item);
 
-		const topNodes 	= [];
-		let topNode 	= item.node;
+		const topNodes = [];
+		let topNode    = item.node;
 
 		switch (item.type) {
 
@@ -1529,16 +1529,16 @@
 			switch (item.type) {
 
 				case 'categories':
-					hideItem.className 		= 'uttv-hide-item uttv-category';
-					hideItem.textContent 	= 'X';
-					hideItem.title 			= chrome.i18n.getMessage('label_HideCategory');
+					hideItem.className   = 'uttv-hide-item uttv-category';
+					hideItem.textContent = 'X';
+					hideItem.title       = chrome.i18n.getMessage('label_HideCategory');
 				break;
 
 				case 'channels':
 
-					hideItem.className 		= 'uttv-hide-item uttv-channel';
-					hideItem.textContent 	= 'X';
-					hideItem.title 			= chrome.i18n.getMessage('label_HideChannel');
+					hideItem.className   = 'uttv-hide-item uttv-channel';
+					hideItem.textContent = 'X';
+					hideItem.title       = chrome.i18n.getMessage('label_HideChannel');
 
 					// offset the "X" button on live channels when FFZ is used (to prevent overlap with stream runtime)
 					if ( usingFFZ() ) {
@@ -1604,9 +1604,9 @@
 
 			let hideTag = document.createElement('div');
 
-			hideTag.className 	= 'uttv-hide-tag';
+			hideTag.className   = 'uttv-hide-tag';
 			hideTag.textContent = 'X';
-			hideTag.title 		= chrome.i18n.getMessage('label_HideTag');
+			hideTag.title       = chrome.i18n.getMessage('label_HideTag');
 
 			if (renderButtons === false) {
 
@@ -1618,8 +1618,8 @@
 		const tagsLength = item.tags.length;
 		for (let i = 0; i < tagsLength; i++) {
 
-			const tag 			= item.tags[i];
-			const hideTagNode 	= hideTag.cloneNode(true);
+			const tag         = item.tags[i];
+			const hideTagNode = hideTag.cloneNode(true);
 
 			// attach action listener with backreference to item
 			hideTagNode.setAttribute('data-uttv-tag', tag.name);
@@ -1658,9 +1658,9 @@
 		renderButtons = state;
 		storageSet({ 'renderButtons': renderButtons });
 
-		const buttonsSelector 	= '.uttv-hide-item, .uttv-hide-tag';
-		const buttons 			= mainNode.querySelectorAll(buttonsSelector);
-		const buttonsLength 	= buttons.length;
+		const buttonsSelector = '.uttv-hide-item, .uttv-hide-tag';
+		const buttons         = mainNode.querySelectorAll(buttonsSelector);
+		const buttonsLength   = buttons.length;
 
 		if (buttonsLength > 0) {
 
@@ -1700,8 +1700,8 @@
 
 			case 'frontpage':
 
-				areaSelector 	= '.root-scrollable__wrapper .front-page-carousel';
-				area 			= mainNode.querySelector(areaSelector);
+				areaSelector = '.root-scrollable__wrapper .front-page-carousel';
+				area         = mainNode.querySelector(areaSelector);
 
 				if (area !== null) {
 
@@ -1720,8 +1720,8 @@
 			case 'channels':
 			case 'game':
 
-				areaSelector 	= 'div[data-a-target="tags-filter-dropdown"]';
-				area 			= mainNode.querySelector(areaSelector);
+				areaSelector = 'div[data-a-target="tags-filter-dropdown"]';
+				area         = mainNode.querySelector(areaSelector);
 
 				if (area !== null) {
 
@@ -1738,8 +1738,8 @@
 
 			case 'videos':
 
-				areaSelector 	= 'div.directory-game-videos-page__filters > div';
-				area 			= mainNode.querySelector(areaSelector);
+				areaSelector = 'div.directory-game-videos-page__filters > div';
+				area         = mainNode.querySelector(areaSelector);
 
 				if (area !== null) {
 
@@ -1754,8 +1754,8 @@
 
 			case 'clips':
 
-				areaSelector 	= 'div.directory-game-clips-page__filters';
-				area 			= mainNode.querySelector(areaSelector);
+				areaSelector = 'div.directory-game-clips-page__filters';
+				area         = mainNode.querySelector(areaSelector);
 
 				if (area !== null) {
 
@@ -1770,8 +1770,8 @@
 
 			case 'following':
 
-				areaSelector 	= 'ul[role="tablist"]';
-				area 			= mainNode.querySelector(areaSelector);
+				areaSelector = 'ul[role="tablist"]';
+				area         = mainNode.querySelector(areaSelector);
 
 				if (area !== null) {
 
@@ -1899,9 +1899,9 @@
 
 		pageLoads = true;
 
-		onPageChangeCounter 			= 0;
-		const pageLoadMonitorInterval 	= 100;
-		const pageLoadTimeout 			= (20000 / pageLoadMonitorInterval);
+		onPageChangeCounter           = 0;
+		const pageLoadMonitorInterval = 100;
+		const pageLoadTimeout         = (20000 / pageLoadMonitorInterval);
 
 		// wait until the directory is fully loaded
 		window.clearInterval(onPageChangeInterval);
@@ -1914,8 +1914,8 @@
 
 				if (mainNode === null) {
 
-					const mainNodeSelector 	= 'main div.simplebar-scroll-content';
-					mainNode 				= document.querySelector(mainNodeSelector);
+					const mainNodeSelector = 'main div.simplebar-scroll-content';
+					mainNode               = document.querySelector(mainNodeSelector);
 
 					if (mainNode === null) {
 
@@ -2382,7 +2382,7 @@
 
 			if (mode === 'sync') {
 
-				const requiredSize 	= measureStoredSize(dataToStore);
+				const requiredSize = measureStoredSize(dataToStore);
 
 				if (requiredSize > storageSyncMaxSize) {
 
@@ -2488,8 +2488,8 @@
 
 			/* BEGIN: root */
 
-				const rootNodeSelector 	= '#root';
-				rootNode 				= document.querySelector(rootNodeSelector);
+				const rootNodeSelector = '#root';
+				rootNode               = document.querySelector(rootNodeSelector);
 
 				if (rootNode === null) {
 

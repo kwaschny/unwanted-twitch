@@ -19,10 +19,10 @@ function splitBlacklistItems(items) {
 
 	const maxValuesPerFragment = 200;
 
-	let fragments 		= {};
-	let fragmentIndex 	= 0;
+	let fragments     = {};
+	let fragmentIndex = 0;
 
-	let remainingSpace 	= maxValuesPerFragment;
+	let remainingSpace = maxValuesPerFragment;
 
 	for (let type in items) {
 		if (!items.hasOwnProperty(type)) { continue; }
@@ -37,10 +37,10 @@ function splitBlacklistItems(items) {
 		let key = ('blItemsFragment' + fragmentIndex);
 		if (fragments[key] === undefined) { fragments[key] = {}; }
 
-		let values 			= ( Array.isArray(items[type]) ? items[type] : Object.keys(items[type]) );
-		let valuesLength 	= values.length;
+		let values       = ( Array.isArray(items[type]) ? items[type] : Object.keys(items[type]) );
+		let valuesLength = values.length;
 
-		let sliceOffset 	= 0;
+		let sliceOffset     = 0;
 		let remainingValues = valuesLength;
 
 		if (remainingValues === 0) { continue; }
@@ -50,11 +50,11 @@ function splitBlacklistItems(items) {
 			// no more space, start new fragment
 			if (remainingSpace === 0) {
 
-				fragmentIndex 			+= 1;
-				key 					 = ('blItemsFragment' + fragmentIndex);
-				fragments[key] 			 = {};
-				fragments[key][type] 	 = [];
-				remainingSpace 			 = maxValuesPerFragment;
+				fragmentIndex       += 1;
+				key                  = ('blItemsFragment' + fragmentIndex);
+				fragments[key]       = {};
+				fragments[key][type] = [];
+				remainingSpace       = maxValuesPerFragment;
 			}
 
 			// max. fragments reached?
@@ -64,11 +64,11 @@ function splitBlacklistItems(items) {
 				break;
 			}
 
-			let slice 		= values.slice(sliceOffset, (sliceOffset + Math.min(remainingSpace, maxValuesPerFragment)));
+			let slice       = values.slice(sliceOffset, (sliceOffset + Math.min(remainingSpace, maxValuesPerFragment)));
 			let sliceLength = slice.length;
 
-			sliceOffset 	+= sliceLength;
-			remainingSpace 	-= sliceLength;
+			sliceOffset     += sliceLength;
+			remainingSpace  -= sliceLength;
 			remainingValues -= sliceLength;
 
 			fragments[key][type] = slice;
@@ -106,8 +106,8 @@ function mergeBlacklistFragments(fragments) {
 					result[type] = [];
 				}
 
-				const itemList 			= fragment[type];
-				const itemListLength 	= itemList.length;
+				const itemList       = fragment[type];
+				const itemListLength = itemList.length;
 				for (let n = 0; n < itemListLength; n++) {
 
 					result[type].push(itemList[n]);
@@ -120,8 +120,8 @@ function mergeBlacklistFragments(fragments) {
 					result[type] = {};
 				}
 
-				const itemList 			= fragment[type];
-				const itemListLength 	= itemList.length;
+				const itemList       = fragment[type];
+				const itemListLength = itemList.length;
 				for (let n = 0; n < itemListLength; n++) {
 
 					result[type][itemList[n]] = 1;
