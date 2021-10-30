@@ -993,15 +993,11 @@
 
 		/* BEGIN: name */
 
-			buffer = node;
+			buffer = node.closest('.game-card');
+			if (buffer !== null) {
 
-			if (
-				buffer.nextSibling
-			) {
-
-				buffer = buffer.nextSibling.querySelector('a[data-a-target^="card-"] h3, a[data-a-target^="live-game-card-"] h3');
-
-				if (buffer) {
+				buffer = buffer.querySelector('h2');
+				if (buffer !== null) {
 
 					result.name 	= buffer.textContent;
 					result.category = result.name;
@@ -1010,6 +1006,10 @@
 
 					return logError('Unable to determine name of category.', node);
 				}
+
+			} else {
+
+				return logError('Unable to determine name of category.', node);
 			}
 
 		/* END: name */
