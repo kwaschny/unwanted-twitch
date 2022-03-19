@@ -126,8 +126,8 @@ function onAddItem(row) {
 		itemToAdd = itemToAdd.replace(/"$/, '\'');
 
 		if (
-			(itemToAdd.substr(0, 1) === '/') &&
-			(itemToAdd.substr(itemToAdd.length -1, 1) === '/')
+			(itemToAdd.slice(0, 1) === '/') &&
+			(itemToAdd.slice(-1) === '/')
 		) {
 
 			try {

@@ -1254,8 +1254,8 @@
 
 					if (title.length === 0) { continue; }
 
-					let firstChar = title.substr(0, 1);
-					let lastChar  = title.substr(title.length -1, 1);
+					let firstChar = title.slice(0, 1);
+					let lastChar  = title.slice(-1);
 
 					// exact match
 					if ((firstChar === '\'') && (lastChar === '\'')) {
