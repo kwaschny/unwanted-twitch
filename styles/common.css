@@ -51,20 +51,27 @@ button {
 			box-shadow: 0px 0px 6px 0px #9147FF;
 		}
 
+	button[disabled],
 	button.disabled {
 		background-color: #737373;
 	}
+		button[disabled]:hover,
 		button.disabled:hover {
 			background-color: #8C8C8C;
 			border-color: #8C8C8C;
 		}
+		button[disabled]:focus,
 		button.disabled:focus {
 			border-color: #A6A6A6;
 			box-shadow: 0px 0px 6px 0px #8C8C8C;
 		}
+		button[disabled]:active,
 		button.disabled:active {
 			border-color: #8C8C8C;
 			box-shadow: 0px 0px 6px 0px #8C8C8C;
+		}
+		button[disabled] {
+			cursor: not-allowed;
 		}
 
 	button.flashed {

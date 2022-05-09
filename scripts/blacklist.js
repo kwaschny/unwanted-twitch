@@ -348,13 +348,25 @@ function onImport() {
 				console.error('UnwantedTwitch: Exception caught:', exception);
 			}
 
+			toggleLoadingScreen(false);
+
 			if (processed === true) {
 
-				alert( chrome.i18n.getMessage('blacklist_ImportSuccess') );
+				// defer alert to redraw DOM first
+				setTimeout(function() {
+
+					alert( chrome.i18n.getMessage('blacklist_ImportSuccess') );
+
+				}, 200);
 
 			} else {
 
-				alert( chrome.i18n.getMessage('blacklist_ImportFailure') );
+				// defer alert to redraw DOM first
+				setTimeout(function() {
+
+					alert( chrome.i18n.getMessage('blacklist_ImportFailure') );
+
+				}, 200);
 			}
 		});
 		reader.addEventListener('error', function() {
@@ -362,7 +374,9 @@ function onImport() {
 			alert('Unwanted Twitch:\nUnexpected error while reading the selected file.');
 		});
 
-		const content = reader.readAsText(
+		toggleLoadingScreen(true);
+
+		reader.readAsText(
 			event.target.files[0]
 		);
 	});
@@ -416,6 +430,22 @@ function onTitlesExplained() {
 	);
 }
 
+function toggleLoadingScreen(show) {
+
+	if (show === true) {
+
+		processingScreen.removeAttribute('hidden');
+
+	} else {
+
+		processingScreen.setAttribute('hidden', '');
+	}
+
+	saveButton.disabled   = show;
+	importButton.disabled = show;
+	exportButton.disabled = show;
+}
+
 // indicates if there are changes to save
 let isModified = false;
 
@@ -436,6 +466,8 @@ let isModified = false;
 
 	const importButton = document.getElementById('import');
 	const exportButton = document.getElementById('export');
+
+	const processingScreen = document.getElementById('processing');
 
 /* END: prepare elements */
 
@@ -533,7 +565,12 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	importButton.textContent = chrome.i18n.getMessage('blacklist_Import');
 	exportButton.textContent = chrome.i18n.getMessage('blacklist_Export');
 
+	processingScreen.textContent = chrome.i18n.getMessage('blacklist_Processing');
+
 /* END: localize */
+
+// show loading screen on start
+toggleLoadingScreen(true);
 
 // load blacklisted items
 storageGet(null, function(result) {
@@ -552,31 +589,64 @@ storageGet(null, function(result) {
 	addItems(channels,   blacklistedItems.channels);
 	addItems(tags,       blacklistedItems.tags);
 	addItems(titles,     blacklistedItems.titles);
+
+	Promise.allSettled([
+
+		loadHideFollowing(),
+		loadHideReruns(),
+		loadStorageMode(),
+
+	]).then(function() {
+
+		// hide loading screen
+		toggleLoadingScreen(false);
+	});
 });
 
 // hide following
-storageGet('hideFollowing', function(result) {
+async function loadHideFollowing() {
 
-	hideFollowingCheckbox.checked = (
-		(typeof result.hideFollowing !== 'boolean') ||
-		(result.hideFollowing === true)
-	);
-});
+	return new Promise(function(resolve) {
+
+		storageGet('hideFollowing', function(result) {
+
+			hideFollowingCheckbox.checked = (
+				(typeof result.hideFollowing !== 'boolean') ||
+				(result.hideFollowing === true)
+			);
+			resolve();
+		});
+	});
+}
 
 // hide reruns
-storageGet('hideReruns', function(result) {
+async function loadHideReruns() {
 
-	hideRerunsCheckbox.checked = (
-		(typeof result.hideReruns === 'boolean') &&
-		(result.hideReruns === true)
-	);
-});
+	return new Promise(function(resolve) {
+
+		storageGet('hideReruns', function(result) {
+
+			hideRerunsCheckbox.checked = (
+				(typeof result.hideReruns === 'boolean') &&
+				(result.hideReruns === true)
+			);
+			resolve();
+		});
+	});
+}
 
 // storage mode
-getStorageMode(function(mode) {
+async function loadStorageMode() {
 
-	useSyncStorageCheckbox.checked = (mode === 'sync');
-});
+	return new Promise(function(resolve) {
+
+		getStorageMode(function(mode) {
+
+			useSyncStorageCheckbox.checked = (mode === 'sync');
+			resolve();
+		});
+	});
+}
 
 /* BEGIN: storage size */
 

@@ -118,6 +118,23 @@
 	padding: 4px;
 }
 
+#blacklist #processing {
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.90);
+	color: #FFFFFF;
+	display: flex;
+	font-size: 200%;
+	justify-content: center;
+	left: 0px;
+	position: fixed;
+	height: 100%;
+	top: 0px;
+	width: 100%;
+}
+	#blacklist #processing[hidden] {
+		display: none;
+	}
+
 @media (max-width: 1023px) {
 
 	#blacklist .area {

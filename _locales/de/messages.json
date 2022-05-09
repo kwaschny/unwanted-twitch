@@ -113,6 +113,9 @@
 	"blacklist_Export": {
 		"message": "↱ Exportieren"
 	},
+	"blacklist_Processing": {
+		"message": "Ladevorgang. Bitte warten..."
+	},
 	"alert_ReloadNote": {
 		"message": "Unwanted Twitch:\nDamit die Änderungen sichtbar werden,\nmüssen bereits geöffnete Tabs neu geladen werden."
 	}

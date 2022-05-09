@@ -113,6 +113,9 @@
 	"blacklist_Export": {
 		"message": "↱ Exportar"
 	},
+	"blacklist_Processing": {
+		"message": "Cargando. Espera por favor..."
+	},
 	"alert_ReloadNote": {
 		"message": "Unwanted Twitch:\nTienes que recargar tus pestañas actuales para que los cambios surtan efecto."
 	}
