@@ -1637,7 +1637,15 @@
 				}
 			});
 
-			tag.node.appendChild(hideTagNode);
+			const pNode = (tag.node.firstChild || tag.node);
+			pNode.appendChild(hideTagNode);
+
+			// reduce padding
+			// known issue: toggling button rendering at runtime won't fix the padding for already attached buttons
+			if (renderButtons) {
+
+				pNode.style.paddingRight = '0';
+			}
 		}
 
 		return hideTag;

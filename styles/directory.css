@@ -96,6 +96,7 @@
 	display: inline-block;
 	font-size: 90%;
 	padding: 0px 6px;
+	margin-left: 0.3rem;
 	user-select: none;
 }
 	.uttv-hide-tag:hover {
