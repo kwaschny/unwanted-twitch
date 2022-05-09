@@ -36,18 +36,6 @@
 ## Note about breaking changes on twitch.tv
 Twitch is infamous for changing their website without further notice, which may break this extension over night (usually on Tuesdays). Twitch also serves different [canary builds](https://whatis.techtarget.com/definition/canary-canary-testing) (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, [report the issue](https://github.com/kwaschny/unwanted-twitch/issues) (you can also send me an e-mail or DM me on Twitter) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on [the GitHub commits](https://github.com/kwaschny/unwanted-twitch/commits/master) or [follow me on Twitter](https://twitter.com/Kwaschny) to receive news regarding new versions. Please avoid leaving a 1-star review as this will neither help the case nor increase my mood. Thank you. 🙂
 
-## Support the ongoing development of this extension
-I am working on this extension in my spare time. And although I don't watch twitch.tv that much anymore, I still want people to be able to hide content they are not interested in. So as long as Twitch doesn't offer a native way to achieve that, I will continue developing this extension and make it work with future updates to the twitch.tv website. If you want to support me, feel free to spread the word and/or [consider a tip](https://www.paypal.me/devservice/5eur). ❤️
-
-## Tips
-| Donor | Amount in € | Date |
-| ----- | ----------: | ---- |
-| Kevin N. | 5.00 | 2021-05 |
-| INTERAKT CO | 10.00 | 2021-03 |
-| Russell K. | 5.00 | 2020-09 |
-| Andrew S. | 5.00 | 2019-11 |
-| Максим Д. | 10.00 | 2018-11 |
-
 ## Contributing to this extension
 Regardless if you are a regular user or a developer yourself, [check out the contribution page for information about how you can help this project](CONTRIBUTING.md).
 

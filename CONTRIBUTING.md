@@ -18,9 +18,6 @@ Do you have suggestions to improve the extension? [Create an issue here on GitHu
 ## Help with additional language translations
 Do you speak a language other than English or German? Help translating the extension's UI into your language. Check `/_locales/en/messages.json` for the reference translation and create a folder ([in ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)) and a `messages.json` file (take a copy of the English one) for the language you are translating into. Send a pull request once you are done. Feel free to contact me if you need further assistance.
 
-## Donations and sponsoring
-If you want to show some love, [please consider donating to help keeping this project alive](https://www.paypal.me/devservice/5eur). Thank you. ❤️
-
 ## Help fixing bugs and/or introducing new features
 If you are a developer and feel comfortable with JavaScript and the DOM, you can help with open issues. Just tell me if you spot something you would like to work on and I will assign you.
 
