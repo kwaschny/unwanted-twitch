@@ -108,16 +108,8 @@ function onAddItem(row) {
 
 	let itemToAdd = input.value.trim();
 
-	// remove any whitespace from channel names
-	if (table.id === 'table_channels') {
-
-		itemToAdd = itemToAdd.replace(/[\s]/g, '');
-
 	// remove consecutive whitespaces
-	} else {
-
-		itemToAdd = itemToAdd.replace(/[\s]{2,}/g, ' ');
-	}
+	itemToAdd = itemToAdd.replace(/[\s]{2,}/g, ' ');
 
 	// convert quotes in title patterns
 	if (table.id === 'table_titles') {
