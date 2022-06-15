@@ -922,6 +922,11 @@
 
 			if (buffer) {
 
+				if (buffer.children.length >= 2) {
+
+					buffer = buffer.querySelector('[data-a-target="preview-card-channel-link"]');
+				}
+
 				result.name = buffer.textContent;
 
 			} else {
