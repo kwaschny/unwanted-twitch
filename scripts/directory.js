@@ -1247,6 +1247,7 @@
 
 			if ((item.title.length > 0) && (storedBlacklistedItems['titles'].length > 0)) {
 
+				const itemTitle  = item.title;
 				const itemTitleL = item.title.toLowerCase();
 
 				const titles       = storedBlacklistedItems['titles'];
@@ -1254,34 +1255,54 @@
 
 				for (let i = 0; i < titlesLength; i++) {
 
-					// matching will be case-insensitive either way
-					const title = titles[i].toLowerCase();
+					const title  = titles[i];
+					const titleL = title.toLowerCase();
 
 					if (title.length === 0) { continue; }
 
-					let firstChar = title.slice(0, 1);
-					let lastChar  = title.slice(-1);
+					const firstChar = title.slice(0, 1);
+					const lastChar  = title.slice(-1);
 
 					// exact match
 					if ((firstChar === '\'') && (lastChar === '\'')) {
 
-						const exactTitle = title.substring(1, (title.length -1));
+						const exactTitle = titleL.substring(1, (titleL.length -1));
 
 						if (itemTitleL === exactTitle) { return true; }
 
 					// regular expression
-					} else if ((firstChar === '/') && (lastChar === '/')) {
-
-						const regex = new RegExp(
-							title.substring(1, (title.length -1)), 'i'
-						);
-
-						if (regex.test(itemTitleL) === true) { return true; }
-
-					// loose match
 					} else {
 
-						if (itemTitleL.indexOf(title) >= 0) { return true; }
+						const isRegExp = new RegExp('^/(.+)/I?$').test(title);
+
+						if (isRegExp) {
+
+							const isCS = (lastChar === 'I');
+
+							// case-sensitive
+							if (isCS) {
+
+								const regex = new RegExp(
+									title.substring(1, (title.length -2))
+								);
+
+								if (regex.test(itemTitle) === true) { return true; }
+
+							// case-insensitive
+							} else {
+
+								const regex = new RegExp(
+									titleL.substring(1, (titleL.length -1)), 'i'
+								);
+
+								if (regex.test(itemTitleL) === true) { return true; }
+							}
+
+						// loose match
+						} else {
+
+							if (itemTitleL.indexOf(titleL) >= 0) { return true; }
+						}
 					}
 				}
 			}

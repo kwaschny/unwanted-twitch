@@ -81,7 +81,7 @@
 		"message": "Explicación sobre los patrones soportados..."
 	},
 	"blacklist_TitlesExplainedText": {
-		"message": "¡Todos los patrones no distinguen entre mayúsculas y minúsculas!\nLos siguientes patrones están soportados:\n\n'Transmisión sin título'\n(El título del canal coincide exactamente).\n\nRepetición\n(El título del canal contiene la palabra especificada).\n\n/^Directo/\n(Expresiones regulares: Deben ir entre barras, en el ejemplo superior: Títulos de canal que empiecen por la palabra \"Directo\")."
+		"message": "¡Todos los patrones no distinguen entre mayúsculas y minúsculas!\nLos siguientes patrones están soportados:\n\n'Transmisión sin título'\n(El título del canal coincide exactamente).\n\nRepetición\n(El título del canal contiene la palabra especificada).\n\n/^directo/\n(Expresiones regulares: Deben ir entre barras, en el ejemplo superior: Títulos de canal que empiecen por la palabra \"Directo\", la ortografía no importa.)\n\n/^Live/I\n(Regular expression case-sensitive: RegEx must be within the slashes, uppercase \"i\" as flag, here: Channel's title starts with the exact spelling of \"Live\".)"
 	},
 	"blacklist_Empty": {
 		"message": "No hay nada en la lista negra aún."

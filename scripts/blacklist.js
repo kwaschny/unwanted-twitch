@@ -111,32 +111,60 @@ function onAddItem(row) {
 	// remove consecutive whitespaces
 	itemToAdd = itemToAdd.replace(/[\s]{2,}/g, ' ');
 
-	// convert quotes in title patterns
+	// special matching support for titles
 	if (table.id === 'table_titles') {
 
-		itemToAdd = itemToAdd.replace(/^"/, '\'');
-		itemToAdd = itemToAdd.replace(/"$/, '\'');
+		const matches = itemToAdd.match(new RegExp('^/(.+)/([a-zA-Z]*)$'))
 
-		if (
-			(itemToAdd.slice(0, 1) === '/') &&
-			(itemToAdd.slice(-1) === '/')
-		) {
+		if (matches !== null) {
+
+			const body  = matches[1];
+			const flags = matches[2];
+
+			const isCI  = (flags.indexOf('i') >= 0); // case-insensitive
+			const isCS  = (flags.indexOf('I') >= 0); // case-sensitive
 
 			try {
 
-				new RegExp(
-					itemToAdd.substring(1, itemToAdd.length -1)
-				);
+				new RegExp(body);
+
+				if (isCS) {
+
+					// preserve case and keep flag
+					itemToAdd = ('/' + body + '/I');
+
+				} else {
+
+					// store manually added keys as all-lowercase
+					itemToAdd = ('/' + body + '/').toLowerCase();
+				}
+
+				if (isCI) {
+
+					alert('The RegExp flag "i" is set by default and will be discarded.');
+				}
 
 			} catch (e) {
 
+				itemToAdd = '';
 				alert('The entered regular expression pattern is invalid.');
 			}
-		}
-	}
 
-	// store manually added keys as all-lowercase
-	itemToAdd = itemToAdd.trim().toLowerCase();
+		} else {
+
+			// convert quotes in title patterns
+			itemToAdd = itemToAdd.replace(/^"/, '\'');
+			itemToAdd = itemToAdd.replace(/"$/, '\'');
+
+			// store manually added keys as all-lowercase
+			itemToAdd = itemToAdd.toLowerCase();
+		}
+
+	} else {
+
+		// store manually added keys as all-lowercase
+		itemToAdd = itemToAdd.toLowerCase();
+	}
 
 	if (itemToAdd.length > 0) {
 
