@@ -64,6 +64,10 @@
 		z-index: 1;
 	}
 
+	.uttv-explore {
+		text-align: right;
+	}
+
 	.uttv-videos .uttv-button,
 	.uttv-clips .uttv-button {
 		margin: 0;

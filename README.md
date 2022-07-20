@@ -29,6 +29,7 @@
 - Game: Videos
 - Game: Clips
 - Frontpage/Discover (carousel is not filtered)
+- Explore Gaming/IRL/Music/Creative (Esports is not filtered)
 - Following
 - Sidebar (filtering only, no buttons to add items to the blacklist)
 - you can still access any blacklisted content via direct link

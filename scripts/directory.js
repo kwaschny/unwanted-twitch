@@ -224,6 +224,12 @@
 			case '/directory/all':
 				return 'channels';
 
+			case '/directory/gaming':
+			case '/directory/irl':
+			case '/directory/music':
+			case '/directory/creative':
+				return 'explore';
+
 			case '/directory/following':
 			case '/directory/following/live':
 			case '/directory/following/videos':
@@ -644,6 +650,7 @@
 		switch (currentPageType) {
 
 			case 'frontpage':
+			case 'explore':
 			case 'following':
 
 				selector = '!a[data-a-target="preview-card-image-link"]%, !a[data-a-target="tw-box-art-card-link"]%';
@@ -1361,6 +1368,11 @@
 						)
 					) {
 						topNodes.push(topNode);
+
+					} else if (
+						(topNode.getAttribute('data-a-target') === 'shelf-card')
+					) {
+						topNodes.push(topNode.parentNode);
 					}
 
 					topNode = topNode.parentNode;
@@ -1422,6 +1434,11 @@
 						)
 					) {
 						topNodes.push(topNode);
+
+					} else if (
+						(topNode.getAttribute('data-a-target') === 'shelf-card')
+					) {
+						topNodes.push(topNode.parentNode);
 					}
 
 					topNode = topNode.parentNode;
@@ -1802,6 +1819,24 @@
 
 			break;
 
+			case 'explore':
+
+				areaSelector = '.esports-directory-home-header';
+				area         = mainNode.querySelector(areaSelector);
+
+				if (area !== null) {
+
+					return buildManagementButton(
+						area, 'uttv-explore'
+					);
+
+				} else {
+
+					logWarn('Unable to find filters area on current page. Expected:', areaSelector);
+				}
+
+			break;
+
 			case 'following':
 
 				areaSelector = 'ul[role="tablist"]';
@@ -1966,6 +2001,7 @@
 				switch (currentPageType) {
 
 					case 'frontpage':
+					case 'explore':
 
 						const placeholderNode = rootNode.querySelector('.tw-placeholder');
 						if (placeholderNode !== null) {

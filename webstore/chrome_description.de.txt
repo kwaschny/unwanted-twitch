@@ -21,6 +21,7 @@ Unterstütze Seiten
 - Kategorie: Videos
 - Kategorie: Clips
 - Startseite/Entdecken (keine Filterung im Karussell)
+- Spiele/IRL/Musik/Creative (keine Filterung bei Esports)
 - Du folgst
 - Seitenleiste (nur Filterung, keine Buttons zum Sperren)
 - Bereiche können weiterhin via Direktlink besucht werden
