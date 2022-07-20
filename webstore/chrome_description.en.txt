@@ -27,7 +27,10 @@ Supported pages
 - you can still access any blacklisted content via direct link
 
 Note about breaking changes on twitch.tv
-Twitch is infamous for changing their website without further notice, which may break this extension over night (usually on Tuesdays). Twitch also serves different canary builds (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, report the issue¹ (you can also send me an e-mail or DM me on Twitter) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on the GitHub commits² or follow me on Twitter³ to receive news regarding new versions. Please avoid leaving a 1-star review as this will neither help the case nor increase my mood. Thank you. 🙂
+Twitch is infamous for changing their website without further notice, which may break this extension over night. Twitch also serves different canary builds (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, report the issue¹ (you can also send me an e-mail or DM me on Twitter) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on the GitHub commits² or follow me on Twitter³ to receive news regarding new versions. Please avoid leaving a 1-star review as this will neither help the case nor increase my mood. Thank you. 🙂
+
+FAQ / Troubleshooting
+Visit the GitHub page for details: https://github.com/kwaschny/unwanted-twitch/blob/master/README.md
 
 Contributing to this extension
 Regardless if you are a regular user or a developer yourself, check out the contribution page on GitHub for information about how you can help this project⁴.

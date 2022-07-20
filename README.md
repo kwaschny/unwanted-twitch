@@ -35,7 +35,27 @@
 - you can still access any blacklisted content via direct link
 
 ## Note about breaking changes on twitch.tv
-Twitch is infamous for changing their website without further notice, which may break this extension over night (usually on Tuesdays). Twitch also serves different [canary builds](https://whatis.techtarget.com/definition/canary-canary-testing) (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, [report the issue](https://github.com/kwaschny/unwanted-twitch/issues) (you can also send me an e-mail or DM me on Twitter) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on [the GitHub commits](https://github.com/kwaschny/unwanted-twitch/commits/master) or [follow me on Twitter](https://twitter.com/Kwaschny) to receive news regarding new versions. Please avoid leaving a 1-star review as this will neither help the case nor increase my mood. Thank you. 🙂
+Twitch is infamous for changing their website without further notice, which may break this extension over night. Twitch also serves different [canary builds](https://www.techtarget.com/whatis/definition/canary-canary-testing) (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, [report the issue](https://github.com/kwaschny/unwanted-twitch/issues) (you can also send me an e-mail or DM me on Twitter) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on [the GitHub commits](https://github.com/kwaschny/unwanted-twitch/commits/master) or [follow me on Twitter](https://twitter.com/Kwaschny) to receive news regarding new versions. Please avoid leaving a 1-star review as this will neither help the case nor increase my mood. Thank you. 🙂
+
+## FAQ / Troubleshooting
+
+**There are no X buttons visible anywhere?**
+- After the first install of the extension, restart your browser.
+- Check if you accidently unchecked the `Show "X" Buttons` option. It can be found in the extension popup menu or as clickable 👁 icon on the management button.
+- Make sure the page is supported, see description. The sidebar generally has no "X" button.
+
+**(Firefox) The extension icon is nowhere to be found?**
+- The icon is part of the address bar (URL) and will only appear if you are on twitch.tv (to the right).
+
+**Whatever I try to block, the entry is never saved to the blacklist?**
+- Try switching to local storage (instead of cloud storage). This option can be found in the management view (accessible via the extension popup menu or via management button) by unchecking the box at the top right.
+- Avoid having more than one tab of twitch.tv open while adding to or removing from the blacklist.
+- Close browser system tabs (browser settings, flags, extensions) before adding to or removing from the blacklist.
+
+**Are you accessing my Twitch profile in any way?**
+- No, there is no attempt to access or read any information other than what is needed to detect and identify items to block. These items do not contain sensitive data.
+- There is no attempt to write any information to an external resource, other than your personal blacklist in case you are using the cloud storage of your browser. The cloud storage is only accessible to you and the cloud storage's operator, such as Google (Chrome), Mozilla (Firefox), Microsoft (Edge) etc. The blacklist only contains category names, channel names, tags and titles, see export.
+- There are no code injections or outgoing requests (such as [script tags](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script), [fetches](https://developer.mozilla.org/en-US/docs/Web/API/fetch) or [XmlHttpRequests](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)). There is also no dependency on any library other than the native browser extension API ([Chrome](https://developer.chrome.com/docs/extensions/reference/) and [WebExtensions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)).
 
 ## Contributing to this extension
 Regardless if you are a regular user or a developer yourself, [check out the contribution page for information about how you can help this project](CONTRIBUTING.md).
