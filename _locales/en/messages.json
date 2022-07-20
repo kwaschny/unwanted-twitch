@@ -81,7 +81,7 @@
 		"message": "Supported patterns explained..."
 	},
 	"blacklist_TitlesExplainedText": {
-		"message": "All patterns are case-insensitive!\nThe following patterns are supported:\n\n'Untitled Broadcast'\n(The channel's title matches exactly.)\n\nRerun\n(The channel's title contains the specified word.)\n\n/^live/\n(Regular expression: RegEx must be within the slashes, here: Channel's title starts with the word \"Live\", spelling doesn't matter.)\n\n/^Live/I\n(Regular expression case-sensitive: RegEx must be within the slashes, uppercase \"i\" as flag, here: Channel's title starts with the exact spelling of \"Live\".)"
+		"message": "All patterns are case-insensitive.\nThe following patterns are supported:\n\n'Untitled Broadcast'\n(The channel's title matches exactly.)\n\nRerun\n(The channel's title contains the specified word.)\n\n/^live/\n(Regular expression: RegEx must be within the slashes, here: Channel's title starts with the word \"Live\", case doesn't matter.)\n\n/^Live/I\n(Regular expression case-sensitive: RegEx must be within the slashes, uppercase \"i\" as flag, here: Channel's title starts with exactly \"Live\".)"
 	},
 	"blacklist_Empty": {
 		"message": "Nothing blacklisted yet."
