@@ -771,6 +771,7 @@
 			'!a[data-a-id^="followed-channel-"]%',
 			'!a[data-a-id^="recommended-channel-"]%',
 			'!a[data-a-id^="popular-channel-"]%',
+			'!a[data-a-id^="similarity-channel-"]%',
 			'!a.side-nav-card%'
 
 		].join(', ');
