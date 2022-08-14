@@ -9,6 +9,8 @@
 
 function createItemRow(key) {
 
+	key = normalizeCase(key);
+
 	let row = document.createElement('tr');
 	row.className = 'item';
 
@@ -60,7 +62,7 @@ function addItems(table, items) {
 	// sort items (case insensitive)
 	sortedKeys = sortedKeys.sort(function (a, b) {
 
-		return a.toLowerCase().localeCompare( b.toLowerCase() );
+		return normalizeCase(a).localeCompare( normalizeCase(b) );
 	});
 
 	let fragment = document.createDocumentFragment();
@@ -95,8 +97,8 @@ function clearItems(table) {
 
 function itemExists(table, key) {
 
-	key = key.toLowerCase();
-	const presentKeys = gatherKeysArray(table, true);
+	key = normalizeCase(key);
+	const presentKeys = gatherKeysArray(table);
 
 	return (presentKeys.indexOf(key) >= 0);
 }
@@ -130,13 +132,13 @@ function onAddItem(row) {
 
 				if (isCS) {
 
-					// preserve case and keep flag
+					// preserve input and keep flag
 					itemToAdd = ('/' + body + '/I');
 
 				} else {
 
-					// store manually added keys as all-lowercase
-					itemToAdd = ('/' + body + '/').toLowerCase();
+					// normalize input and discard flag
+					itemToAdd = ('/' + normalizeCase(body) + '/');
 				}
 
 				if (isCI) {
@@ -156,14 +158,14 @@ function onAddItem(row) {
 			itemToAdd = itemToAdd.replace(/^"/, '\'');
 			itemToAdd = itemToAdd.replace(/"$/, '\'');
 
-			// store manually added keys as all-lowercase
-			itemToAdd = itemToAdd.toLowerCase();
+			// store manually added key with normalized case
+			itemToAdd = normalizeCase(itemToAdd);
 		}
 
 	} else {
 
-		// store manually added keys as all-lowercase
-		itemToAdd = itemToAdd.toLowerCase();
+		// store manually added key with normalized case
+		itemToAdd = normalizeCase(itemToAdd);
 	}
 
 	if (itemToAdd.length > 0) {
@@ -227,7 +229,7 @@ function handleItemCount(table) {
 	return count;
 }
 
-function gatherKeysMap(table, allLowerCase) {
+function gatherKeysMap(table) {
 
 	let result = {};
 
@@ -236,19 +238,16 @@ function gatherKeysMap(table, allLowerCase) {
 
 	for (let i = 0; i < nodesLength; i++) {
 
-		let key = nodes[i].getAttribute('data-key');
-
-		if (allLowerCase === true) {
-
-			key = key.toLowerCase();
-		}
+		let key = normalizeCase(
+			nodes[i].getAttribute('data-key')
+		);
 
 		result[key] = 1;
 	}
 
 	return result;
 }
-function gatherKeysArray(table, allLowerCase) {
+function gatherKeysArray(table) {
 
 	let result = [];
 
@@ -257,12 +256,9 @@ function gatherKeysArray(table, allLowerCase) {
 
 	for (let i = 0; i < nodesLength; i++) {
 
-		let key = nodes[i].getAttribute('data-key');
-
-		if (allLowerCase === true) {
-
-			key = key.toLowerCase();
-		}
+		let key = normalizeCase(
+			nodes[i].getAttribute('data-key')
+		);
 
 		result.push(key);
 	}

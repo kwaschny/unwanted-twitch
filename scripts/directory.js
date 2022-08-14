@@ -1188,9 +1188,9 @@
 
 			if (item.name.length > 0) {
 
-				// also check all-lowercase spelling
+				// check original and normalized case against blacklist
 				const itemName  = item.name;
-				const itemNameL = itemName.toLowerCase();
+				const itemNameL = normalizeCase(itemName);
 
 				const blacklistedByName = (
 					(storedBlacklistedItems[item.type][itemName]  !== undefined) ||
@@ -1207,9 +1207,9 @@
 
 			if (item.category.length > 0) {
 
-				// also check all-lowercase spelling
+				// check original and normalized case against blacklist
 				const categoryName  = item.category;
-				const categoryNameL = categoryName.toLowerCase();
+				const categoryNameL = normalizeCase(categoryName);
 
 				const blacklistedByCategory = (
 					(storedBlacklistedItems['categories'][categoryName]  !== undefined) ||
@@ -1233,9 +1233,9 @@
 
 				if (tag.name.length === 0) { continue; }
 
-				// also check all-lowercase spelling
+				// check original and normalized case against blacklist
 				const tagName  = tag.name;
-				const tagNameL = tagName.toLowerCase();
+				const tagNameL = normalizeCase(tagName);
 
 				if (
 					(storedBlacklistedItems['tags'][tagName]  !== undefined) ||
@@ -1256,7 +1256,7 @@
 			if ((item.title.length > 0) && (storedBlacklistedItems['titles'].length > 0)) {
 
 				const itemTitle  = item.title;
-				const itemTitleL = item.title.toLowerCase();
+				const itemTitleL = normalizeCase(item.title);
 
 				const titles       = storedBlacklistedItems['titles'];
 				const titlesLength = titles.length;
@@ -1264,7 +1264,7 @@
 				for (let i = 0; i < titlesLength; i++) {
 
 					const title  = titles[i];
-					const titleL = title.toLowerCase();
+					const titleL = normalizeCase(title);
 
 					if (title.length === 0) { continue; }
 
@@ -2261,7 +2261,9 @@
 
 			storedBlacklistedItems[item.type] = {};
 		}
-		storedBlacklistedItems[item.type][item.name] = 1;
+
+		const nameL = normalizeCase(item.name);
+		storedBlacklistedItems[item.type][nameL] = 1;
 
 		// update storage
 		putBlacklistedItems(storedBlacklistedItems);
@@ -2295,7 +2297,9 @@
 
 			storedBlacklistedItems['tags'] = {};
 		}
-		storedBlacklistedItems['tags'][tag.name] = 1;
+
+		const nameL = normalizeCase(tag.name);
+		storedBlacklistedItems['tags'][nameL] = 1;
 
 		// update storage
 		putBlacklistedItems(storedBlacklistedItems);

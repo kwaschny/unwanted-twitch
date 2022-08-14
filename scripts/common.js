@@ -63,6 +63,19 @@ function isFirefox() {
 }
 
 /**
+ * Returns a normalized lowercase string without diacritics.
+ */
+function normalizeCase(term) {
+
+	return String(term)
+		.trim()
+		.normalize('NFKD')
+		.replace(/\p{Diacritic}/gu, '')
+		.toLowerCase()
+	;
+}
+
+/**
  * Wrapper to retrieve data from storage.
  */
 function storageGet(data, callback) {
