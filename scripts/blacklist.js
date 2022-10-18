@@ -9,8 +9,6 @@
 
 function createItemRow(key) {
 
-	key = normalizeCase(key);
-
 	let row = document.createElement('tr');
 	row.className = 'item';
 
@@ -33,6 +31,11 @@ function createItemRow(key) {
 }
 
 function addItem(table, key) {
+
+	if (!tableAllowsRules(table)) {
+
+		key = normalizeCase(key);
+	}
 
 	// prevent adding the same key more than once
 	if (itemExists(table, key) === true) {
@@ -67,9 +70,15 @@ function addItems(table, items) {
 
 	let fragment = document.createDocumentFragment();
 
+	const allowsRules = tableAllowsRules(table);
+
 	for (let i = 0; i < sortedKeysLength; i++) {
 
 		let key = sortedKeys[i];
+		if (!allowsRules) {
+
+			key = normalizeCase(key);
+		}
 
 		fragment.appendChild(
 			createItemRow(key)
@@ -97,7 +106,6 @@ function clearItems(table) {
 
 function itemExists(table, key) {
 
-	key = normalizeCase(key);
 	const presentKeys = gatherKeysArray(table);
 
 	return (presentKeys.indexOf(key) >= 0);
@@ -113,8 +121,8 @@ function onAddItem(row) {
 	// remove consecutive whitespaces
 	itemToAdd = itemToAdd.replace(/[\s]{2,}/g, ' ');
 
-	// special matching support for titles
-	if (table.id === 'table_titles') {
+	// check for special matching support
+	if (tableAllowsRules(table)) {
 
 		const matches = itemToAdd.match(new RegExp('^/(.+)/([a-zA-Z]*)$'))
 
@@ -132,13 +140,13 @@ function onAddItem(row) {
 
 				if (isCS) {
 
-					// preserve input and keep flag
+					// keep flag
 					itemToAdd = ('/' + body + '/I');
 
 				} else {
 
-					// normalize input and discard flag
-					itemToAdd = ('/' + normalizeCase(body) + '/');
+					// discard flag
+					itemToAdd = ('/' + body + '/');
 				}
 
 				if (isCI) {
@@ -236,11 +244,15 @@ function gatherKeysMap(table) {
 	let nodes = table.querySelectorAll('[data-key]');
 	const nodesLength = nodes.length;
 
+	const allowsRules = tableAllowsRules(table);
+
 	for (let i = 0; i < nodesLength; i++) {
 
-		let key = normalizeCase(
-			nodes[i].getAttribute('data-key')
-		);
+		let key = nodes[i].getAttribute('data-key');;
+		if (!allowsRules) {
+
+			key = normalizeCase(key);
+		}
 
 		result[key] = 1;
 	}
@@ -254,11 +266,15 @@ function gatherKeysArray(table) {
 	let nodes = table.querySelectorAll('[data-key]');
 	const nodesLength = nodes.length;
 
+	const allowsRules = tableAllowsRules(table);
+
 	for (let i = 0; i < nodesLength; i++) {
 
-		let key = normalizeCase(
-			nodes[i].getAttribute('data-key')
-		);
+		let key = nodes[i].getAttribute('data-key');
+		if (!allowsRules) {
+
+			key = normalizeCase(key);
+		}
 
 		result.push(key);
 	}
@@ -444,6 +460,16 @@ function onTitlesExplained() {
 	alert(
 		chrome.i18n.getMessage('blacklist_TitlesExplainedText')
 	);
+}
+
+function tableAllowsRules(table) {
+
+	if (table && table.id) {
+
+		table = table.id;
+	}
+
+	return (table === 'table_titles');
 }
 
 function toggleLoadingScreen(show) {

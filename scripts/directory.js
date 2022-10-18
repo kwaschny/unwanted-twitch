@@ -1198,7 +1198,6 @@
 				);
 
 				if (blacklistedByName) { return true; }
-
 			}
 
 		/* END: blacklisted by name */
@@ -1217,7 +1216,6 @@
 				);
 
 				if (blacklistedByCategory) { return true; }
-
 			}
 
 		/* END: blacklisted by category */
@@ -1294,6 +1292,7 @@
 									title.substring(1, (title.length -2))
 								);
 
+								// match against regular title (regular expression body is not normalized)
 								if (regex.test(itemTitle) === true) { return true; }
 
 							// case-insensitive
@@ -1303,7 +1302,8 @@
 									titleL.substring(1, (titleL.length -1)), 'i'
 								);
 
-								if (regex.test(itemTitleL) === true) { return true; }
+								// match against regular title (regular expression body is not normalized)
+								if (regex.test(itemTitle) === true) { return true; }
 							}
 
 						// loose match
