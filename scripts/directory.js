@@ -1912,6 +1912,13 @@
 		// click action for eye symbol
 		buttonToggle.addEventListener('click', function() {
 
+			// require the user to confirm his intent to hide the "X" buttons (prevent accidental toggle)
+			if (renderButtons === true) {
+
+				const confirmed = confirm( chrome.i18n.getMessage('confirm_HideButtons') );
+				if (!confirmed) { return; }
+			}
+
 			toggleHideButtonsVisibility(!renderButtons);
 		});
 

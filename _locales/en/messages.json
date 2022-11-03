@@ -18,6 +18,9 @@
 	"confirm_HideTag": {
 		"message": "Unwanted Twitch:\nYou are about to hide all categories and channels\nwith the following tag:"
 	},
+	"confirm_HideButtons": {
+		"message": "Unwanted Twitch:\nYou are about to hide all \"X\" buttons.\n\nYou can toggle the visibility by clicking on the 👁 eye icon again."
+	},
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nThe blacklist is full. You cannot add more items if you want to keep synchronization enabled.\n\nDisable \"Synchronize Blacklist via Cloud\" under settings to be able to add more items to the blacklist."
 	},

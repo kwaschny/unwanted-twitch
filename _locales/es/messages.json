@@ -18,6 +18,9 @@
 	"confirm_HideTag": {
 		"message": "Unwanted Twitch:\nEstás a punto de ocultar todas las categorías y canales\ncon la siguiente etiqueta:"
 	},
+	"confirm_HideButtons": {
+		"message": "Unwanted Twitch:\nYou are about to hide all \"X\" buttons.\n\nYou can toggle the visibility by clicking on the 👁 eye icon again."
+	},
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nLa lista negra está llena. No puedes añadir más ítems si quieres mantener la sincronización activada.\n\nDesactiva \"Sincronizar la Lista Negra en la Nube\" en los ajustes para poder añadir más ítems a la lista negra."
 	},

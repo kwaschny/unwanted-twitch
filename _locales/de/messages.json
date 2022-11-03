@@ -18,6 +18,9 @@
 	"confirm_HideTag": {
 		"message": "Unwanted Twitch:\nSie sind dabei alle Kategorien und Kanäle\nmit folgendem Tag auszublenden:"
 	},
+	"confirm_HideButtons": {
+		"message": "Unwanted Twitch:\nSie sind dabei alle \"X\" Buttons auszublenden.\n\nSie können die Sichtbarkeit über das 👁 Augen-Symbol jederzeit wieder umschalten."
+	},
 	"alert_StorageQuota": {
 		"message": "Unwanted Twitch:\nDie Sperrliste ist voll. Es können keine weiteren Einträge hinzugefügt werden, solange die Synchronisierung stattfinden soll.\n\nDeaktivieren Sie \"Sperrliste in Cloud synchronisieren\" in den Einstellungen, um weitere Einträge hinzufügen zu können."
 	},
