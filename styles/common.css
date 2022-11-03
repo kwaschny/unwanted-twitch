@@ -1,86 +1,198 @@
 ﻿* {
+	border-style: solid;
+	border-width: 0;
 	box-sizing: border-box;
 	margin: 0px;
 	padding: 0px;
 }
 
+/** Abbreviations explained
+ * UT: Unwanted Twitch
+ */
+
+:root {
+	--UT-color1: black;
+	--UT-color2: white;
+	--UT-h-color1: var(--UT-MainColor1);
+	--UT-MainColor1: #9147ff;
+	--UT-MainColor2: #772ce8;
+	--UT-btn-lowlight: #9A75D1;
+	--UT-Table-background-color1: #f5f4f6;
+	--UT-Table-background-color2: #dad8de;
+	--UT-Main-background-color1: white;
+	--UT-Main-background-color2: white;
+	--UT-Transition-background-color: #C0BDC7;
+	--UT-checkbox-filterColor: hue-rotate(47.3deg);
+	--UT-textbox-border-color: hsl(0, 0%, 90%);
+}
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--UT-color1: hsl(0, 0%, 80%);
+		--UT-color2: var(--UT-color1);
+		--UT-h-color1: hsl(264, 100%, 79%);
+		--UT-MainColor1: hsl(264, 100%, 32%);
+		--UT-MainColor2: hsl(264, 80%, 26%);
+		--UT-btn-lowlight: hsl(264, 50%, 32%);
+		--UT-Main-background-color1: hsl(264, 2%, 10%);
+		--UT-Main-background-color2: hsl(264, 2%, 13%);
+		--UT-Table-background-color1: hsl(264, 2%, 20%);
+		--UT-Table-background-color2: hsl(264, 2%, 20%);
+		--UT-Transition-background-color: hsl(264, 2%, 15%);
+	}
+}
+
+/* #region General */
 body {
+	background-color: var(--UT-Main-background-color1);
+	color: var(--UT-color1);
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	font-size: 16px;
 	padding: 8px 16px;
 }
 
+button,
+input {
+	color: inherit;
+	font-family: inherit;
+}
+
+input[type="checkbox"] {
+	filter: var(--UT-checkbox-filterColor);
+}
+
+input[type="text"] {
+	background-color: var(--UT-Main-background-color2);
+	border-width: 2px;
+	border-color: var(--UT-Transition-background-color);
+}
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+	::selection {
+		background-color: hsla(264, 100%, 64%, 0.6);
+	}
+
+	/* Crude way of making dark checkbox */
+	input[type="checkbox"] {
+		filter: var(--UT-checkbox-filterColor) invert(.8);
+	}
+
+	input[type="checkbox"]:checked {
+		filter: var(--UT-checkbox-filterColor) brightness(.8);
+	}
+}
+
 button {
-	background-color: #9147FF;
+	color: inherit;
+	font-family: inherit;
+}
+
+input[type="checkbox"] {
+	filter: var(--UT-checkbox-filterColor);
+}
+
+input,
+
+input[type="text"] {
+	background-color: var(--UT-Main-background-color2);
+	border-width: 2px;
+	border-color: var(--UT-Transition-background-color);
+}
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+	::selection {
+		background-color: hsla(264, 100%, 64%, 0.6);
+	}
+
+	/* Crude way of making dark checkbox */
+	input[type="checkbox"] {
+		filter: var(--UT-checkbox-filterColor) invert(.8);
+	}
+
+	input[type="checkbox"]:checked {
+		filter: var(--UT-checkbox-filterColor) brightness(.8);
+	}
+}
+
+button {
+	background-color: var(--UT-MainColor1);
 	border: 1px solid transparent;
 	border-radius: 2px;
-	color: #FFFFFF;
+	color: var(--UT-color2);
 	cursor: pointer;
-	font-family: inherit;
 	outline: none;
 	padding: 8px;
 	user-select: none;
 	width: 192px;
 }
-	button:hover {
-		background-color: #772CE8;
-		border-color: #772CE8;
-	}
-	button:focus {
-		border-color: #9A7FCC;
-		box-shadow: 0px 0px 6px 0px #772CE8;
-	}
-	button:active {
-		border-color: #772CE8;
-		box-shadow: 0px 0px 6px 0px #772CE8;
-	}
 
-	button.lowlight {
-		background-color: #9A75D1;
-	}
-		button.lowlight:hover {
-			background-color: #9147FF;
-			border-color: #9147FF;
-		}
-		button.lowlight:focus {
-			border-color: #9147FF;
-			box-shadow: 0px 0px 6px 0px #9147FF;
-		}
-		button.lowlight:active {
-			border-color: #9147FF;
-			box-shadow: 0px 0px 6px 0px #9147FF;
-		}
+button:hover {
+	background-color: var(--UT-MainColor2);
+	border-color: var(--UT-MainColor2);
+}
 
-	button[disabled],
-	button.disabled {
-		background-color: #737373;
-	}
-		button[disabled]:hover,
-		button.disabled:hover {
-			background-color: #8C8C8C;
-			border-color: #8C8C8C;
-		}
-		button[disabled]:focus,
-		button.disabled:focus {
-			border-color: #A6A6A6;
-			box-shadow: 0px 0px 6px 0px #8C8C8C;
-		}
-		button[disabled]:active,
-		button.disabled:active {
-			border-color: #8C8C8C;
-			box-shadow: 0px 0px 6px 0px #8C8C8C;
-		}
-		button[disabled] {
-			cursor: not-allowed;
-		}
+button:focus {
+	border-color: #9A7FCC;
+	box-shadow: 0px 0px 6px 0px var(--UT-MainColor2);
+}
 
-	button.flashed {
-		border: 1px solid #FFFFFF;
-		box-shadow: 0px 0px 4px #772CE8, 0px 0px 4px #772CE8, 0px 0px 4px #772CE8, 0px 0px 4px #772CE8;
-	}
+button:active {
+	border-color: var(--UT-MainColor2);
+	box-shadow: 0px 0px 6px 0px var(--UT-MainColor2);
+}
 
-input {
-	font-family: inherit;
+button.lowlight {
+	background-color: var(--UT-btn-lowlight);
+}
+
+button.lowlight:hover {
+	background-color: var(--UT-MainColor1);
+	border-color: var(--UT-MainColor1);
+}
+
+button.lowlight:focus {
+	border-color: var(--UT-MainColor1);
+	box-shadow: 0px 0px 6px 0px var(--UT-MainColor1);
+}
+
+button.lowlight:active {
+	border-color: var(--UT-MainColor1);
+	box-shadow: 0px 0px 6px 0px var(--UT-MainColor1);
+}
+
+button[disabled],
+button.disabled {
+	background-color: #737373;
+}
+
+button[disabled]:hover,
+button.disabled:hover {
+	background-color: #8C8C8C;
+	border-color: #8C8C8C;
+}
+
+button[disabled]:focus,
+button.disabled:focus {
+	border-color: #A6A6A6;
+	box-shadow: 0px 0px 6px 0px #8C8C8C;
+}
+
+button[disabled]:active,
+button.disabled:active {
+	border-color: #8C8C8C;
+	box-shadow: 0px 0px 6px 0px #8C8C8C;
+}
+
+button[disabled] {
+	cursor: not-allowed;
+}
+
+button.flashed {
+	border: 1px solid #FFFFFF;
+	box-shadow: 0px 0px 4px var(--UT-MainColor2), 0px 0px 4px var(--UT-MainColor2), 0px 0px 4px var(--UT-MainColor2), 0px 0px 4px var(--UT-MainColor2);
 }
 
 table {
@@ -88,28 +200,28 @@ table {
 	width: 100%;
 }
 
-	table tr:nth-child(odd) {
-		background-color: #F5F4F6;
-	}
+table tr:nth-child(odd) {
+	background-color: var(--UT-Table-background-color1);
+}
 
-	table th,
-	table td {
-		border: 1px solid #DAD8DE;
-		padding: 4px 8px;
-	}
+table th,
+table td {
+	border: 1px solid var(--UT-Table-background-color2);
+	padding: 4px 8px;
+}
 
-	table th {
-		background-color: #9147FF;
-		color: #FFFFFF;
-		padding-bottom: 8px;
-		padding-top: 8px;
-		text-align: left;
-	}
+table th {
+	background-color: var(--UT-MainColor1);
+	color: var(--UT-color2);
+	padding-bottom: 8px;
+	padding-top: 8px;
+	text-align: left;
+}
 
 .checkable {
 	user-select: none;
 }
 
-	.checkable * {
-		vertical-align: middle;
-	}
+.checkable * {
+	vertical-align: middle;
+}

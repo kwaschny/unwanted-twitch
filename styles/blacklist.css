@@ -2,115 +2,120 @@
 	padding-bottom: 96px;
 }
 
-	#blacklist .settings {
-		font-size: 80%;
-		margin-bottom: 24px;
-	}
+#blacklist .settings {
+	font-size: 80%;
+	margin-bottom: 24px;
+}
 
-	#blacklist .settings h2 {
-		color: #9147FF;
-		margin-bottom: 4px;
-		margin-top: -8px;
-	}
+#blacklist .settings h2 {
+	color: var(--UT-h-color1);
+	margin-bottom: 4px;
+	margin-top: -8px;
+}
 
-		#blacklist .settings .left,
-		#blacklist .settings .right {
-			display: inline-block;
-			vertical-align: top;
-			width: 50%;
-		}
+#blacklist .settings .left,
+#blacklist .settings .right {
+	display: inline-block;
+	vertical-align: top;
+	width: 50%;
+}
 
-		#blacklist .settings .left {
-			text-align: left;
-		}
-		#blacklist .settings .right {
-			text-align: right;
-		}
+#blacklist .settings .left {
+	text-align: left;
+}
 
-		#blacklist .settings .storage-stats {
-			font-family: Consolas, 'Courier New', Courier, monospace;
-			font-size: 11px;
-			margin-top: 8px;
-			opacity: 0.50;
-			visibility: hidden;
-		}
+#blacklist .settings .right {
+	text-align: right;
+}
 
-	#blacklist .area {
-		display: inline-block;
-		margin-bottom: 64px;
-		vertical-align: top;
-		width: 24.5%;
-	}
-		#blacklist .area.left,
-		#blacklist .area.center-left,
-		#blacklist .area.center-right {
-			margin-right: 0.66%;
-		}
+#blacklist .settings .storage-stats {
+	font-family: Consolas, 'Courier New', Courier, monospace;
+	font-size: 11px;
+	margin-top: 8px;
+	opacity: 0.50;
+	visibility: hidden;
+}
 
-		#blacklist .area th {
-			position: relative;
-		}
+#blacklist .area {
+	display: inline-block;
+	margin-bottom: 64px;
+	vertical-align: top;
+	width: 24.5%;
+}
 
-		#blacklist .area td:nth-child(1) {
-			width: 99%;
-		}
-		#blacklist .area td:nth-child(2) {
-			width: 1%;
-		}
+#blacklist .area.left,
+#blacklist .area.center-left,
+#blacklist .area.center-right {
+	margin-right: 0.66%;
+}
 
-		#blacklist .area tr.input td:first-child {
-			padding-left: 2px;
-			padding-right: 2px;
-		}
+#blacklist .area th {
+	position: relative;
+}
 
-		#blacklist .area input {
-			padding: 4px;
-			width: 100%;
-		}
+#blacklist .area td:nth-child(1) {
+	width: 99%;
+}
 
-		#blacklist .area button {
-			width: 96px;
-		}
-			#blacklist .area button.clear {
-				border-color: #FFFFFF;
-				font-weight: normal;
-				padding: 4px 8px;
-				position: absolute;
-				right: 8px;
-				top: 6px;
-			}
+#blacklist .area td:nth-child(2) {
+	width: 1%;
+}
 
-	#blacklist .actions {
-		background-color: #DAD8DE;
-		border-top: 2px solid #C0BDC7;
-		bottom: 0px;
-		display: flex;
-		justify-content: space-between;
-		left: 0px;
-		padding: 16px 32px;
-		position: fixed;
-		text-align: center;
-		width: 100%;
-	}
+#blacklist .area tr.input td:first-child {
+	padding-left: 2px;
+	padding-right: 2px;
+}
 
-		#blacklist .actions .left button {
-			width: 128px;
-		}
+#blacklist .area input {
+	padding: 4px;
+	width: 100%;
+}
 
-		#blacklist .actions button {
-			margin-right: 16px;
-		}
-			#blacklist .actions button:last-child {
-				margin-right: 0px;
-			}
+#blacklist .area button {
+	width: 96px;
+}
 
-	#blacklist .hint {
-		color: #9147FF;
-		cursor: pointer;
-		display: inline-block;
-		font-size: 70%;
-		margin-top: 4px;
-	}
+#blacklist .area button.clear {
+	border-color: var(--UT-color2);
+	font-weight: normal;
+	padding: 4px 8px;
+	position: absolute;
+	right: 8px;
+	top: 6px;
+}
+
+#blacklist .actions {
+	background-color: var(--UT-Table-background-color2);
+	border-top: 2px solid var(--UT-Transition-background-color);
+	bottom: 0px;
+	display: flex;
+	justify-content: space-between;
+	left: 0px;
+	padding: 16px 32px;
+	position: fixed;
+	text-align: center;
+	width: 100%;
+}
+
+#blacklist .actions .left button {
+	width: 128px;
+}
+
+#blacklist .actions button {
+	margin-right: 16px;
+}
+
+#blacklist .actions button:last-child {
+	margin-right: 0px;
+}
+
+#blacklist .hint {
+	color: var(--UT-h-color1);
+	cursor: pointer;
+	display: inline-block;
+	font-size: 70%;
+	margin-top: 4px;
+}
 
 #blacklist #clearStorages {
 	font-size: 11px;
@@ -121,7 +126,7 @@
 #blacklist #processing {
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0.90);
-	color: #FFFFFF;
+	color: var(--UT-color1);
 	display: flex;
 	font-size: 200%;
 	justify-content: center;
@@ -131,9 +136,10 @@
 	top: 0px;
 	width: 100%;
 }
-	#blacklist #processing[hidden] {
-		display: none;
-	}
+
+#blacklist #processing[hidden] {
+	display: none;
+}
 
 @media (max-width: 1023px) {
 
