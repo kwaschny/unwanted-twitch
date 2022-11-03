@@ -9,7 +9,7 @@
 - Filterung auf der "Du folgst"-Seite kann deaktiviert werden (unter Einstellungen)
 - Sichtbarkeit der "X"-Buttons umschaltbar
 - Sperrliste im- und exportierbar (unter Einstellungen)
-- Sperrliste synchronisiert sich automatisch mit allen Geräten (unter Einstellungen, kann deaktiviert werden)
+- Sperrliste kann sich automatisch zwischen allen Geräten synchronisieren (unter Einstellungen, erfordert Opt-in)
 - bequemes Ein- und Ausschalten der Erweiterung
 - kompatibel mit BetterTTV (BTTV) und FrankerFaceZ (FFZ)
 - unterstützt Twitchs dunklen Modus

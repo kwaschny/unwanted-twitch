@@ -24,7 +24,8 @@ function cloneBlacklistItems(items) {
 function getStorageMode(callback) {
 	logTrace('invoking getStorageMode()');
 
-	let useSyncStorage = true;
+	// default mode: local
+	let useSyncStorage = false;
 
 	chrome.storage.local.get('useLocalStorage', function(result) {
 

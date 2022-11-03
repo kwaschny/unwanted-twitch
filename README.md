@@ -17,7 +17,7 @@
 - filtering on "Following" page can be disabled (in settings)
 - toggle visibility of "X" buttons
 - share blacklists using import/export (in settings)
-- blacklist is automatically synced between devices (in settings, can be deactivated)
+- blacklist can automatically sync between devices (in settings, requires opt-in)
 - one-click-toggle to disable/enable extension (click on the extension icon to access)
 - compatible with FrankerFaceZ (FFZ) and BetterTTV (BTTV)
 - supports Twitch's Dark Mode
