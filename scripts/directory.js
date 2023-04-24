@@ -2443,7 +2443,7 @@
 
 		if (attemptRecovery === false) {
 
-			logError('Restoring backup:', items);
+			logWarn('Restoring backup:', items);
 		}
 
 		// prepare backup of current items
@@ -2495,21 +2495,23 @@
 
 						if (attemptRecovery !== false) {
 
+							const suffix = ('\n\nBrowser\'s runtime.lastError reports:\n' + error.message);
+
 							if (error.message.indexOf('QUOTA_BYTES') >= 0) {
 
-								alert( chrome.i18n.getMessage('alert_StorageQuota') );
+								alert(chrome.i18n.getMessage('alert_StorageQuota') + suffix);
 
 							} else if (error.message.indexOf('MAX_') >= 0) {
 
-								alert( chrome.i18n.getMessage('alert_StorageThrottle') );
+								alert(chrome.i18n.getMessage('alert_StorageThrottle') + suffix);
 
 							} else {
 
-								alert( chrome.i18n.getMessage('alert_StorageIssue') );
+								alert(chrome.i18n.getMessage('alert_StorageIssue') + suffix);
 							}
 
 							// something went wrong, restore the backup
-							logError('Encountered storage error. Attempting to restore backup:', backupBlacklistedItems);
+							logWarn('Attempting to restore backup:', backupBlacklistedItems);
 							putBlacklistedItems(backupBlacklistedItems, callback, false);
 							return;
 						}
