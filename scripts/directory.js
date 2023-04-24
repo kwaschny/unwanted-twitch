@@ -1368,14 +1368,17 @@
 							)
 						)
 					) {
+						// matching node
 						topNodes.push(topNode);
 
 					} else if (
 						(topNode.getAttribute('data-a-target') === 'shelf-card')
 					) {
+						// parent node of match
 						topNodes.push(topNode.parentNode);
 					}
 
+					// keep looking
 					topNode = topNode.parentNode;
 				}
 
@@ -1404,28 +1407,14 @@
 						}
 					}
 
-					const aTarget = topNode.getAttribute('data-a-target');
+					const aTarget = (topNode.getAttribute('data-a-target') ?? '');
 
 					// order by vague to most specific selector
 					if (
 						topNode.classList.contains('tw-transition') ||
 						topNode.classList.contains('stream-thumbnail') ||
-						topNode.classList.contains('live-channel-card') ||
-						(
-							(aTarget !== null) &&
-							(typeof aTarget === 'string') &&
-							(aTarget.indexOf('followed-vod') >= 0)
-						) ||
-						(
-							(aTarget !== null) &&
-							(typeof aTarget === 'string') &&
-							(aTarget.indexOf('video-tower-card') >= 0)
-						) ||
-						(
-							(aTarget !== null) &&
-							(typeof aTarget === 'string') &&
-							(aTarget.indexOf('clips-card') >= 0)
-						) ||
+						(aTarget.indexOf('video-tower-card') >= 0) ||
+						(aTarget.indexOf('clips-card') >= 0) ||
 						(
 							(topNode.getAttribute('data-target') !== null) &&
 							(
@@ -1434,14 +1423,24 @@
 							)
 						)
 					) {
+						// matching node
 						topNodes.push(topNode);
 
 					} else if (
-						(topNode.getAttribute('data-a-target') === 'shelf-card')
+						topNode.classList.contains('live-channel-card') ||
+						(aTarget === 'shelf-card')
 					) {
+						// parent node of match
 						topNodes.push(topNode.parentNode);
+
+					} else if (
+						(aTarget.indexOf('followed-vod') >= 0)
+					) {
+						// parent's parent node of match
+						topNodes.push(topNode.parentNode.parentNode);
 					}
 
+					// keep looking
 					topNode = topNode.parentNode;
 				}
 
