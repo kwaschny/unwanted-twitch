@@ -47,6 +47,15 @@ Twitch is infamous for changing their website without further notice, which may 
 **(Firefox) The extension icon is nowhere to be found?**
 - The icon is part of the address bar (URL) and will only appear if you are on twitch.tv (to the right).
 
+**Why do special characters in blocked items disappear?**
+- This is working as intended. When adding an item, all characters are normalized (i.e. diacritics are removed).
+- At runtime, every item in the directory will also be normalized internally before matching against the blocked item.
+- Example: Blocking the term `ÄéôŪ` will be added as `aeou`, yet it will block items like `äëöü`, `âèôú`, `ẬỆỘỤ` etc. because all of them are normalized as `aeou`.
+
+**Channel still show up although I blocked one of the tags?**
+- Twitch limits the number of visible tags in the directory view. If the blocked tag only shows up on the channel page and is not visible in the directory, the extension cannot filter properly.
+- The extension needs to "see" the unwanted content on the page to perform filtering.
+
 **Whatever I try to block, the entry is never saved to the blacklist?**
 - Try switching to local storage (instead of cloud storage). This option can be found in the management view (accessible via the extension popup menu or via management button) by unchecking the box at the top right.
 - Avoid having more than one tab of twitch.tv open while adding to or removing from the blacklist.
