@@ -11,8 +11,9 @@ Funktionen
 - Sperrliste im- und exportierbar (unter Einstellungen)
 - Sperrliste kann sich automatisch zwischen allen Geräten synchronisieren (unter Einstellungen, erfordert Opt-in)
 - bequemes Ein- und Ausschalten der Erweiterung
-- kompatibel mit BetterTTV (BTTV) und FrankerFaceZ (FFZ)
+- kompatibel mit FrankerFaceZ (FFZ) und anderen populären Erweiterungen für Twitch
 - unterstützt Twitchs dunklen Modus
+- unterstützt Muster und reguläre Ausdrücke
 
 Unterstütze Seiten
 - Durchsuchen: Kategorien
@@ -27,7 +28,7 @@ Unterstütze Seiten
 - Bereiche können weiterhin via Direktlink besucht werden
 
 Hinweis bzgl. Änderungen auf twitch.tv
-Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, bitte das Problem melden¹ und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen. Also entweder auf GitHub vorbeischauen² oder mir auf Twitter folgen³, um über neue Versionen informiert zu bleiben. Bitte hinterlasst dafür keine 1-Stern-Bewertungen, denn das hilft weder der Sache noch meinem Gemüt. Danke. 🙂
+Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, bitte das Problem melden¹ und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen. Also entweder auf GitHub vorbeischauen² oder mir auf Twitter folgen³, um über neue Versionen informiert zu bleiben.
 
 Fragen & Antworten / Fehlerbehebung
 Besuche die GitHub-Seite für weitere Details: https://github.com/kwaschny/unwanted-twitch/blob/master/README.md

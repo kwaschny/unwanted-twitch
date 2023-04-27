@@ -19,8 +19,9 @@
 - share blacklists using import/export (in settings)
 - blacklist can automatically sync between devices (in settings, requires opt-in)
 - one-click-toggle to disable/enable extension (click on the extension icon to access)
-- compatible with FrankerFaceZ (FFZ) and BetterTTV (BTTV)
+- compatible with FrankerFaceZ (FFZ) and other popular extensions for Twitch
 - supports Twitch's Dark Mode
+- supports pattern matching and regular expressions for dynamic blacklisting
 
 ## Supported pages
 - Browse: Categories
@@ -35,7 +36,7 @@
 - you can still access any blacklisted content via direct link
 
 ## Note about breaking changes on twitch.tv
-Twitch is infamous for changing their website without further notice, which may break this extension over night. Twitch also serves different [canary builds](https://www.techtarget.com/whatis/definition/canary-canary-testing) (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, [report the issue](https://github.com/kwaschny/unwanted-twitch/issues) (you can also send me an e-mail or DM me on Twitter) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on [the GitHub commits](https://github.com/kwaschny/unwanted-twitch/commits/master) or [follow me on Twitter](https://twitter.com/Kwaschny) to receive news regarding new versions. Please avoid leaving a 1-star review as this will neither help the case nor increase my mood. Thank you. 🙂
+Twitch is infamous for changing their website without further notice, which may break this extension over night. Twitch also serves different [canary builds](https://www.techtarget.com/whatis/definition/canary-canary-testing) (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, [report the issue](https://github.com/kwaschny/unwanted-twitch/issues) and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on [the GitHub commits](https://github.com/kwaschny/unwanted-twitch/commits/master) or [follow me on Twitter](https://twitter.com/Kwaschny) to receive news regarding new versions.
 
 ## FAQ / Troubleshooting
 

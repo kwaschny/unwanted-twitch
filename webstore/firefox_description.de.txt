@@ -11,8 +11,9 @@
 - Sperrliste im- und exportierbar (unter Einstellungen)
 - Sperrliste kann sich automatisch zwischen allen Geräten synchronisieren (unter Einstellungen, erfordert Opt-in)
 - bequemes Ein- und Ausschalten der Erweiterung
-- kompatibel mit BetterTTV (BTTV) und FrankerFaceZ (FFZ)
+- kompatibel mit FrankerFaceZ (FFZ) und anderen populären Erweiterungen für Twitch
 - unterstützt Twitchs dunklen Modus
+- unterstützt Muster und reguläre Ausdrücke
 
 <b>Unterstütze Seiten</b>
 - Durchsuchen: Kategorien
@@ -27,7 +28,7 @@
 - Bereiche können weiterhin via Direktlink besucht werden
 
 <b>Hinweis bzgl. Änderungen auf twitch.tv</b>
-Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, <a href="https://github.com/kwaschny/unwanted-twitch/issues">bitte das Problem melden</a> und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen. Also entweder <a href="https://github.com/kwaschny/unwanted-twitch/commits/master">auf GitHub vorbeischauen</a> oder <a href="https://twitter.com/Kwaschny">mir auf Twitter folgen</a>, um über neue Versionen informiert zu bleiben. Bitte hinterlasst dafür keine 1-Stern-Bewertungen, denn das hilft weder der Sache noch meinem Gemüt. Danke. 🙂
+Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, <a href="https://github.com/kwaschny/unwanted-twitch/issues">bitte das Problem melden</a> und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen. Also entweder <a href="https://github.com/kwaschny/unwanted-twitch/commits/master">auf GitHub vorbeischauen</a> oder <a href="https://twitter.com/Kwaschny">mir auf Twitter folgen</a>, um über neue Versionen informiert zu bleiben.
 
 <b>Fragen & Antworten / Fehlerbehebung</b>
 Besuche die GitHub-Seite für weitere Details: <a href="https://github.com/kwaschny/unwanted-twitch/blob/master/README.md">README</a>
