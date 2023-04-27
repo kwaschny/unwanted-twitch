@@ -64,6 +64,77 @@ function isFirefox() {
 }
 
 /**
+ * Returns if the provided term is supposed to be an exact match (case-sensitive).
+ */
+function isExactTerm(term) {
+
+	const firstChar = term.slice(0, 1);
+	const lastChar  = term.slice(-1);
+
+	return (
+		(firstChar === "'") &&
+		(lastChar  === "'")
+	);
+}
+
+/**
+ * Returns if the provided term may be loosely matched (contained, case-insensitive).
+ */
+function isLooseTerm(term) {
+
+	const firstChar = term.slice(0, 1);
+
+	return (firstChar === '~');
+}
+
+/**
+ * Returns if the provided term is a regular expression pattern.
+ */
+function isRegExpTerm(term) {
+
+	const firstChar = term.slice(0, 1);
+
+	return (
+		(firstChar === '/') &&
+		/^\/(.*)\/[a-zA-Z]*$/.test(term)
+	);
+}
+
+/**
+ * Builds a regular expression object from the provided term.
+ * Returns `null` if the pattern is invalid.
+ */
+function toRegExp(term) {
+
+	let regexp;
+	const isCI = /^\/[^/]*\/[^i]*i[^i]*$/.test(term);
+
+	// strip
+	term = term.substring(1, term.indexOf('/', 1));
+	if (term.length === 0) { return null; }
+
+	try {
+
+		// case-insensitive
+		if (isCI) {
+
+			regexp = new RegExp(term, 'i');
+
+		// case-sensitive
+		} else {
+
+			regexp = new RegExp(term);
+		}
+
+	} catch {
+
+		return null;
+	}
+
+	return regexp;
+}
+
+/**
  * Returns a normalized lowercase string without diacritics.
  */
 function normalizeCase(term) {

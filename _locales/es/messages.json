@@ -80,11 +80,11 @@
 	"blacklist_TitlesInput": {
 		"message": "Patrón en el título"
 	},
-	"blacklist_TitlesExplainedLabel": {
+	"blacklist_PatternExplainedLabel": {
 		"message": "Explicación sobre los patrones soportados..."
 	},
-	"blacklist_TitlesExplainedText": {
-		"message": "¡Todos los patrones no distinguen entre mayúsculas y minúsculas.\nLos siguientes patrones están soportados:\n\n'Transmisión sin título'\n(El título del canal coincide exactamente).\n\nRepetición\n(El título del canal contiene la palabra especificada).\n\n/^directo/\n(Expresiones regulares: Deben ir entre barras, en el ejemplo superior: Títulos de canal que empiecen por la palabra \"Directo\", la ortografía no importa.)\n\n/^Live/I\n(Regular expression case-sensitive: RegEx must be within the slashes, uppercase \"i\" as flag, here: Channel's title starts with exactly \"Live\".)"
+	"blacklist_PatternExplainedText": {
+		"message": "The following patterns are supported:\n\nhalf-life 3\n(The term must match exactly, case-insensitive.)\n\n'Half-Life 3'\n(The term must match exactly, case-sensitive.)\n\n~half-life\n(The term must be contained, case-insensitive.)\n\n/^half\\-?life [0-9]+/i\n(The term must match the regular expression, case-insensitive.)\n\n/^Half\\-?Life [0-9]+/\n(The term must match the regular expression, case-sensitive.)"
 	},
 	"blacklist_Empty": {
 		"message": "No hay nada en la lista negra aún."

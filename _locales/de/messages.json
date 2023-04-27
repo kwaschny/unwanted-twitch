@@ -80,11 +80,11 @@
 	"blacklist_TitlesInput": {
 		"message": "Muster im auszublendenen Titel"
 	},
-	"blacklist_TitlesExplainedLabel": {
+	"blacklist_PatternExplainedLabel": {
 		"message": "Erklärung zu unterstützten Mustern..."
 	},
-	"blacklist_TitlesExplainedText": {
-		"message": "Alle Muster ignorieren Groß- und Kleinschreibung.\nNachfolgende Muster können verwendet werden:\n\n'Übertragung ohne Titel'\n(Der Titel des Kanals muss exakt übereinstimmen.)\n\nWiederholung\n(Der Titel des Kanals enthält das angegebene Wort an einer beliebigen Stelle.)\n\n/^live/\n(Regulärer Ausdruck: RegEx innerhalb der Slashes, hier: Titel des Kanals beginnt mit dem Wort \"Live\", Schreibweise egal.)\n\n/^Live/I\n(Regulärer Ausdruck mit Groß- und Kleinschreibung: RegEx innerhalb der Slashes, ein großes \"i\" als Flag, hier: Titel des Kanals beginnt mit dem Wort \"Live\" in genau dieser Schreibweise.)"
+	"blacklist_PatternExplainedText": {
+		"message": "The following patterns are supported:\n\nhalf-life 3\n(The term must match exactly, case-insensitive.)\n\n'Half-Life 3'\n(The term must match exactly, case-sensitive.)\n\n~half-life\n(The term must be contained, case-insensitive.)\n\n/^half\\-?life [0-9]+/i\n(The term must match the regular expression, case-insensitive.)\n\n/^Half\\-?Life [0-9]+/\n(The term must match the regular expression, case-sensitive.)"
 	},
 	"blacklist_Empty": {
 		"message": "Noch kein Eintrag vorhanden."

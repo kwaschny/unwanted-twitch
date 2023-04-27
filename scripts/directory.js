@@ -26,7 +26,11 @@
 
 	// collection of blacklisted items, serves as local cache
 	let storedBlacklistedItems = {};
-	let backupBlacklistedItems = {};
+
+	// internal cache to improve matching performance
+	let cacheExactTerms  = {};
+	let cacheLooseTerms  = {};
+	let cacheRegExpTerms = {};
 
 	// interval handles for page load detection
 	let monitorPagesInterval;
@@ -104,7 +108,7 @@
 				logInfo('Synchronizing new blacklist.', items);
 
 				// store new items in cache
-				storedBlacklistedItems = items;
+				modifyBlacklistedItems(items);
 
 			} else {
 
@@ -1128,8 +1132,8 @@
 
 					if (buffer === null) {
 
-						return logError('Unable to determine name of channel.', node);
-					}
+							return logError('Unable to determine name of channel.', node);
+						}
 
 					result.name = buffer;
 
@@ -1182,143 +1186,74 @@
 	function isBlacklistedItem(item) {
 		logTrace('invoking isBlacklistedItem($)', item);
 
-		if (storedBlacklistedItems[item.type] === undefined) { return false; }
-
-		/* BEGIN: blacklisted by name */
-
-			if (item.name.length > 0) {
-
-				// check original and normalized case against blacklist
-				const itemName  = item.name;
-				const itemNameL = normalizeCase(itemName);
-
-				const blacklistedByName = (
-					(storedBlacklistedItems[item.type][itemName]  !== undefined) ||
-					(storedBlacklistedItems[item.type][itemNameL] !== undefined)
-				);
-
-				if (blacklistedByName) { return true; }
-			}
-
-		/* END: blacklisted by name */
-
-		/* BEGIN: blacklisted by category */
-
-			if (item.category.length > 0) {
-
-				// check original and normalized case against blacklist
-				const categoryName  = item.category;
-				const categoryNameL = normalizeCase(categoryName);
-
-				const blacklistedByCategory = (
-					(storedBlacklistedItems['categories'][categoryName]  !== undefined) ||
-					(storedBlacklistedItems['categories'][categoryNameL] !== undefined)
-				);
-
-				if (blacklistedByCategory) { return true; }
-			}
-
-		/* END: blacklisted by category */
-
-		/* BEGIN: blacklisted by tag */
-
-			let blacklistedByTag = false;
-
-			const tagsLength = item.tags.length;
-			for (let i = 0; i < tagsLength; i++) {
-
-				const tag = item.tags[i];
-
-				if (tag.name.length === 0) { continue; }
-
-				// check original and normalized case against blacklist
-				const tagName  = tag.name;
-				const tagNameL = normalizeCase(tagName);
-
-				if (
-					(storedBlacklistedItems['tags'][tagName]  !== undefined) ||
-					(storedBlacklistedItems['tags'][tagNameL] !== undefined)
-				) {
-
-					blacklistedByTag = true;
-					break;
-				}
-			}
-
-			if (blacklistedByTag) { return true; }
-
-		/* END: blacklisted by tag */
-
-		/* BEGIN: blacklisted by title */
-
-			if ((item.title.length > 0) && (storedBlacklistedItems['titles'].length > 0)) {
-
-				const itemTitle  = item.title;
-				const itemTitleL = normalizeCase(item.title);
-
-				const titles       = storedBlacklistedItems['titles'];
-				const titlesLength = titles.length;
-
-				for (let i = 0; i < titlesLength; i++) {
-
-					const title  = titles[i];
-					const titleL = normalizeCase(title);
-
-					if (title.length === 0) { continue; }
-
-					const firstChar = title.slice(0, 1);
-					const lastChar  = title.slice(-1);
-
-					// exact match
-					if ((firstChar === '\'') && (lastChar === '\'')) {
-
-						const exactTitle = titleL.substring(1, (titleL.length -1));
-
-						if (itemTitleL === exactTitle) { return true; }
-
-					// regular expression
-					} else {
-
-						const isRegExp = new RegExp('^/(.+)/I?$').test(title);
-
-						if (isRegExp) {
-
-							const isCS = (lastChar === 'I');
-
-							// case-sensitive
-							if (isCS) {
-
-								const regex = new RegExp(
-									title.substring(1, (title.length -2))
-								);
-
-								// match against regular title (regular expression body is not normalized)
-								if (regex.test(itemTitle) === true) { return true; }
-
-							// case-insensitive
-							} else {
-
-								const regex = new RegExp(
-									titleL.substring(1, (titleL.length -1)), 'i'
-								);
-
-								// match against regular title (regular expression body is not normalized)
-								if (regex.test(itemTitle) === true) { return true; }
-							}
-
-						// loose match
-						} else {
-
-							if (itemTitleL.indexOf(titleL) >= 0) { return true; }
-						}
-					}
-				}
-			}
-
-		/* END: blacklisted by title */
-
 		// blacklisted for being a rerun
 		if (hideReruns && (item.rerun === true)) { return true; }
+
+		if (storedBlacklistedItems[item.type] === undefined) { return false; }
+
+		// blacklisted by name
+		if (matchTerms(item.name, item.type)) { return true; }
+
+		// blacklisted by category
+		if (matchTerms(item.category, 'categories')) { return true; }
+
+		// blacklisted by tag
+		const tagsLength = item.tags.length;
+		for (let i = 0; i < tagsLength; i++) {
+
+			if (matchTerms(item.tags[i].name, 'tags')) { return true; }
+		}
+
+		// blacklisted by title
+		if (matchTerms(item.title, 'titles')) { return true; }
+
+		return false;
+	}
+
+	/**
+	 * Returns if the specified term matches against the provided blacklist.
+	 */
+	function matchTerms(term, type) {
+
+		if (typeof term !== 'string') { return false; }
+		if (term.length === 0)        { return false; }
+
+		const termL = normalizeCase(term);
+
+		// match against map
+		if (
+			(storedBlacklistedItems[type][term]  !== undefined) ||
+			(storedBlacklistedItems[type][termL] !== undefined)
+		) {
+			return true;
+		}
+
+		// check for exact match
+		if (cacheExactTerms[type] !== undefined) {
+
+			for (const exactTerm of cacheExactTerms[type]) {
+
+				if (term === exactTerm) { return true; }
+			}
+		}
+
+		// check for loose match
+		if (cacheLooseTerms[type] !== undefined) {
+
+			for (const looseTerm of cacheLooseTerms[type]) {
+
+				if (termL.indexOf(looseTerm) >= 0) { return true; }
+			}
+		}
+
+		// check for regular expression match
+		if (cacheRegExpTerms[type] !== undefined) {
+
+			for (const regexp of cacheRegExpTerms[type]) {
+
+				if (regexp.test(term) === true) { return true; }
+			}
+		}
 
 		return false;
 	}
@@ -2263,13 +2198,8 @@
 		}
 
 		// update cache
-		if (storedBlacklistedItems[item.type] === undefined) {
-
-			storedBlacklistedItems[item.type] = {};
-		}
-
 		const nameL = normalizeCase(item.name);
-		storedBlacklistedItems[item.type][nameL] = 1;
+		modifyBlacklistedItems(item.type, nameL);
 
 		// update storage
 		putBlacklistedItems(storedBlacklistedItems);
@@ -2299,13 +2229,8 @@
 		}
 
 		// update cache
-		if (storedBlacklistedItems['tags'] === undefined) {
-
-			storedBlacklistedItems['tags'] = {};
-		}
-
 		const nameL = normalizeCase(tag.name);
-		storedBlacklistedItems['tags'][nameL] = 1;
+		modifyBlacklistedItems('tags', nameL);
 
 		// update storage
 		putBlacklistedItems(storedBlacklistedItems);
@@ -2432,6 +2357,115 @@
 				callback(blacklistedItems);
 			}
 		});
+	}
+
+	/**
+	 * Stores the provided items or a single item in the local cache.
+	 * Maintains several internal lists to improve matching performance.
+	 */
+	function modifyBlacklistedItems(items, item) {
+
+		if (item !== undefined) {
+
+			if (storedBlacklistedItems[items] === undefined) {
+				storedBlacklistedItems[items] = {};
+			}
+			storedBlacklistedItems[items][item] = 1;
+
+			if (isExactTerm(item)) {
+
+				if (cacheExactTerms[items] === undefined) {
+					cacheExactTerms[items] = [];
+				}
+
+				cacheExactTerms[items].push(
+					item.substring(1, (item.length -1))
+				);
+				return;
+			}
+
+			if (isLooseTerm(item)) {
+
+				if (cacheLooseTerms[items] === undefined) {
+					cacheLooseTerms[items] = [];
+				}
+
+				cacheLooseTerms[items].push(
+					item.substring(1)
+				);
+				return;
+			}
+
+			if (isRegExpTerm(item)) {
+
+				if (cacheRegExpTerms[items] === undefined) {
+					cacheRegExpTerms[items] = [];
+				}
+
+				cacheRegExpTerms[items].push( toRegExp(item) );
+				return;
+			}
+
+		} else {
+
+			storedBlacklistedItems = items;
+
+			// rebuild caches
+			cacheExactTerms  = {};
+			cacheLooseTerms  = {};
+			cacheRegExpTerms = {};
+
+			const itemsKeys = [ 'categories', 'channels', 'tags', 'titles' ];
+			for (const itemsKey of itemsKeys) {
+
+				let terms;
+				if (Array.isArray(items[itemsKey])) {
+
+					terms = items[itemsKey];
+
+				} else {
+
+					terms = Object.keys(items[itemsKey]);
+				}
+
+				for (const term of terms) {
+
+					if (isExactTerm(term)) {
+
+						if (cacheExactTerms[itemsKey] === undefined) {
+							cacheExactTerms[itemsKey] = [];
+						}
+
+						cacheExactTerms[itemsKey].push(
+							term.substring(1, (term.length -1))
+						);
+						continue;
+					}
+
+					if (isLooseTerm(term)) {
+
+						if (cacheLooseTerms[itemsKey] === undefined) {
+							cacheLooseTerms[itemsKey] = [];
+						}
+
+						cacheLooseTerms[itemsKey].push(
+							term.substring(1)
+						);
+						continue;
+					}
+
+					if (isRegExpTerm(term)) {
+
+						if (cacheRegExpTerms[itemsKey] === undefined) {
+							cacheRegExpTerms[itemsKey] = [];
+						}
+
+						cacheRegExpTerms[itemsKey].push( toRegExp(term) );
+						continue;
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -2567,6 +2601,7 @@
 			// cache blacklisted items from storage
 			storedBlacklistedItems = blacklistedItems;
 			backupBlacklistedItems = cloneBlacklistItems(blacklistedItems);
+			modifyBlacklistedItems(blacklistedItems);
 			logInfo('Blacklist loaded:', blacklistedItems);
 
 			/* BEGIN: root */

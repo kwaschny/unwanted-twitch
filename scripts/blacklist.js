@@ -32,11 +32,6 @@ function createItemRow(key) {
 
 function addItem(table, key) {
 
-	if (!tableAllowsRules(table)) {
-
-		key = normalizeCase(key);
-	}
-
 	// prevent adding the same key more than once
 	if (itemExists(table, key) === true) {
 
@@ -70,15 +65,9 @@ function addItems(table, items) {
 
 	let fragment = document.createDocumentFragment();
 
-	const allowsRules = tableAllowsRules(table);
-
 	for (let i = 0; i < sortedKeysLength; i++) {
 
 		let key = sortedKeys[i];
-		if (!allowsRules) {
-
-			key = normalizeCase(key);
-		}
 
 		fragment.appendChild(
 			createItemRow(key)
@@ -116,75 +105,46 @@ function onAddItem(row) {
 	const input = row.querySelector('input');
 	const table = row.parentNode;
 
-	let itemToAdd = input.value.trim();
+	let item = input.value.trim();
 
 	// remove consecutive whitespaces
-	itemToAdd = itemToAdd.replace(/[\s]{2,}/g, ' ');
+	item = item.replace(/[\s]{2,}/g, ' ');
 
-	// check for special matching support
-	if (tableAllowsRules(table)) {
+	// convert quotes
+	item = item.replace(/^"/, "'");
+	item = item.replace(/"$/, "'");
 
-		const matches = itemToAdd.match(new RegExp('^/(.+)/([a-zA-Z]*)$'))
+	if (isExactTerm(item)) {
 
-		if (matches !== null) {
+		// don't touch
 
-			const body  = matches[1];
-			const flags = matches[2];
+	} else if (isRegExpTerm(item)) {
 
-			const isCI  = (flags.indexOf('i') >= 0); // case-insensitive
-			const isCS  = (flags.indexOf('I') >= 0); // case-sensitive
+		const re = toRegExp(item);
+		if (re !== null) {
 
-			try {
-
-				new RegExp(body);
-
-				if (isCS) {
-
-					// keep flag
-					itemToAdd = ('/' + body + '/I');
-
-				} else {
-
-					// discard flag
-					itemToAdd = ('/' + body + '/');
-				}
-
-				if (isCI) {
-
-					alert('The RegExp flag "i" is set by default and will be discarded.');
-				}
-
-			} catch (e) {
-
-				itemToAdd = '';
-				alert('The entered regular expression pattern is invalid.');
-			}
+			item = re.toString();
 
 		} else {
 
-			// convert quotes in title patterns
-			itemToAdd = itemToAdd.replace(/^"/, '\'');
-			itemToAdd = itemToAdd.replace(/"$/, '\'');
-
-			// store manually added key with normalized case
-			itemToAdd = normalizeCase(itemToAdd);
+			item = '';
+			alert('The entered regular expression pattern is invalid.');
 		}
+	}
+	else {
 
-	} else {
-
-		// store manually added key with normalized case
-		itemToAdd = normalizeCase(itemToAdd);
+		item = normalizeCase(item);
 	}
 
-	if (itemToAdd.length > 0) {
+	if (item.length > 0) {
 
-		addItem(table, itemToAdd);
+		addItem(table, item);
 		input.value = '';
+
+		flashSaveButton();
 	}
 
 	input.focus();
-
-	flashSaveButton();
 }
 
 function onRemoveItem() {
@@ -244,16 +204,9 @@ function gatherKeysMap(table) {
 	let nodes = table.querySelectorAll('[data-key]');
 	const nodesLength = nodes.length;
 
-	const allowsRules = tableAllowsRules(table);
-
 	for (let i = 0; i < nodesLength; i++) {
 
 		let key = nodes[i].getAttribute('data-key');;
-		if (!allowsRules) {
-
-			key = normalizeCase(key);
-		}
-
 		result[key] = 1;
 	}
 
@@ -266,16 +219,9 @@ function gatherKeysArray(table) {
 	let nodes = table.querySelectorAll('[data-key]');
 	const nodesLength = nodes.length;
 
-	const allowsRules = tableAllowsRules(table);
-
 	for (let i = 0; i < nodesLength; i++) {
 
 		let key = nodes[i].getAttribute('data-key');
-		if (!allowsRules) {
-
-			key = normalizeCase(key);
-		}
-
 		result.push(key);
 	}
 
@@ -455,21 +401,11 @@ function flashSaveButton(interval) {
 	}, interval);
 }
 
-function onTitlesExplained() {
+function onPatternExplained(type) {
 
 	alert(
-		chrome.i18n.getMessage('blacklist_TitlesExplainedText')
+		chrome.i18n.getMessage('blacklist_PatternExplainedText')
 	);
-}
-
-function tableAllowsRules(table) {
-
-	if (table && table.id) {
-
-		table = table.id;
-	}
-
-	return (table === 'table_titles');
 }
 
 function toggleLoadingScreen(show) {
@@ -497,11 +433,11 @@ let isModified = false;
 	const hideRerunsCheckbox     = document.getElementById('hideReruns');
 	const useSyncStorageCheckbox = document.getElementById('useSyncStorage');
 
-	const categories      = document.getElementById('table_categories');
-	const channels        = document.getElementById('table_channels');
-	const tags            = document.getElementById('table_tags');
-	const titles          = document.getElementById('table_titles');
-	const titlesExplained = document.getElementById('titles_explained');
+	const categories        = document.getElementById('table_categories');
+	const channels          = document.getElementById('table_channels');
+	const tags              = document.getElementById('table_tags');
+	const titles            = document.getElementById('table_titles');
+	const patternsExplained = document.querySelectorAll('[is-pattern]');
 
 	const saveButton   = document.getElementById('save');
 	const cancelButton = document.getElementById('cancel');
@@ -551,7 +487,13 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	hideRerunsCheckbox.addEventListener('change', flashSaveButton);
 	useSyncStorageCheckbox.addEventListener('change', flashSaveButton);
 
-	titlesExplained.addEventListener('click', onTitlesExplained);
+	patternsExplained.forEach(function(e) {
+
+		e.addEventListener('click', function() {
+
+			onPatternExplained();
+		});
+	});
 
 	saveButton.addEventListener('click', onSave);
 	cancelButton.addEventListener('click', onCancel);
@@ -573,7 +515,10 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	document.getElementById('column_Tags').textContent       = chrome.i18n.getMessage('blacklist_Tags');
 	document.getElementById('column_Titles').textContent     = chrome.i18n.getMessage('blacklist_Titles');
 
-	titlesExplained.textContent = chrome.i18n.getMessage('blacklist_TitlesExplainedLabel');
+	patternsExplained.forEach(function(e) {
+
+		e.textContent = chrome.i18n.getMessage('blacklist_PatternExplainedLabel');
+	});
 
 	document.querySelectorAll('button.clear').forEach(function(e) {
 

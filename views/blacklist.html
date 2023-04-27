@@ -50,7 +50,8 @@
 			<tbody id="table_categories">
 				<tr class="input">
 					<td>
-						<input type="text" placeholder="Name of Category to blacklist" />
+						<input type="text" placeholder="Pattern of Category to blacklist" /><br>
+						<span is-pattern class="hint">Show supported patterns...</span>
 					</td>
 					<td>
 						<button type="button" class="add">Add</button>
@@ -71,7 +72,8 @@
 			<tbody id="table_channels">
 				<tr class="input">
 					<td>
-						<input type="text" placeholder="Name of Channel to blacklist" />
+						<input type="text" placeholder="Pattern of Channel to blacklist" /><br>
+						<span is-pattern class="hint">Show supported patterns...</span>
 					</td>
 					<td>
 						<button type="button" class="add">Add</button>
@@ -92,7 +94,8 @@
 			<tbody id="table_tags">
 				<tr class="input">
 					<td>
-						<input type="text" placeholder="Name of Tag to blacklist" />
+						<input type="text" placeholder="Pattern of Tag to blacklist" /><br>
+						<span is-pattern class="hint">Show supported patterns...</span>
 					</td>
 					<td>
 						<button type="button" class="add">Add</button>
@@ -114,7 +117,7 @@
 				<tr class="input">
 					<td>
 						<input type="text" placeholder="Pattern in Title to blacklist" /><br>
-						<span id="titles_explained" class="hint">Show supported patterns...</span>
+						<span is-pattern class="hint">Show supported patterns...</span>
 					</td>
 					<td>
 						<button type="button" class="add">Add</button>

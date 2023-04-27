@@ -80,11 +80,11 @@
 	"blacklist_TitlesInput": {
 		"message": "Pattern in Title to blacklist"
 	},
-	"blacklist_TitlesExplainedLabel": {
+	"blacklist_PatternExplainedLabel": {
 		"message": "Supported patterns explained..."
 	},
-	"blacklist_TitlesExplainedText": {
-		"message": "All patterns are case-insensitive.\nThe following patterns are supported:\n\n'Untitled Broadcast'\n(The channel's title matches exactly.)\n\nRerun\n(The channel's title contains the specified word.)\n\n/^live/\n(Regular expression: RegEx must be within the slashes, here: Channel's title starts with the word \"Live\", case doesn't matter.)\n\n/^Live/I\n(Regular expression case-sensitive: RegEx must be within the slashes, uppercase \"i\" as flag, here: Channel's title starts with exactly \"Live\".)"
+	"blacklist_PatternExplainedText": {
+		"message": "The following patterns are supported:\n\nhalf-life 3\n(The term must match exactly, case-insensitive.)\n\n'Half-Life 3'\n(The term must match exactly, case-sensitive.)\n\n~half-life\n(The term must be contained, case-insensitive.)\n\n/^half\\-?life [0-9]+/i\n(The term must match the regular expression, case-insensitive.)\n\n/^Half\\-?Life [0-9]+/\n(The term must match the regular expression, case-sensitive.)"
 	},
 	"blacklist_Empty": {
 		"message": "Nothing blacklisted yet."
