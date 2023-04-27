@@ -1124,18 +1124,31 @@
 			// collapsed sidebar
 			if (node.classList.contains('side-nav-card')) {
 
+				// automatically collapsed
 				buffer = node.querySelector('.tw-avatar');
 
 				if (buffer !== null) {
 
 					buffer = buffer.getAttribute('aria-label');
 
-					if (buffer === null) {
+					if (buffer !== null) {
+
+						result.name = buffer;
+
+					} else {
+
+						// manually collapsed
+						buffer = node.querySelector('.tw-image-avatar');
+
+						if ((buffer !== null) && (buffer.alt)) {
+
+							result.name = buffer.alt;
+
+						} else {
 
 							return logError('Unable to determine name of channel.', node);
 						}
-
-					result.name = buffer;
+					}
 
 				} else {
 
