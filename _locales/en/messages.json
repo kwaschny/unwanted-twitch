@@ -118,8 +118,5 @@
 	},
 	"blacklist_Processing": {
 		"message": "Loading. Please wait..."
-	},
-	"alert_ReloadNote": {
-		"message": "Unwanted Twitch:\nYou have to reload your current tabs for the changes to take effect."
 	}
 }

@@ -255,11 +255,6 @@ function onSave() {
 
 		/* END: update items */
 
-		if (isModified === true) {
-
-			alert( chrome.i18n.getMessage('alert_ReloadNote') );
-		}
-
 		onCancel();
 	});
 }
