@@ -1206,20 +1206,36 @@
 		if (storedBlacklistedItems[item.type] === undefined) { return false; }
 
 		// blacklisted by name
-		if (matchTerms(item.name, item.type)) { return true; }
+		if (matchTerms(item.name, item.type)) {
+
+			logTrace('blacklisted by name:', item.name);
+			return true;
+		}
 
 		// blacklisted by category
-		if (matchTerms(item.category, 'categories')) { return true; }
+		if (matchTerms(item.category, 'categories')) {
+
+			logTrace('blacklisted by category:', item.category);
+			return true;
+		}
 
 		// blacklisted by tag
 		const tagsLength = item.tags.length;
 		for (let i = 0; i < tagsLength; i++) {
 
-			if (matchTerms(item.tags[i].name, 'tags')) { return true; }
+			if (matchTerms(item.tags[i].name, 'tags')) {
+
+				logTrace('blacklisted by tag:', item.tags[i].name);
+				return true;
+			}
 		}
 
 		// blacklisted by title
-		if (matchTerms(item.title, 'titles')) { return true; }
+		if (matchTerms(item.title, 'titles')) {
+
+			logTrace('blacklisted by title:', item.title);
+			return true;
+		}
 
 		return false;
 	}
@@ -2343,6 +2359,7 @@
 	 * Maintains several internal lists to improve matching performance.
 	 */
 	function modifyBlacklistedItems(items, item) {
+		logTrace('invoking modifyBlacklistedItems($, $)', items, item);
 
 		if (item !== undefined) {
 
@@ -2457,7 +2474,7 @@
 	 * Stores all blacklisted items in the storage.
 	 */
 	function putBlacklistedItems(items, callback, attemptRecovery) {
-		logVerbose('invoking putBlacklistedItems($, $, $)', items, callback, attemptRecovery);
+		logTrace('invoking putBlacklistedItems($, $, $)', items, callback, attemptRecovery);
 
 		getStorageMode(function(mode) {
 
