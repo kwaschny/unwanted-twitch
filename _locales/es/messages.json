@@ -22,7 +22,7 @@
 		"message": "Unwanted Twitch:\nYou are about to hide all \"X\" buttons.\n\nYou can toggle the visibility by clicking on the 👁 eye icon again."
 	},
 	"alert_StorageQuota": {
-		"message": "Unwanted Twitch:\nLa lista negra está llena. No puedes añadir más ítems si quieres mantener la sincronización activada.\n\nDesactiva \"Sincronizar la Lista Negra en la Nube\" en los ajustes para poder añadir más ítems a la lista negra."
+		"message": "Unwanted Twitch:\nLa lista negra está llena y ya no se puede sincronizar."
 	},
 	"alert_StorageThrottle": {
 		"message": "Unwanted Twitch:\nEl servicio de almacenamiento está ocupado en estos momentos.\nPor favor espera unos minutos, reinicia tu navegador y prueba otra vez."

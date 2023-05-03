@@ -22,7 +22,7 @@
 		"message": "Unwanted Twitch:\nSie sind dabei alle \"X\" Buttons auszublenden.\n\nSie können die Sichtbarkeit über das 👁 Augen-Symbol jederzeit wieder umschalten."
 	},
 	"alert_StorageQuota": {
-		"message": "Unwanted Twitch:\nDie Sperrliste ist voll. Es können keine weiteren Einträge hinzugefügt werden, solange die Synchronisierung stattfinden soll.\n\nDeaktivieren Sie \"Sperrliste in Cloud synchronisieren\" in den Einstellungen, um weitere Einträge hinzufügen zu können."
+		"message": "Unwanted Twitch:\nDie Sperrliste ist voll und kann nicht länger über die Cloud synchronisiert werden."
 	},
 	"alert_StorageThrottle": {
 		"message": "Unwanted Twitch:\nDer Synchronisierungsdienst ist derzeit überlastet.\nBitte warten Sie ein paar Minuten, starten den Browser neu und versuchen es dann noch einmal."

@@ -26,6 +26,7 @@
 
 	// collection of blacklisted items, serves as local cache
 	let storedBlacklistedItems = {};
+	let backupBlacklistedItems = {};
 
 	// internal cache to improve matching performance
 	let cacheExactTerms  = {};
@@ -2198,7 +2199,7 @@
 	}
 
 	/**
-	 * Event that is emitted by hide buttons on cards in the directory of the current page. Returns if the tag was removed.
+	 * Event that is emitted by hide buttons on cards in the directory of the current page.
 	 */
 	function onHideItem(item) {
 		logTrace('invoking onHideItem($)', item);
@@ -2216,20 +2217,10 @@
 
 		// update storage
 		putBlacklistedItems(storedBlacklistedItems);
-
-		// remove item
-		if (removeDirectoryItem(item) === true) {
-
-			logVerbose('Removed item in directory due to being blacklisted:', item);
-
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
-	 * Event that is emitted by hide buttons on tags in the directory of the current page. Returns if the tag was removed.
+	 * Event that is emitted by hide buttons on tags in the directory of the current page.
 	 */
 	function onHideTag(item, tag) {
 		logTrace('invoking onHideTag($, $)', item, tag);
@@ -2247,16 +2238,6 @@
 
 		// update storage
 		putBlacklistedItems(storedBlacklistedItems);
-
-		// remove item
-		if (removeDirectoryItem(item) === true) {
-
-			logVerbose('Removed item in directory due to being blacklisted via tag:', item, tag);
-
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
@@ -2303,12 +2284,10 @@
 	function initBlacklistedItems(collection) {
 		logTrace('invoking initBlacklistedItems($)', collection);
 
-		const itemTypesAsObject = [
+		const itemTypes = [
 			'categories',
 			'channels',
-			'tags'
-		];
-		const itemTypesAsArray = [
+			'tags',
 			'titles'
 		];
 
@@ -2318,27 +2297,14 @@
 			collection = {};
 		}
 
-		// prepare all item types in collection (object)
-		const itemTypesAsObjectLength = itemTypesAsObject.length;
-		for (let i = 0; i < itemTypesAsObjectLength; i++) {
+		const itemTypesLength = itemTypes.length;
+		for (let i = 0; i < itemTypesLength; i++) {
 
-			let itemType = itemTypesAsObject[i];
+			let itemType = itemTypes[i];
 
 			if (collection[itemType] === undefined) {
 
 				collection[itemType] = {};
-			}
-		}
-
-		// prepare all item types in collection (array)
-		const itemTypesAsArrayLength = itemTypesAsArray.length;
-		for (let i = 0; i < itemTypesAsArrayLength; i++) {
-
-			let itemType = itemTypesAsArray[i];
-
-			if (collection[itemType] === undefined) {
-
-				collection[itemType] = [];
 			}
 		}
 
@@ -2428,28 +2394,34 @@
 			cacheLooseTerms  = {};
 			cacheRegExpTerms = {};
 
-			const itemsKeys = [ 'categories', 'channels', 'tags', 'titles' ];
-			for (const itemsKey of itemsKeys) {
+			const itemTypes = [
+				'categories',
+				'channels',
+				'tags',
+				'titles'
+			];
+
+			for (const itemType of itemTypes) {
 
 				let terms;
-				if (Array.isArray(items[itemsKey])) {
+				if (Array.isArray(items[itemType])) {
 
-					terms = items[itemsKey];
+					terms = items[itemType];
 
 				} else {
 
-					terms = Object.keys(items[itemsKey]);
+					terms = Object.keys(items[itemType]);
 				}
 
 				for (const term of terms) {
 
 					if (isExactTerm(term)) {
 
-						if (cacheExactTerms[itemsKey] === undefined) {
-							cacheExactTerms[itemsKey] = [];
+						if (cacheExactTerms[itemType] === undefined) {
+							cacheExactTerms[itemType] = [];
 						}
 
-						cacheExactTerms[itemsKey].push(
+						cacheExactTerms[itemType].push(
 							term.substring(1, (term.length -1))
 						);
 						continue;
@@ -2457,11 +2429,11 @@
 
 					if (isLooseTerm(term)) {
 
-						if (cacheLooseTerms[itemsKey] === undefined) {
-							cacheLooseTerms[itemsKey] = [];
+						if (cacheLooseTerms[itemType] === undefined) {
+							cacheLooseTerms[itemType] = [];
 						}
 
-						cacheLooseTerms[itemsKey].push(
+						cacheLooseTerms[itemType].push(
 							term.substring(1)
 						);
 						continue;
@@ -2469,11 +2441,11 @@
 
 					if (isRegExpTerm(term)) {
 
-						if (cacheRegExpTerms[itemsKey] === undefined) {
-							cacheRegExpTerms[itemsKey] = [];
+						if (cacheRegExpTerms[itemType] === undefined) {
+							cacheRegExpTerms[itemType] = [];
 						}
 
-						cacheRegExpTerms[itemsKey].push( toRegExp(term) );
+						cacheRegExpTerms[itemType].push( toRegExp(term) );
 						continue;
 					}
 				}
@@ -2485,30 +2457,23 @@
 	 * Stores all blacklisted items in the storage.
 	 */
 	function putBlacklistedItems(items, callback, attemptRecovery) {
-		logTrace('invoking putBlacklistedItems($, $, $)', items, callback, attemptRecovery);
-
-		if (attemptRecovery === false) {
-
-			logWarn('Restoring backup:', items);
-		}
-
-		// prepare backup of current items
-		const backupItems = cloneBlacklistItems(items);
-
-		// clean up bug, see https://github.com/kwaschny/unwanted-twitch/issues/29
-		delete items['categories'][''];
-		delete items['channels'][''];
-		delete items['tags'][''];
-		delete items['titles'][''];
-
-		// synchronize new items among tabs
-		syncBlacklistedItems(items);
-
-		let dataToStore = { 'blacklistedItems': items };
+		logVerbose('invoking putBlacklistedItems($, $, $)', items, callback, attemptRecovery);
 
 		getStorageMode(function(mode) {
 
-			if (mode === 'sync') {
+			const isSync = (mode === 'sync');
+
+			if (attemptRecovery === false) {
+
+				logWarn('Restoring backup:', items);
+			}
+
+			// prepare backup of current items
+			const backupItems = cloneBlacklistItems(items);
+
+			let dataToStore = { 'blacklistedItems': items };
+
+			if (isSync) {
 
 				const requiredSize = measureStoredSize(dataToStore);
 
@@ -2541,7 +2506,7 @@
 
 						if (attemptRecovery !== false) {
 
-							const suffix = ('\n\nBrowser\'s runtime.lastError reports:\n' + error.message);
+							const suffix = ('\n\nStorage Service Error:\n' + error.message);
 
 							if (error.message.indexOf('QUOTA_BYTES') >= 0) {
 
@@ -2556,18 +2521,27 @@
 								alert(chrome.i18n.getMessage('alert_StorageIssue') + suffix);
 							}
 
-							// something went wrong, restore the backup
-							logWarn('Attempting to restore backup:', backupBlacklistedItems);
-							putBlacklistedItems(backupBlacklistedItems, callback, false);
+							// something went wrong, restore the backup (force local storage)
+							chrome.storage.local.set({ 'useLocalStorage': true }, function() {
+
+								putBlacklistedItems(backupBlacklistedItems, callback, false);
+							});
+
 							return;
 						}
 
 					} else {
 
-						// update backup cache
-						backupBlacklistedItems = backupItems;
+						// synchronize new items among tabs
+						syncBlacklistedItems(items);
 
-						logVerbose('Created backup of blacklist:', backupBlacklistedItems);
+						// update backup cache
+						if (attemptRecovery !== false) {
+
+							backupBlacklistedItems = backupItems;
+							logVerbose('Created backup of blacklist:', backupBlacklistedItems);
+						}
+
 						logInfo('Added to blacklist:', items);
 					}
 
@@ -2613,9 +2587,10 @@
 
 			// cache blacklisted items from storage
 			storedBlacklistedItems = blacklistedItems;
-			backupBlacklistedItems = cloneBlacklistItems(blacklistedItems);
 			modifyBlacklistedItems(blacklistedItems);
 			logInfo('Blacklist loaded:', blacklistedItems);
+
+			backupBlacklistedItems = cloneBlacklistItems(blacklistedItems);
 
 			/* BEGIN: root */
 
