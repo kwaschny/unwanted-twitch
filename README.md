@@ -8,6 +8,9 @@
 - [Microsoft Edge-Add-Ons](https://microsoftedge.microsoft.com/addons/detail/unwanted-twitch/jkhpefiopamdlihbichhnhmpfgomefmh)
 - other [Chromium based browsers](https://en.wikipedia.org/wiki/Chromium_(web_browser)#Browsers_based_on_Chromium) (such as Opera, Brave and Vivaldi) are compatible and allow you to load the extension too
 
+## Project status
+Please note that **this extension is in maintenance mode**. I will no longer work on new features. However, I will continue to fix issues related to changes on Twitch up to the point where Twitch releases a complete redesign of their website. You can still contribute by [translating the extension in your language](CONTRIBUTING.md).
+
 ## Features
 - hide unwanted categories/games
 - hide unwanted channels/streams
