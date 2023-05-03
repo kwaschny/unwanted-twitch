@@ -53,6 +53,11 @@ Twitch is infamous for changing their website without further notice, which may 
 - At runtime, every item in the directory will also be normalized internally before matching against the blocked item.
 - Example: Blocking the term `ÄéôŪ` will be added as `aeou`, yet it will block items like `äëöü`, `âèôú`, `ẬỆỘỤ` etc. because all of them are normalized as `aeou`.
 
+**What's the maximum number of items I can block?**
+- When using the **cloud synchronization**, about `1 MB` of data. That roughly translates to **about 30.000 items** due to internal restrictions. If you exceed this quota, the extension will automatically turn off synchronization and switch to the local storage.
+- When using **local storage** (default), about `5 MB` of data. That roughly translates to **about 200.000 items**.
+- Before reaching this upper limit, you will most likely notice a performance degradation first. The extension is generally not designed and optimized for a huge blacklists (50.000+ items).
+
 **Channel still show up although I blocked one of the tags?**
 - Twitch limits the number of visible tags in the directory view. If the blocked tag only shows up on the channel page and is not visible in the directory, the extension cannot filter properly.
 - The extension needs to "see" the unwanted content on the page to perform filtering.
