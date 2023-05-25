@@ -45,6 +45,10 @@
 	// semaphore for page load progress
 	let pageLoads = false;
 
+	// track number of loops when waiting for placeholders to prevent infinite waiting
+	let placeholderLoop = 0;
+	const MAX_PLACEHOLDER_LOOP = 20;
+
 	// semaphore for filter progress
 	let directoryFilterRunning = false;
 	let sidebarFilterRunning   = false;
@@ -321,7 +325,8 @@
 		logTrace('invoking stopPageChangePolling()');
 
 		window.clearInterval(onPageChangeInterval);
-		pageLoads = false;
+		placeholderLoop = 0;
+		pageLoads       = false;
 	}
 
 	/**
@@ -1976,10 +1981,13 @@
 					case 'explore':
 
 						const placeholderNode = rootNode.querySelector('.tw-placeholder');
-						if (placeholderNode !== null) {
+						if (
+							(placeholderNode !== null) &&
+							(placeholderLoop < MAX_PLACEHOLDER_LOOP)
+						) {
 
-							logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-							return;
+							placeholderLoop++;
+							return logVerbose(`Found a placeholder in loop ${placeholderLoop}. Assuming the page is not fully loaded yet.`, placeholderNode);
 						}
 
 						stopPageChangePolling();
@@ -2008,7 +2016,7 @@
 						// detect changes (delayed loading, clicking on "Show more")
 						listenToScroll();
 
-						break;
+					break;
 
 					case 'categories':
 					case 'channels':
@@ -2018,10 +2026,13 @@
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
-							if (placeholderNode !== null) {
+							if (
+								(placeholderNode !== null) &&
+								(placeholderLoop < MAX_PLACEHOLDER_LOOP)
+							) {
 
-								logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-								return;
+								placeholderLoop++;
+								return logVerbose(`Found a placeholder in loop ${placeholderLoop}. Assuming the page is not fully loaded yet.`, placeholderNode);
 							}
 
 							stopPageChangePolling();
@@ -2059,10 +2070,13 @@
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
-							if (placeholderNode !== null) {
+							if (
+								(placeholderNode !== null) &&
+								(placeholderLoop < MAX_PLACEHOLDER_LOOP)
+							) {
 
-								logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-								return;
+								placeholderLoop++;
+								return logVerbose(`Found a placeholder in loop ${placeholderLoop}. Assuming the page is not fully loaded yet.`, placeholderNode);
 							}
 
 							stopPageChangePolling();
@@ -2100,10 +2114,13 @@
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
-							if (placeholderNode !== null) {
+							if (
+								(placeholderNode !== null) &&
+								(placeholderLoop < MAX_PLACEHOLDER_LOOP)
+							) {
 
-								logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-								return;
+								placeholderLoop++;
+								return logVerbose(`Found a placeholder in loop ${placeholderLoop}. Assuming the page is not fully loaded yet.`, placeholderNode);
 							}
 
 							stopPageChangePolling();
@@ -2137,61 +2154,65 @@
 
 					case 'following':
 
-							indicator = mainNode.querySelector('a[data-a-target="preview-card-image-link"], a[data-a-target="tw-box-art-card-link"]');
-							if (indicator !== null) {
+						indicator = mainNode.querySelector('a[data-a-target="preview-card-image-link"], a[data-a-target="tw-box-art-card-link"]');
+						if (indicator !== null) {
 
-								const placeholderNode = rootNode.querySelector('.tw-placeholder');
-								if (placeholderNode !== null) {
+							const placeholderNode = rootNode.querySelector('.tw-placeholder');
+							if (
+								(placeholderNode !== null) &&
+								(placeholderLoop < MAX_PLACEHOLDER_LOOP)
+							) {
 
-									return logVerbose('Found a placeholder. Assuming the page is not fully loaded yet.', placeholderNode);
-								}
+								placeholderLoop++;
+								return logVerbose(`Found a placeholder in loop ${placeholderLoop}. Assuming the page is not fully loaded yet.`, placeholderNode);
+							}
 
-								stopPageChangePolling();
-								logTrace('polling stopped in onPageChange(): page loaded');
+							stopPageChangePolling();
+							logTrace('polling stopped in onPageChange(): page loaded');
 
-								addManagementButton();
+							addManagementButton();
 
+							if (hideFollowing === true) {
+
+								// invoke directory filter
+								const remainingItems = filterDirectory();
+
+								// attach hide buttons
+								attachHideButtons(remainingItems);
+
+								// invoke sidebar filter
 								if (hideFollowing === true) {
 
-									// invoke directory filter
-									const remainingItems = filterDirectory();
-
-									// attach hide buttons
-									attachHideButtons(remainingItems);
-
-									// invoke sidebar filter
-									if (hideFollowing === true) {
-
-										filterSidebar();
-										observeSidebar();
-
-									} else {
-
-										filterSidebar('recommended');
-										observeSidebar('recommended');
-									}
+									filterSidebar();
+									observeSidebar();
 
 								} else {
 
-									logInfo('Filtering is disabled on the current page due to user preference.');
-
-									// invoke directory filter for recommended section
-									const remainingItems = filterDirectory('recommended');
-
-									// mark remaining items as being processed
-									filterDirectory('unprocessed', false);
-
-									// attach hide buttons
-									attachHideButtons(remainingItems);
-
-									// invoke sidebar filter
 									filterSidebar('recommended');
 									observeSidebar('recommended');
 								}
 
-								// detect expanding sections
-								listenToScroll();
+							} else {
+
+								logInfo('Filtering is disabled on the current page due to user preference.');
+
+								// invoke directory filter for recommended section
+								const remainingItems = filterDirectory('recommended');
+
+								// mark remaining items as being processed
+								filterDirectory('unprocessed', false);
+
+								// attach hide buttons
+								attachHideButtons(remainingItems);
+
+								// invoke sidebar filter
+								filterSidebar('recommended');
+								observeSidebar('recommended');
 							}
+
+							// detect expanding sections
+							listenToScroll();
+						}
 
 					break;
 
