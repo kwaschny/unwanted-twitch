@@ -84,7 +84,7 @@
 	position: absolute;
 	top: 10px;
 	user-select: none;
-	z-index: 2; /* 2+ required to be on top of Twitch Prime badge */
+	z-index: 9999; /* stay on top of Twitch badges */
 }
 	.uttv-hide-item.uttv-ffz {
 		top: 34px;
