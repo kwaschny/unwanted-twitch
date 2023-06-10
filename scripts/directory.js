@@ -683,13 +683,13 @@
 			case 'videos':
 			case 'clips':
 
-				selector = '!a[data-a-target="preview-card-image-link"]%';
+				selector = '!a[data-a-target="preview-card-image-link"]%, !.switcher-preview-card__wrapper%';
 
 			break;
 
 			case 'collection':
 
-				selector = '!article[data-a-target^="card-"]%';
+				selector = '!article[data-a-target^="card-"]%, !.switcher-preview-card__wrapper%';
 
 			break;
 
@@ -896,10 +896,15 @@
 			// category
 			case 'tw-box-art-card-link':
 				return readCategory(node);
-
-			default:
-				return logError('Unable to identify item:', node);
 		}
+
+		// channel in preview switcher
+		if (node.classList.contains('switcher-preview-card__wrapper')) {
+
+			return readChannel(node, false, true);
+		}
+
+		return logError('Unable to identify item:', node);
 	}
 
 	/**
@@ -919,12 +924,7 @@
 		};
 
 		let buffer;
-		let parent = node.closest('article');
-
-		if (parent === null) {
-
-			return logError('Unable to determine parent node of provided channel node.', node);
-		}
+		let parent = (node.closest('article') ?? node);
 
 		/* BEGIN: title */
 
@@ -944,7 +944,16 @@
 
 				} else {
 
-					logVerbose('Unable to determine title of channel.', node);
+					buffer = parent.querySelectorAll('p[title]');
+
+					if (buffer && buffer.length >= 2) {
+
+						result.title = buffer[1].textContent.trim();
+
+					} else {
+
+						logVerbose('Unable to determine title of channel.', node);
+					}
 				}
 			}
 
@@ -961,11 +970,20 @@
 					buffer = buffer.querySelector('[data-a-target="preview-card-channel-link"]');
 				}
 
-				result.name = buffer.textContent;
+				result.name = buffer.textContent.trim();
 
 			} else {
 
-				return logError('Unable to determine name of channel.', node);
+				buffer = parent.querySelector('p[title]');
+
+				if (buffer) {
+
+					result.name = buffer.textContent.trim();
+
+				} else {
+
+					return logError('Unable to determine name of channel.', node);
+				}
 			}
 
 		/* END: name */
@@ -976,7 +994,7 @@
 
 			if (buffer) {
 
-				result.category = buffer.textContent;
+				result.category = buffer.textContent.trim();
 
 			} else if (findCategory) {
 
@@ -1414,7 +1432,11 @@
 
 					} else if (
 						topNode.classList.contains('live-channel-card') ||
-						(aTarget === 'shelf-card')
+						(aTarget === 'shelf-card') ||
+						(
+							(topNode.getAttribute('href') !== null) &&
+							(topNode.getAttribute('tabindex') === '-1')
+						)
 					) {
 						// parent node of match
 						topNodes.push(topNode.parentNode);
@@ -1614,6 +1636,7 @@
 			onHideItem(item);
 		});
 
+		item.node.parentNode.style.position = 'relative';
 		item.node.parentNode.appendChild(hideItem);
 
 		return hideItem;
@@ -1987,7 +2010,7 @@
 
 				if (mainNode === null) {
 
-					const mainNodeSelector = 'main div.simplebar-scroll-content';
+					const mainNodeSelector = 'main';
 					mainNode               = document.querySelector(mainNodeSelector);
 
 					if (mainNode === null) {
@@ -2049,7 +2072,7 @@
 					case 'channels':
 					case 'game':
 
-						indicator = mainNode.querySelector('div[data-target][style^="order:"]');
+						indicator = mainNode.querySelector('div[data-target][style^="order:"], .switcher-preview-card__wrapper');
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
@@ -2093,7 +2116,7 @@
 
 					case 'videos':
 
-						indicator = mainNode.querySelector('div[data-a-target^="video-tower-card-"]');
+						indicator = mainNode.querySelector('div[data-a-target^="video-tower-card-"], .switcher-preview-card__wrapper');
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
@@ -2137,7 +2160,7 @@
 
 					case 'clips':
 
-						indicator = mainNode.querySelector('div[data-a-target^="clips-card-"]');
+						indicator = mainNode.querySelector('div[data-a-target^="clips-card-"], .switcher-preview-card__wrapper');
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
@@ -2245,7 +2268,7 @@
 
 					case 'collection':
 
-						indicator = mainNode.querySelector('article[data-a-target^="card-"]');
+						indicator = mainNode.querySelector('article[data-a-target^="card-"], .switcher-preview-card__wrapper');
 						if (indicator !== null) {
 
 							stopPageChangePolling();
