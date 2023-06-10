@@ -1,18 +1,17 @@
 ﻿{
 	"name": "Unwanted Twitch",
 	"short_name": "Unwanted TTV",
-	"version": "23.5.25",
+	"version": "23.6.10",
 	"description": "__MSG_app_Desc__",
+	"host_permissions": [
+		"https://www.twitch.tv/"
+	],
 	"permissions": [
-		"https://www.twitch.tv/",
 		"storage"
 	],
 	"default_locale": "en",
 	"background": {
-		"scripts": [
-			"scripts/background.js"
-		],
-		"persistent": false
+		"service_worker": "scripts/background.js"
 	},
 	"content_scripts": [
 		{
@@ -30,7 +29,7 @@
 			]
 		}
 	],
-	"page_action": {
+	"action": {
 		"default_icon": "images/icon32.png",
 		"default_popup": "views/popup.html"
 	},
@@ -40,5 +39,5 @@
 		"48": "images/icon48.png",
 		"128": "images/icon128.png"
 	},
-	"manifest_version": 2
+	"manifest_version": 3
 }

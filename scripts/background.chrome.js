@@ -3,14 +3,19 @@
 const twitchUrl = 'https://www.twitch.tv/';
 
 // enable icon on twitch.tv tabs only
-function checkForSupportedURL(tabID, changeInfo, tab) {
+function checkForSupportedURL(tabID, _, tab) {
 
-	if ((typeof tab.url === 'string') && (tab.url.indexOf(twitchUrl) === 0)) {
-
-		chrome.pageAction.show(tabID);
+	if (
+		(typeof tab.url === 'string') &&
+		(tab.url.indexOf(twitchUrl) === 0)
+	) {
+		chrome.action.enable(tabID);
+	}
+	else {
+		chrome.action.disable(tabID);
 	}
 }
-chrome.tabs.onUpdated.addListener(checkForSupportedURL); // Chrome does not support page_action.show_matches in manifest
+chrome.tabs.onUpdated.addListener(checkForSupportedURL);
 
 // forward all messages to content script
 function forwardMessageToTabs(request, tabs) {
