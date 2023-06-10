@@ -29,7 +29,7 @@ Please note that **this extension is in maintenance mode**. I will no longer wor
 ## Supported pages
 - Browse: Categories
 - Browse: Live Channels
-- Game: Live Channels
+- Game: Live Channels (preview is not filtered)
 - Game: Videos
 - Game: Clips
 - Frontpage/Discover (carousel is not filtered)

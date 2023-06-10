@@ -18,7 +18,7 @@
 <b>Unterstütze Seiten</b>
 - Durchsuchen: Kategorien
 - Durchsuchen: Live-Kanäle
-- Kategorie: Live-Kanäle
+- Kategorie: Live-Kanäle (keine Filterung der Vorschau)
 - Kategorie: Videos
 - Kategorie: Clips
 - Startseite/Entdecken (keine Filterung im Karussell)

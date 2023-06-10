@@ -18,7 +18,7 @@
 <b>Supported pages</b>
 - Browse: Categories
 - Browse: Live Channels
-- Game: Live Channels
+- Game: Live Channels (preview is not filtered)
 - Game: Videos
 - Game: Clips
 - Frontpage/Discover (carousel is not filtered)
