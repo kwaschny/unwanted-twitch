@@ -279,6 +279,11 @@
 						return 'game';
 					}
 
+					if (page.indexOf('/collection/') >= 0) {
+
+						return 'collection';
+					}
+
 					return 'channels';
 				}
 		}
@@ -682,6 +687,12 @@
 
 			break;
 
+			case 'collection':
+
+				selector = '!article[data-a-target^="card-"]%';
+
+			break;
+
 			default:
 
 				logError('Unable to get item nodes of directory, because the page type is unhandled:', currentPageType);
@@ -863,6 +874,11 @@
 
 		// category
 		if (/^card\-[0-9]+$/.test(target)) {
+
+			if (node.nodeName === 'ARTICLE') {
+
+				return readChannel(node);
+			}
 
 			return readCategory(node);
 		}
@@ -1408,6 +1424,13 @@
 					) {
 						// parent's parent node of match
 						topNodes.push(topNode.parentNode.parentNode);
+
+					} else if (
+						(topNode.nodeName === 'ARTICLE') &&
+						(aTarget.indexOf('card-') >= 0)
+					) {
+						// parent's parent node of match
+						topNodes.push(topNode.parentNode.parentNode.parentNode);
 					}
 
 					// keep looking
@@ -1726,9 +1749,7 @@
 
 				if (area !== null) {
 
-					return buildManagementButton(
-						area, 'uttv-frontpage'
-					);
+					return buildManagementButton(area, 'uttv-frontpage');
 
 				} else {
 
@@ -1746,9 +1767,7 @@
 
 				if (area !== null) {
 
-					return buildManagementButton(
-						area.parentNode.parentNode
-					);
+					return buildManagementButton(area.parentNode.parentNode);
 
 				} else {
 
@@ -1796,9 +1815,7 @@
 
 				if (area !== null) {
 
-					return buildManagementButton(
-						area, 'uttv-explore'
-					);
+					return buildManagementButton(area, 'uttv-explore');
 
 				} else {
 
@@ -1814,13 +1831,23 @@
 
 				if (area !== null) {
 
-					return buildManagementButton(
-						area.parentNode
-					);
+					return buildManagementButton(area.parentNode);
 
 				} else {
 
 					logWarn('Unable to find filters area on current page. Expected:', areaSelector);
+				}
+
+			break;
+
+			case 'collection':
+
+				areaSelector = '#directory-game-main-content h1';
+				area         = mainNode.querySelector(areaSelector);
+
+				if (area !== null) {
+
+					return buildManagementButton(area.parentNode, 'uttv-collection');
 				}
 
 			break;
@@ -2211,6 +2238,40 @@
 							}
 
 							// detect expanding sections
+							listenToScroll();
+						}
+
+					break;
+
+					case 'collection':
+
+						indicator = mainNode.querySelector('article[data-a-target^="card-"]');
+						if (indicator !== null) {
+
+							stopPageChangePolling();
+							logTrace('polling stopped in onPageChange(): page loaded');
+
+							addManagementButton();
+
+							// invoke directory filter
+							const remainingItems = filterDirectory();
+
+							// attach hide buttons to the remaining items
+							attachHideButtons(remainingItems);
+
+							// invoke sidebar filter
+							if (hideFollowing === true) {
+
+								filterSidebar();
+								observeSidebar();
+
+							} else {
+
+								filterSidebar('recommended');
+								observeSidebar('recommended');
+							}
+
+							// detect scrolling
 							listenToScroll();
 						}
 
