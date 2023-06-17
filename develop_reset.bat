@@ -19,22 +19,5 @@ if exist "%dir%\%neutral%" (
 
 )
 
-:: scripts\background.js
-set neutral=background.js
-set chrome=background.chrome.js
-set firefox=background.firefox.js
-
-if exist "%dir%\scripts\%neutral%" (
-
-	if exist "%dir%\scripts\%firefox%" (
-		rename "%dir%\scripts\%neutral%" "%chrome%"
-	) else (
-		rename "%dir%\scripts\%neutral%" "%firefox%"
-	)
-
-	echo Restored: scripts\%neutral%
-
-)
-
 echo(
 pause

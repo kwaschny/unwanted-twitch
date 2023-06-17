@@ -8,10 +8,6 @@ set target="%dir%publish\firefox\current.zip"
 del "%dir%\manifest.json"
 type "%dir%\manifest.firefox.json" > "%dir%\manifest.json"
 
-:: swap scripts\background.js
-del "%dir%\scripts\background.js"
-type "%dir%\scripts\background.firefox.js" > "%dir%\scripts\background.js"
-
 :: compress
 del %target%
 %zip% a -mx=9 -r %target% "%dir%*"^
@@ -19,7 +15,6 @@ del %target%
  -x!"manifest.*.json"^
  -x!"publish\"^
  -x!"raw\"^
- -x!"scripts\background.*.js"^
  -x!"tests\"^
  -x!"webstore\"^
  -x!"*.md"^
@@ -27,6 +22,5 @@ del %target%
 
 :: clean up
 del "%dir%\manifest.json"
-del "%dir%\scripts\background.js"
 
 pause

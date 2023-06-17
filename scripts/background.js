@@ -25,7 +25,6 @@ async function forwardMessageToTabs(request, tabs) {
 	let tabsLength = tabs.length;
 	for (let i = 0; i < tabsLength; i++) {
 
-		// tabs where "url" is provided are on twitch.tv (implicit permission)
 		if (typeof tabs[i].url === 'string') {
 
 			relevantTabs.push(tabs[i]);
@@ -36,12 +35,12 @@ async function forwardMessageToTabs(request, tabs) {
 	for (let i = 0; i < tabsLength; i++) {
 
 		request.dispatcherIndex = i;
-		await chrome.tabs.sendMessage(relevantTabs[i].id, request);
-		const error = chrome.runtime.lastError;
 
-		if (error) {
-
-			logError('chrome.runtime.sendMessage', error);
+		try {
+			await chrome.tabs.sendMessage(relevantTabs[i].id, request);
+		}
+		catch (error) {
+			console.error(error);
 		}
 	}
 }
@@ -60,8 +59,10 @@ chrome.runtime.onMessage.addListener(async(request) => {
 	// passthrough
 	} else {
 
-		// does not require "tabs" permission (implicit permission on twitch.tv)
+		// get relevant tabs only
 		const tabs = await chrome.tabs.query({ url: (twitchUrl + '*') });
 		await forwardMessageToTabs(request, tabs);
 	}
+
+	return true;
 });

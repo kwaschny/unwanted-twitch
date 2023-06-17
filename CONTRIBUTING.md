@@ -23,7 +23,7 @@ If you are a developer and feel comfortable with JavaScript and the DOM, you can
 
 ### Setting up the extension for debugging
 1. Clone the repository using your favorite git tool.
-2. Prepare the repository to be loaded by the browser. If you are on Windows, execute `develop_chrome.bat` to work with Chrome or `develop_firefox.bat` to work with Firefox. If you are on a *nix OS, rename `manifest.chrome.json` (for Chrome) or `manifest.firefox.json` (for Firefox) to `manifest.json` and rename `/scripts/background.chrome.js` (for Chrome) or `/scripts/background.firefox.js` (for Firefox) to `/scripts/background.js`. You can only load the extension for one browser at a time.
+2. Prepare the repository to be loaded by the browser. If you are on Windows, execute `develop_chrome.bat` to work with Chrome or `develop_firefox.bat` to work with Firefox. If you are on a *nix OS, rename `manifest.chrome.json` (for Chrome) or `manifest.firefox.json` (for Firefox) to `manifest.json`. You can only load the extension for one browser at a time.
 3. Load the repository as a temporary extension. On Chrome, visit `chrome://extensions/`. On Firefox, visit `about:debugging#/runtime/this-firefox`.
 4. Open `/scripts/common.js` in your favorite editor and change the debugging flag to `const debug = 1;`. This will output almost all debug information in the browser console, except trace data. Whenever you change files of a currently loaded extension, you will have to reload the extension, see step 3.
 
