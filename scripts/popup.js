@@ -1,45 +1,50 @@
 ﻿// jshint esversion: 6
 
-function openBlacklist() {
+async function openBlacklist() {
 
-	chrome.tabs.create({ active: true, url: '/views/blacklist.html' });
+	await chrome.tabs.create({ active: true, url: '/views/blacklist.html' });
 }
 
-function getState(callback) {
+async function getState() {
 
-	storageGet([ 'enabled', 'renderButtons' ], function(response) {
+	const result = await storageGet([ 'enabled', 'renderButtons' ]);
 
-		let enabled       = true;
-		let renderButtons = true;
+	let enabled       = true;
+	let renderButtons = true;
 
-		// enabled
-		if (typeof response.enabled === 'boolean') {
+	// enabled
+	if (typeof result.enabled === 'boolean') {
 
-			enabled = response.enabled;
-		}
+		enabled = result.enabled;
+	}
 
-		// renderButtons
-		if (typeof response.renderButtons === 'boolean') {
+	// renderButtons
+	if (typeof result.renderButtons === 'boolean') {
 
-			renderButtons = response.renderButtons;
-		}
+		renderButtons = result.renderButtons;
+	}
 
-		callback(enabled, renderButtons);
-	});
+	return [ enabled, renderButtons ];
 }
 
-function enableExtension() {
+async function enableExtension() {
 
-	chrome.runtime.sendMessage(
-		{ 'extension': 'enable' }
-	);
+	try {
+		await chrome.runtime.sendMessage({ 'extension': 'enable' });
+	}
+	catch (error) {
+		logError('Failed to enable extension.', error);
+	}
 }
 
-function disableExtension() {
+async function disableExtension() {
 
-	chrome.runtime.sendMessage(
-		{ 'extension': 'disable' }
-	);
+	try {
+		await chrome.runtime.sendMessage({ 'extension': 'disable' });
+	}
+	catch (error) {
+		logError('Failed to disable extension.', error);
+	}
 }
 
 function toggleExtension() {
@@ -56,11 +61,14 @@ function toggleExtension() {
 	window.close();
 }
 
-function toggleButtonsToggle() {
+async function toggleButtonsToggle() {
 
-	chrome.runtime.sendMessage(
-		{ 'renderButtons': this.checked }
-	);
+	try {
+		await chrome.runtime.sendMessage({ 'renderButtons': this.checked });
+	}
+	catch (error) {
+		logError('Failed to toggle button visibility.', error);
+	}
 }
 
 // prepare elements
@@ -79,8 +87,10 @@ stateToggleButton.textContent                                     = chrome.i18n.
 buttonsToggleButton.parentNode.querySelector('label').textContent = chrome.i18n.getMessage('popup_ToggleButtons');
 
 // initialize state
-getState(function onGetState(enabled, renderButtons) {
+const init = async() => {
 
+	const [ enabled, renderButtons ] = await getState();
+	console.log(enabled, renderButtons);
 	// enabled
 	if (enabled === true) {
 
@@ -101,4 +111,5 @@ getState(function onGetState(enabled, renderButtons) {
 
 	// renderButtons
 	buttonsToggleButton.checked = renderButtons;
-});
+};
+init();

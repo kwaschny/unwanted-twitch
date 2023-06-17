@@ -69,7 +69,7 @@
 	/**
 	 * Listens for chrome extension messages and dispatches corresponding actions.
 	 */
-	chrome.runtime.onMessage.addListener(function callback_runtimeOnMessage(request) {
+	chrome.runtime.onMessage.addListener(async function callback_runtimeOnMessage(request) {
 		logTrace('event invoked: chrome.runtime.onMessage($)', request);
 
 		logVerbose('Command received:', request);
@@ -77,8 +77,8 @@
 		// renderButtons
 		if (typeof request['renderButtons'] === 'boolean') {
 
-			toggleHideButtonsVisibility(request['renderButtons']);
-			return;
+			await toggleHideButtonsVisibility(request['renderButtons']);
+			return true;
 		}
 
 		// extension
@@ -87,18 +87,18 @@
 			if (request.extension === 'disable') {
 
 				enabled = false;
-				storageSet({ 'enabled': enabled });
+				await storageSet({ 'enabled': enabled });
 
 				window.location.reload();
-				return;
+				return true;
 
 			} else if (request.extension === 'enable') {
 
 				enabled = true;
-				storageSet({ 'enabled': enabled });
+				await storageSet({ 'enabled': enabled });
 
 				window.location.reload();
-				return;
+				return true;
 			}
 		}
 
@@ -123,8 +123,7 @@
 				) {
 
 					logInfo('Storing new blacklist.', items);
-
-					putBlacklistedItems(items);
+					await putBlacklistedItems(items);
 
 				} else {
 
@@ -159,10 +158,11 @@
 				filterSidebar('recommended');
 			}
 
-			return;
+			return true;
 		}
 
 		logError('Unknown command received. The following command was ignored:', request);
+		return true;
 	});
 
 /* END: runtime listeners */
@@ -1627,13 +1627,13 @@
 		// attach action listener with backreference to item
 		hideItem.setAttribute('data-uttv-type', item.type);
 		hideItem.setAttribute('data-uttv-name', item.name);
-		hideItem.addEventListener('click', function(event) {
+		hideItem.addEventListener('click', async(event) => {
 
 			// cancel regular click event on card
 			event.preventDefault();
 			event.stopPropagation();
 
-			onHideItem(item);
+			await onHideItem(item);
 		});
 
 		item.node.parentNode.style.position = 'relative';
@@ -1682,7 +1682,7 @@
 
 			// attach action listener with backreference to item
 			hideTagNode.setAttribute('data-uttv-tag', tag.name);
-			hideTagNode.addEventListener('click', function(event) {
+			hideTagNode.addEventListener('click', async(event) => {
 
 				// cancel regular click event on tag
 				event.preventDefault();
@@ -1692,7 +1692,7 @@
 				const decision = confirm( chrome.i18n.getMessage('confirm_HideTag') + ' [' + tag.name + ']' );
 				if (decision === true) {
 
-					onHideTag(item, tag);
+					await onHideTag(item, tag);
 				}
 			});
 
@@ -1713,7 +1713,7 @@
 	/**
 	 * Toggles visibility state of all present hide buttons in the directory of the current page. Returns all present hide buttons.
 	 */
-	function toggleHideButtonsVisibility(state) {
+	async function toggleHideButtonsVisibility(state) {
 		logTrace('invoking toggleHideButtonsVisibility($)', state);
 
 		if (typeof state !== 'boolean') {
@@ -1723,7 +1723,7 @@
 
 		// store state globally
 		renderButtons = state;
-		storageSet({ 'renderButtons': renderButtons });
+		await storageSet({ 'renderButtons': renderButtons });
 
 		const buttonsSelector = '.uttv-hide-item, .uttv-hide-tag';
 		const buttons         = mainNode.querySelectorAll(buttonsSelector);
@@ -1919,9 +1919,14 @@
 		buttonText.textContent = chrome.i18n.getMessage('label_Management');
 
 		// click action for label
-		buttonText.addEventListener('click', function() {
+		buttonText.addEventListener('click', async() => {
 
-			chrome.runtime.sendMessage({ action: 'openBlacklist' });
+			try {
+				await chrome.runtime.sendMessage({ action: 'openBlacklist' });
+			}
+			catch {
+				logError('Failed to open blacklist tab.', error);
+			}
 		});
 
 		let buttonToggle = document.createElement('div');
@@ -1929,7 +1934,7 @@
 		buttonToggle.textContent = '👁';
 
 		// click action for eye symbol
-		buttonToggle.addEventListener('click', function() {
+		buttonToggle.addEventListener('click', async() => {
 
 			// require the user to confirm his intent to hide the "X" buttons (prevent accidental toggle)
 			if (renderButtons === true) {
@@ -1938,7 +1943,7 @@
 				if (!confirmed) { return; }
 			}
 
-			toggleHideButtonsVisibility(!renderButtons);
+			await toggleHideButtonsVisibility(!renderButtons);
 		});
 
 		button.appendChild(buttonText);
@@ -2322,7 +2327,7 @@
 	/**
 	 * Event that is emitted by hide buttons on cards in the directory of the current page.
 	 */
-	function onHideItem(item) {
+	async function onHideItem(item) {
 		logTrace('invoking onHideItem($)', item);
 
 		if (item.name.length === 0) {
@@ -2337,13 +2342,13 @@
 		modifyBlacklistedItems(item.type, nameL);
 
 		// update storage
-		putBlacklistedItems(storedBlacklistedItems);
+		await putBlacklistedItems(storedBlacklistedItems);
 	}
 
 	/**
 	 * Event that is emitted by hide buttons on tags in the directory of the current page.
 	 */
-	function onHideTag(item, tag) {
+	async function onHideTag(item, tag) {
 		logTrace('invoking onHideTag($, $)', item, tag);
 
 		if (tag.name.length === 0) {
@@ -2358,7 +2363,7 @@
 		modifyBlacklistedItems('tags', nameL);
 
 		// update storage
-		putBlacklistedItems(storedBlacklistedItems);
+		await putBlacklistedItems(storedBlacklistedItems);
 	}
 
 	/**
@@ -2435,28 +2440,23 @@
 	/**
 	 * Retrieves all blacklisted items from the storage.
 	 */
-	function getBlacklistedItems(callback) {
-		logTrace('invoking getBlacklistedItems($)', callback);
+	async function getBlacklistedItems() {
+		logTrace('invoking getBlacklistedItems()');
 
-		storageGet(null, function callback_storageGet(result) {
-			logTrace('callback invoked: storageGet($)', null, result);
+		const result = await storageGet(null);
 
-			let blacklistedItems = {};
-			if (typeof result.blacklistedItems === 'object') {
+		let blacklistedItems = {};
+		if (typeof result.blacklistedItems === 'object') {
 
-				blacklistedItems = result.blacklistedItems;
+			blacklistedItems = result.blacklistedItems;
 
-			} else if (typeof result['blItemsFragment0'] === 'object') {
+		} else if (typeof result['blItemsFragment0'] === 'object') {
 
-				blacklistedItems = mergeBlacklistFragments(result);
-				logVerbose('Merged fragments to blacklist:', result, blacklistedItems);
-			}
+			blacklistedItems = mergeBlacklistFragments(result);
+			logVerbose('Merged fragments to blacklist:', result, blacklistedItems);
+		}
 
-			if (typeof callback === 'function') {
-
-				callback(blacklistedItems);
-			}
-		});
+		return blacklistedItems;
 	}
 
 	/**
@@ -2578,110 +2578,102 @@
 	/**
 	 * Stores all blacklisted items in the storage.
 	 */
-	function putBlacklistedItems(items, callback, attemptRecovery) {
-		logTrace('invoking putBlacklistedItems($, $, $)', items, callback, attemptRecovery);
+	async function putBlacklistedItems(items, attemptRecovery) {
+		logTrace('invoking putBlacklistedItems($, $)', items, attemptRecovery);
 
-		getStorageMode(function(mode) {
+		const mode   = await getStorageMode();
+		const isSync = (mode === 'sync');
 
-			const isSync = (mode === 'sync');
+		if (attemptRecovery === false) {
 
-			if (attemptRecovery === false) {
+			logWarn('Restoring backup:', items);
+		}
 
-				logWarn('Restoring backup:', items);
+		// prepare backup of current items
+		const backupItems = cloneBlacklistItems(items);
+
+		let dataToStore = { 'blacklistedItems': items };
+
+		if (isSync) {
+
+			const requiredSize = measureStoredSize(dataToStore);
+
+			if (requiredSize > storageSyncMaxSize) {
+
+				logWarn('Blacklist to store (' + requiredSize + ') exceeds the maximum storage size per item (' + storageSyncMaxSize + '). Splitting required...');
+				dataToStore = splitBlacklistItems(items);
+				logVerbose('Splitting of blacklist completed:', dataToStore);
 			}
+		}
 
-			// prepare backup of current items
-			const backupItems = cloneBlacklistItems(items);
+		const keysToRemove = [ 'blacklistedItems' ];
+		for (let i = 0; i < (storageMaxFragments - 1); i++) {
 
-			let dataToStore = { 'blacklistedItems': items };
+			keysToRemove.push('blItemsFragment' + i);
+		}
+		await storageRemove(keysToRemove);
 
-			if (isSync) {
+		const error = await storageSet(dataToStore);
 
-				const requiredSize = measureStoredSize(dataToStore);
+		// inform user about storage quota
+		if (
+			(error !== null) &&
+			(error.message !== undefined) &&
+			(typeof error.message === 'string')
+		) {
 
-				if (requiredSize > storageSyncMaxSize) {
+			if (attemptRecovery !== false) {
 
-					logWarn('Blacklist to store (' + requiredSize + ') exceeds the maximum storage size per item (' + storageSyncMaxSize + '). Splitting required...');
-					dataToStore = splitBlacklistItems(items);
-					logVerbose('Splitting of blacklist completed:', dataToStore);
+				const suffix = ('\n\nStorage Service Error:\n' + error.message);
+
+				if (error.message.indexOf('QUOTA_BYTES') >= 0) {
+
+					alert(chrome.i18n.getMessage('alert_StorageQuota') + suffix);
+
+				} else if (error.message.indexOf('MAX_') >= 0) {
+
+					alert(chrome.i18n.getMessage('alert_StorageThrottle') + suffix);
+
+				} else {
+
+					alert(chrome.i18n.getMessage('alert_StorageIssue') + suffix);
 				}
+
+				// something went wrong, force local storage and restore the backup
+				await chrome.storage.local.set({ 'useLocalStorage': true });
+				await putBlacklistedItems(backupBlacklistedItems, false);
+				return;
 			}
 
-			const keysToRemove = [ 'blacklistedItems' ];
-			for (let i = 0; i < (storageMaxFragments - 1); i++) {
+		} else {
 
-				keysToRemove.push('blItemsFragment' + i);
+			// synchronize new items among tabs
+			await syncBlacklistedItems(items);
+
+			// update backup cache
+			if (attemptRecovery !== false) {
+
+				backupBlacklistedItems = backupItems;
+				logVerbose('Created backup of blacklist:', backupBlacklistedItems);
 			}
 
-			storageRemove(keysToRemove, function callback_storageRemove() {
-				logTrace('callback invoked: storageRemove($)', keysToRemove);
+			logInfo('Added to blacklist:', items);
+		}
 
-				storageSet(dataToStore, function callback_storageSet(error) {
-					logTrace('callback invoked: storageSet($)', dataToStore);
-
-					// inform user about storage quota
-					if (
-						(error !== null) &&
-						(error.message !== undefined) &&
-						(typeof error.message === 'string')
-					) {
-
-						if (attemptRecovery !== false) {
-
-							const suffix = ('\n\nStorage Service Error:\n' + error.message);
-
-							if (error.message.indexOf('QUOTA_BYTES') >= 0) {
-
-								alert(chrome.i18n.getMessage('alert_StorageQuota') + suffix);
-
-							} else if (error.message.indexOf('MAX_') >= 0) {
-
-								alert(chrome.i18n.getMessage('alert_StorageThrottle') + suffix);
-
-							} else {
-
-								alert(chrome.i18n.getMessage('alert_StorageIssue') + suffix);
-							}
-
-							// something went wrong, restore the backup (force local storage)
-							chrome.storage.local.set({ 'useLocalStorage': true }, function() {
-
-								putBlacklistedItems(backupBlacklistedItems, callback, false);
-							});
-
-							return;
-						}
-
-					} else {
-
-						// synchronize new items among tabs
-						syncBlacklistedItems(items);
-
-						// update backup cache
-						if (attemptRecovery !== false) {
-
-							backupBlacklistedItems = backupItems;
-							logVerbose('Created backup of blacklist:', backupBlacklistedItems);
-						}
-
-						logInfo('Added to blacklist:', items);
-					}
-
-					if (typeof callback === 'function') {
-
-						callback(items);
-					}
-				});
-			});
-		});
+		return items;
 	}
 
 	/**
 	 * Informs all tabs (including the one that invokes this function) about the provided items in order to keep them synchronized.
 	 */
-	function syncBlacklistedItems(items) {
+	async function syncBlacklistedItems(items) {
 
-		chrome.runtime.sendMessage({ blacklistedItems: items, storage: false });
+		try {
+			await chrome.runtime.sendMessage({ blacklistedItems: items, storage: false });
+		}
+		catch {
+			logError('Failed to synchronize all tabs.', error);
+		}
 	}
 
 /* END: blacklist */
@@ -2691,7 +2683,7 @@
 	/**
 	 * Fetches blacklist from storage and starts filtering.
 	 */
-	function init() {
+	async function init() {
 		logTrace('invoking init()');
 
 		if (initRun === true) {
@@ -2701,41 +2693,40 @@
 		initRun = true;
 
 		// prepare blacklist (regardless of the current page support)
-		getBlacklistedItems(function callback_getBlacklistedItems(blacklistedItems) {
-			logTrace('callback invoked: getBlacklistedItems($)', blacklistedItems);
+		const blacklistedItems = await getBlacklistedItems();
+		logTrace('invoked getBlacklistedItems()', blacklistedItems);
 
-			// initialize defaults in blacklisted items collection
-			initBlacklistedItems(blacklistedItems);
+		// initialize defaults in blacklisted items collection
+		initBlacklistedItems(blacklistedItems);
 
-			// cache blacklisted items from storage
-			storedBlacklistedItems = blacklistedItems;
-			modifyBlacklistedItems(blacklistedItems);
-			logInfo('Blacklist loaded:', blacklistedItems);
+		// cache blacklisted items from storage
+		storedBlacklistedItems = blacklistedItems;
+		modifyBlacklistedItems(blacklistedItems);
+		logInfo('Blacklist loaded:', blacklistedItems);
 
-			backupBlacklistedItems = cloneBlacklistItems(blacklistedItems);
+		backupBlacklistedItems = cloneBlacklistItems(blacklistedItems);
 
-			/* BEGIN: root */
+		/* BEGIN: root */
 
-				const rootNodeSelector = '#root';
-				rootNode               = document.querySelector(rootNodeSelector);
+			const rootNodeSelector = '#root';
+			rootNode               = document.querySelector(rootNodeSelector);
 
-				if (rootNode === null) {
+			if (rootNode === null) {
 
-					logError('Root not found. Expected:', rootNodeSelector);
-					rootNode = document;
-				}
+				logError('Root not found. Expected:', rootNodeSelector);
+				rootNode = document;
+			}
 
-			/* END: root */
+		/* END: root */
 
-			// start filtering
-			onPageChange(currentPage);
-		});
+		// start filtering
+		onPageChange(currentPage);
 	}
 
 	/**
 	 * Retrieves the extension state from storage.
 	 */
-	function initExtensionState(callback) {
+	async function initExtensionState() {
 		logTrace('invoking initExtensionState()');
 
 		const stateKeys = [
@@ -2745,110 +2736,101 @@
 			'hideReruns'
 		];
 
-		storageGet(stateKeys, function callback_storageGet(result) {
-			logTrace('callback invoked: storageGet($)', stateKeys, result);
+		const result = await storageGet(stateKeys);
 
-			// enabled
-			if (typeof result['enabled'] === 'boolean') {
+		// enabled
+		if (typeof result['enabled'] === 'boolean') {
 
-				enabled = result['enabled'];
+			enabled = result['enabled'];
 
-				if (result['enabled'] === true) {
+			if (result['enabled'] === true) {
 
-					logVerbose('Extension\'s enabled state:', result['enabled']);
-
-				} else {
-
-					logVerbose('Extension\'s enabled state:', result['enabled']);
-				}
+				logVerbose('Extension\'s enabled state:', result['enabled']);
 
 			} else {
 
-				logVerbose('Extension\'s enabled state unknown, assuming:', true);
+				logVerbose('Extension\'s enabled state:', result['enabled']);
 			}
 
-			// renderButtons
-			if (typeof result['renderButtons'] === 'boolean') {
+		} else {
 
-				renderButtons = result['renderButtons'];
+			logVerbose('Extension\'s enabled state unknown, assuming:', true);
+		}
 
-				if (result['renderButtons'] === true) {
+		// renderButtons
+		if (typeof result['renderButtons'] === 'boolean') {
 
-					logVerbose('Extension\'s render buttons state:', result['renderButtons']);
+			renderButtons = result['renderButtons'];
 
-				} else {
+			if (result['renderButtons'] === true) {
 
-					logVerbose('Extension\'s render buttons state:', result['renderButtons']);
-				}
+				logVerbose('Extension\'s render buttons state:', result['renderButtons']);
 
 			} else {
 
-				logVerbose('Extension\'s render buttons state unknown, assuming:', true);
+				logVerbose('Extension\'s render buttons state:', result['renderButtons']);
 			}
 
-			// hideFollowing
-			if (typeof result['hideFollowing'] === 'boolean') {
+		} else {
 
-				hideFollowing = result['hideFollowing'];
+			logVerbose('Extension\'s render buttons state unknown, assuming:', true);
+		}
 
-				if (result['hideFollowing'] === true) {
+		// hideFollowing
+		if (typeof result['hideFollowing'] === 'boolean') {
 
-					logVerbose('Extension\'s hide following state:', result['hideFollowing']);
+			hideFollowing = result['hideFollowing'];
 
-				} else {
+			if (result['hideFollowing'] === true) {
 
-					logVerbose('Extension\'s hide following state:', result['hideFollowing']);
-				}
+				logVerbose('Extension\'s hide following state:', result['hideFollowing']);
 
 			} else {
 
-				logVerbose('Extension\'s render hide following state unknown, assuming:', true);
+				logVerbose('Extension\'s hide following state:', result['hideFollowing']);
 			}
 
-			// hideReruns
-			if (typeof result['hideReruns'] === 'boolean') {
+		} else {
 
-				hideReruns = result['hideReruns'];
+			logVerbose('Extension\'s render hide following state unknown, assuming:', true);
+		}
 
-				if (result['hideReruns'] === true) {
+		// hideReruns
+		if (typeof result['hideReruns'] === 'boolean') {
 
-					logVerbose('Extension\'s hide reruns state:', result['hideReruns']);
+			hideReruns = result['hideReruns'];
 
-				} else {
+			if (result['hideReruns'] === true) {
 
-					logVerbose('Extension\'s hide reruns state:', result['hideReruns']);
-				}
+				logVerbose('Extension\'s hide reruns state:', result['hideReruns']);
 
 			} else {
 
-				logVerbose('Extension\'s render hide reruns state unknown, assuming:', false);
+				logVerbose('Extension\'s hide reruns state:', result['hideReruns']);
 			}
 
-			if (typeof callback === 'function') {
+		} else {
 
-				callback(enabled, renderButtons);
-			}
-		});
+			logVerbose('Extension\'s render hide reruns state unknown, assuming:', false);
+		}
 	}
 
 	/**
 	 * Waits for the DOM to load, then starts initialization.
 	 */
-	window.addEventListener('DOMContentLoaded', function callback_windowLoad() {
+	window.addEventListener('DOMContentLoaded', async function callback_windowLoad() {
 		logTrace('event invoked: window.DOMContentLoaded()');
 
 		// init extension's state
-		initExtensionState(function callback_initExtensionState(enabled, renderButtons) {
-			logTrace('callback invoked: initExtensionState($, $)', enabled, renderButtons);
+		await initExtensionState();
 
-			if (enabled === false) {
+		if (enabled === false) {
 
-				return logWarn('Page initialization aborted. Extension is not enabled.');
-			}
+			return logWarn('Page initialization aborted. Extension is not enabled.');
+		}
 
-			logInfo('Started initialization on page:', currentPage);
-			init();
-		});
+		logInfo('Started initialization on page:', currentPage);
+		await init();
 	});
 
 /* END: initialization */

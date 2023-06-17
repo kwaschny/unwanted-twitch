@@ -19,39 +19,6 @@ function cloneBlacklistItems(items) {
 }
 
 /**
- * Returns (async) with the selected storage mode, either "sync" or "local".
- */
-function getStorageMode(callback) {
-	logTrace('invoking getStorageMode()');
-
-	// default mode: local
-	let useSyncStorage = false;
-
-	chrome.storage.local.get('useLocalStorage', function(result) {
-
-		if (chrome.runtime.lastError) {
-
-			logError('An error occured trying to read from local storage:', chrome.runtime.lastError);
-		}
-
-		if (typeof result['useLocalStorage'] === 'boolean') {
-
-			useSyncStorage = !result['useLocalStorage'];
-		}
-
-		// remember storage mode
-		storageMode = ( useSyncStorage ? 'sync' : 'local' );
-
-		logVerbose('Storage mode is: ' + storageMode);
-
-		if (typeof callback === 'function') {
-
-			callback(storageMode);
-		}
-	});
-}
-
-/**
  * Returns if the extension is loaded via Firefox.
  */
 function isFirefox() {
@@ -148,115 +115,104 @@ function normalizeCase(term) {
 }
 
 /**
+ * Returns (async) with the selected storage mode, either "sync" or "local".
+ */
+async function getStorageMode() {
+	logTrace('invoking getStorageMode()');
+
+	// default mode: local
+	let useSyncStorage = false;
+
+	const result = await chrome.storage.local.get('useLocalStorage');
+	const error  = chrome.runtime.lastError;
+
+	if (error) {
+
+		logError('An error occured trying to read from local storage:', error);
+	}
+
+	if (typeof result['useLocalStorage'] === 'boolean') {
+
+		useSyncStorage = !result['useLocalStorage'];
+	}
+
+	// remember storage mode
+	const storageMode = ( useSyncStorage ? 'sync' : 'local' );
+	logVerbose('Storage mode is: ' + storageMode);
+
+	return storageMode;
+}
+
+/**
  * Wrapper to retrieve data from storage.
  */
-function storageGet(data, callback) {
+async function storageGet(data) {
 	logTrace('invoking storageGet($)', data);
 
-	const errorHandler = function(result) {
+	const mode   = await getStorageMode();
+	const result = await chrome.storage[mode].get(data);
+	const error  = chrome.runtime.lastError;
 
-		let error = null;
+	if (error) {
 
-		if (chrome.runtime.lastError) {
+		logError('An error occured trying to read from storage:', error);
+	}
 
-			error = chrome.runtime.lastError;
-			logError('An error occured trying to read from storage:', chrome.runtime.lastError);
-		}
-
-		if (typeof callback === 'function') {
-
-			callback(result, error);
-		}
-	};
-
-	getStorageMode(function(mode) {
-
-		chrome.storage[mode].get(data, errorHandler);
-	});
+	return result;
 }
 
 /**
  * Wrapper to store data in storage.
  */
-function storageSet(data, callback) {
+async function storageSet(data) {
 	logTrace('invoking storageSet($)', data);
 
-	const errorHandler = function() {
+	const mode = await getStorageMode();
+	await chrome.storage[mode].set(data);
+	const error = chrome.runtime.lastError;
 
-		let error = null;
+	if (error) {
 
-		if (chrome.runtime.lastError) {
+		logError('An error occured trying to write to storage:', error);
+	}
 
-			error = chrome.runtime.lastError;
-			logError('An error occured trying to write to storage:', chrome.runtime.lastError);
-		}
-
-		if (typeof callback === 'function') {
-
-			callback(error);
-		}
-	};
-
-	getStorageMode(function(mode) {
-
-		chrome.storage[mode].set(data, errorHandler);
-	});
+	return (error ?? null);
 }
 
 /**
  * Wrapper to remove data from storage.
  */
-function storageRemove(data, callback) {
+async function storageRemove(data) {
 	logTrace('invoking storageRemove($)', data);
 
-	const errorHandler = function() {
+	const mode = await getStorageMode();
+	await chrome.storage[mode].remove(data);
+	const error = chrome.runtime.lastError;
 
-		let error = null;
+	if (error) {
 
-		if (chrome.runtime.lastError) {
+		logError('An error occured trying to remove from storage:', error);
+	}
 
-			error = chrome.runtime.lastError;
-			logError('An error occured trying to write to storage:', chrome.runtime.lastError);
-		}
-
-		if (typeof callback === 'function') {
-
-			callback(error);
-		}
-	};
-
-	getStorageMode(function(mode) {
-
-		chrome.storage[mode].remove(data, errorHandler);
-	});
+	return error;
 }
 
 /**
  * Wrapper to remove all data from storage.
  */
-function storageClear(callback) {
+async function storageClear() {
 	logTrace('invoking storageClear()');
 
-	const errorHandler = function() {
+	const mode = await getStorageMode();
+	await chrome.storage[mode].clear(data);
+	const error = chrome.runtime.lastError;
 
-		let error = null;
+	if (error) {
 
-		if (chrome.runtime.lastError) {
+		logError('An error occured trying to clear storage:', error);
+	}
 
-			error = chrome.runtime.lastError;
-			logError('An error occured trying to write to storage:', chrome.runtime.lastError);
-		}
-
-		if (typeof callback === 'function') {
-
-			callback(error);
-		}
-	};
-
-	getStorageMode(function(mode) {
-
-		chrome.storage[mode].clear(errorHandler);
-	});
+	return error;
 }
 
 function logTrace() {

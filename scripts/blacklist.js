@@ -228,43 +228,44 @@ function gatherKeysArray(table) {
 	return result;
 }
 
-function onSave() {
+async function onSave() {
 
 	// storage mode (store in local storage only)
-	chrome.storage.local.set({ 'useLocalStorage': !useSyncStorageCheckbox.checked }, function() {
+	await chrome.storage.local.set({ 'useLocalStorage': !useSyncStorageCheckbox.checked });
 
-		// hide following
-		storageSet({ 'hideFollowing': hideFollowingCheckbox.checked });
+	// hide following
+	await storageSet({ 'hideFollowing': hideFollowingCheckbox.checked });
 
-		// hide reruns
-		storageSet({ 'hideReruns': hideRerunsCheckbox.checked });
+	// hide reruns
+	await storageSet({ 'hideReruns': hideRerunsCheckbox.checked });
 
-		/* BEGIN: update items */
+	/* BEGIN: update items */
 
-			let items = {};
+		let items = {};
 
-			items.categories = gatherKeysMap(categories);
-			items.channels   = gatherKeysMap(channels);
-			items.tags       = gatherKeysMap(tags);
-			items.titles     = gatherKeysArray(titles);
+		items.categories = gatherKeysMap(categories);
+		items.channels   = gatherKeysMap(channels);
+		items.tags       = gatherKeysMap(tags);
+		items.titles     = gatherKeysArray(titles);
 
-			// store via content script to reflect changes immediately
-			chrome.runtime.sendMessage({
-				'blacklistedItems': items
-			});
+		// store via content script to reflect changes immediately
+		try {
+			await chrome.runtime.sendMessage({ 'blacklistedItems': items });
+		}
+		catch (error) {
+			console.error(error);
+		}
 
-		/* END: update items */
+	/* END: update items */
 
-		onCancel();
-	});
+	await onCancel();
 }
 
-function onCancel() {
+async function onCancel() {
 
-	chrome.tabs.getCurrent(function(tab) {
+	const tab = await chrome.tabs.getCurrent();
 
-		chrome.tabs.remove(tab.id);
-	});
+	await chrome.tabs.remove(tab.id);
 }
 
 function onImport() {
@@ -273,13 +274,13 @@ function onImport() {
 	input.type = 'file';
 	input.accept = '.json,.txt';
 
-	input.addEventListener('change', function(event) {
+	input.addEventListener('change', (event) => {
 
 		if (event.target.files.length === 0) { return; }
 
 		// reader
 		const reader = new FileReader();
-		reader.addEventListener('load', function() {
+		reader.addEventListener('load', () => {
 
 			let processed = false;
 
@@ -326,7 +327,7 @@ function onImport() {
 			if (processed === true) {
 
 				// defer alert to redraw DOM first
-				setTimeout(function() {
+				setTimeout(() => {
 
 					alert( chrome.i18n.getMessage('blacklist_ImportSuccess') );
 
@@ -335,14 +336,14 @@ function onImport() {
 			} else {
 
 				// defer alert to redraw DOM first
-				setTimeout(function() {
+				setTimeout(() => {
 
 					alert( chrome.i18n.getMessage('blacklist_ImportFailure') );
 
 				}, 200);
 			}
 		});
-		reader.addEventListener('error', function() {
+		reader.addEventListener('error', () => {
 
 			alert('Unwanted Twitch:\nUnexpected error while reading the selected file.');
 		});
@@ -389,18 +390,16 @@ function flashSaveButton(interval) {
 	if (isModified === true) { return; }
 	isModified = true;
 
-	setInterval(function() {
+	setInterval(() => {
 
 		saveButton.classList.toggle('flashed');
 
 	}, interval);
 }
 
-function onPatternExplained(type) {
+function onPatternExplained() {
 
-	alert(
-		chrome.i18n.getMessage('blacklist_PatternExplainedText')
-	);
+	alert( chrome.i18n.getMessage('blacklist_PatternExplainedText') );
 }
 
 function toggleLoadingScreen(show) {
@@ -445,9 +444,9 @@ let isModified = false;
 /* END: prepare elements */
 
 // "clear" buttons
-document.querySelectorAll('button.clear').forEach(function(e) {
+document.querySelectorAll('button.clear').forEach((e) => {
 
-	e.addEventListener('click', function() {
+	e.addEventListener('click', () => {
 
 		const table = e.parentNode.parentNode.parentNode.parentNode.querySelector('tbody');
 		clearItems(table);
@@ -455,7 +454,7 @@ document.querySelectorAll('button.clear').forEach(function(e) {
 });
 
 // "add" buttons
-document.querySelectorAll('button.add').forEach(function(e) {
+document.querySelectorAll('button.add').forEach((e) => {
 
 	e.addEventListener('click', function() {
 
@@ -464,7 +463,7 @@ document.querySelectorAll('button.add').forEach(function(e) {
 });
 
 // "add" inputs
-document.querySelectorAll('tr.input input').forEach(function(e) {
+document.querySelectorAll('tr.input input').forEach((e) => {
 
 	e.addEventListener('keydown', function(event) {
 
@@ -482,9 +481,9 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	hideRerunsCheckbox.addEventListener('change', flashSaveButton);
 	useSyncStorageCheckbox.addEventListener('change', flashSaveButton);
 
-	patternsExplained.forEach(function(e) {
+	patternsExplained.forEach((e) => {
 
-		e.addEventListener('click', function() {
+		e.addEventListener('click', () => {
 
 			onPatternExplained();
 		});
@@ -510,33 +509,33 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 	document.getElementById('column_Tags').textContent       = chrome.i18n.getMessage('blacklist_Tags');
 	document.getElementById('column_Titles').textContent     = chrome.i18n.getMessage('blacklist_Titles');
 
-	patternsExplained.forEach(function(e) {
+	patternsExplained.forEach((e) => {
 
 		e.textContent = chrome.i18n.getMessage('blacklist_PatternExplainedLabel');
 	});
 
-	document.querySelectorAll('button.clear').forEach(function(e) {
+	document.querySelectorAll('button.clear').forEach((e) => {
 
 		e.textContent = chrome.i18n.getMessage('blacklist_RemoveAll');
 	});
-	document.querySelectorAll('button.add').forEach(function(e) {
+	document.querySelectorAll('button.add').forEach((e) => {
 
 		e.textContent = chrome.i18n.getMessage('blacklist_Add');
 	});
 
-	document.querySelectorAll('#table_categories tr.input input').forEach(function(e) {
+	document.querySelectorAll('#table_categories tr.input input').forEach((e) => {
 
 		e.placeholder = chrome.i18n.getMessage('blacklist_CategoriesInput');
 	});
-	document.querySelectorAll('#table_channels tr.input input').forEach(function(e) {
+	document.querySelectorAll('#table_channels tr.input input').forEach((e) => {
 
 		e.placeholder = chrome.i18n.getMessage('blacklist_ChannelsInput');
 	});
-	document.querySelectorAll('#table_tags tr.input input').forEach(function(e) {
+	document.querySelectorAll('#table_tags tr.input input').forEach((e) => {
 
 		e.placeholder = chrome.i18n.getMessage('blacklist_TagsInput');
 	});
-	document.querySelectorAll('#table_titles tr.input input').forEach(function(e) {
+	document.querySelectorAll('#table_titles tr.input input').forEach((e) => {
 
 		e.placeholder = chrome.i18n.getMessage('blacklist_TitlesInput');
 	});
@@ -555,7 +554,9 @@ document.querySelectorAll('tr.input input').forEach(function(e) {
 toggleLoadingScreen(true);
 
 // load blacklisted items
-storageGet(null, function(result) {
+const loadBlacklistedItems = async() => {
+
+	const result = await storageGet(null);
 
 	let blacklistedItems = {};
 	if (typeof result.blacklistedItems === 'object') {
@@ -578,100 +579,91 @@ storageGet(null, function(result) {
 		loadHideReruns(),
 		loadStorageMode(),
 
-	]).then(function() {
+	]).then(() => {
 
 		// hide loading screen
 		toggleLoadingScreen(false);
 	});
-});
+
+};
+loadBlacklistedItems();
 
 // hide following
 async function loadHideFollowing() {
 
-	return new Promise(function(resolve) {
+	const result = await storageGet('hideFollowing');
 
-		storageGet('hideFollowing', function(result) {
-
-			hideFollowingCheckbox.checked = (
-				(typeof result.hideFollowing !== 'boolean') ||
-				(result.hideFollowing === true)
-			);
-			resolve();
-		});
-	});
+	hideFollowingCheckbox.checked = (
+		(typeof result.hideFollowing !== 'boolean') ||
+		(result.hideFollowing === true)
+	);
 }
 
 // hide reruns
 async function loadHideReruns() {
 
-	return new Promise(function(resolve) {
+	const result = await storageGet('hideReruns');
 
-		storageGet('hideReruns', function(result) {
-
-			hideRerunsCheckbox.checked = (
-				(typeof result.hideReruns === 'boolean') &&
-				(result.hideReruns === true)
-			);
-			resolve();
-		});
-	});
+	hideRerunsCheckbox.checked = (
+		(typeof result.hideReruns === 'boolean') &&
+		(result.hideReruns === true)
+	);
 }
 
 // storage mode
 async function loadStorageMode() {
 
-	return new Promise(function(resolve) {
+	const mode = await getStorageMode();
 
-		getStorageMode(function(mode) {
-
-			useSyncStorageCheckbox.checked = (mode === 'sync');
-			resolve();
-		});
-	});
+	useSyncStorageCheckbox.checked = (mode === 'sync');
 }
 
 /* BEGIN: storage size */
 
-	// getBytesInUse() is not supported by Firefox
-	if (isFirefox() === false) {
+	const reportStorageSizes = async() => {
 
-		chrome.storage.sync.getBytesInUse(null, function(result) {
+		if (chrome.storage.sync.getBytesInUse) {
+
+			const result = await chrome.storage.sync.getBytesInUse(null);
 
 			document.getElementById('storageSize_sync').textContent = result.toLocaleString();
-		});
+		}
 
-		chrome.storage.local.getBytesInUse(null, function(result) {
+		if (chrome.storage.local.getBytesInUse) {
+
+			const result = await chrome.storage.local.getBytesInUse(null);
 
 			document.getElementById('storageSize_local').textContent = result.toLocaleString();
-		});
+		}
 
 		document.querySelector('.storage-stats').style.visibility = 'visible';
-	}
+	};
+	reportStorageSizes();
 
 /* END: storage size */
 
 // report storage contents
 if (debug <= 1) {
 
-	chrome.storage.sync.get(null, function(result) {
+	const reportStorages = async() => {
 
-		logVerbose('storage.sync:', result);
-	});
+		const syncStorage = await chrome.storage.sync.get(null);
+		logVerbose('storage.sync:', syncStorage);
 
-	chrome.storage.local.get(null, function(result) {
+		const syncLocal = await chrome.storage.local.get(null);
+		logVerbose('storage.local:', syncLocal);
 
-		logVerbose('storage.local:', result);
-	});
+		const clearStoragesButton = document.getElementById('clearStorages');
+		clearStoragesButton.style.display = 'inline-block';
+		clearStoragesButton.addEventListener('click', async() => {
 
-	const clearStoragesButton = document.getElementById('clearStorages');
-	clearStoragesButton.style.display = 'inline-block';
-	clearStoragesButton.addEventListener('click', function() {
+			await chrome.storage.sync.clear();
+			await chrome.storage.local.clear();
 
-		chrome.storage.sync.clear();
-		chrome.storage.local.clear();
+			alert('Unwanted Twitch:\nStorages cleared. Reloading...');
 
-		alert('Unwanted Twitch:\nStorages cleared. Reloading...');
-
-		window.location.reload();
-	});
+			window.location.reload();
+		});
+	};
+	reportStorages();
 }
