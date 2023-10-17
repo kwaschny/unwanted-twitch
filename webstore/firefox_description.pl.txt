@@ -1,0 +1,37 @@
+﻿<b>Ukryj niechciane streamy, gry, kategorie, kanały i tagi na: twitch.tv</b>
+
+<b>Funkcje</b>
+- ukrycie niechcianych kategorii/gier
+- ukrycie niechcianych kanałów/streamów
+- ukrycie niechcianych tagów
+- ukrycie retransmisji streamów
+- ukrycie streamów ze względu na tytuł
+- filtrowanie na podstronie "Obserwowane" (może zostać wyłączone w ustawieniach)
+- przełączenie widoczność przycisków "X"
+- udostępnianie czarnej listy dzięki importowaniu/eksportowaniu (w ustawieniach)
+- czarna lista może automatycznie się synchronizować między urządzeniami (w ustawieniach, wymaga zaznaczenia)
+- włączenie/wyłączenie rozszerzenia jednym kliknięciem na ikonę rozszerzenia
+- kompatybilne z FrankerFaceZ (FFZ) i innymi popularnymi rozszerzenami na Twitchu
+- wspiera ciemny motyw na Twitchu
+- wspiera wzorce i wyrażenia regularne dla dynamicznego blokowania
+
+<b>Wspierane podstrony</b>
+- Przeglądaj: Kategorie
+- Przeglądaj: Kanały na żywo
+- Gry: Kanały na żywo (miniaturki nie mogą być filtrowane)
+- Gry: Filmy
+- Gry: Klipy
+- Strona główna/Odkrywaj (karuzela nie może być filtrowana)
+- Odkrywaj Gry/IRL/Muzyka/Creative (Esport nie może być filtrowany)
+- Obserwowane
+- Pasek boczny (tylko filtrowanie, brak przycisków do natychmiastowego ukrywania)
+- nadal można odwiedzać zablokowane kanały przez bezpośrednie linki
+
+<b>Uwaga odnośnie zmian na twitch.tv psujących to rozszerzenie</b>
+Twitch słynie ze zmieniania swojej strony bez uprzedzenia, co może psuć działanie rozszerzenia. Twitch również często wprowadza nowe zmiany tylko wybranym/losowym użytkownikom do 4 tygodni wcześniej, co może skutkować popsuciem rozszerzenia. Jeśli zauważysz problem z rozszerzeniem, to wyłącz je, <a href="https://github.com/kwaschny/unwanted-twitch/issues">zgłoś problem</a> i poczekaj na aktualizację. Aktualizacje mogą potrzebować kilku dni by zostać zatwierdzone w odpowiednich przeglądarkach. Miej oko na <a href="https://github.com/kwaschny/unwanted-twitch/commits/master">commity na GitHubie</a> lub <a href="https://twitter.com/Kwaschny">obserwuj mnie na Twitterze</a> by otrzymywać wiadomości na temat nowych wersji.
+
+<b>Często zadawane pytania / Rozwiązywanie problemów</b>
+Odwiedź moja stronę na GitHubie po szczegóły: <a href="https://github.com/kwaschny/unwanted-twitch/blob/master/README.md">README</a>
+
+<b>Wkład w rozszerzenie</b>
+Niezależnie od tego czy jesteś zwykłym użytkownikiem czy deweloperem, <a href="https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md">odwiedź stronę na GitHubie i zobacz jak możesz pomóc temu projektowi</a>.

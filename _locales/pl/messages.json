@@ -1,0 +1,122 @@
+﻿ {
+	"app_Desc": {
+		"message": "Ukryj niechciane streamy, gry, kategorie, kanały i tagi na: twitch.tv"
+	},
+
+	"label_Management": {
+		"message": "Zarządzaj czarną listą"
+	},
+	"label_HideCategory": {
+		"message": "Ukryj kategorię"
+	},
+	"label_HideChannel": {
+		"message": "Ukryj kanał"
+	},
+	"label_HideTag": {
+		"message": "Ukryj tag"
+	},
+	"confirm_HideTag": {
+		"message": "Unwanted Twitch:\nUkryjesz wszystkie kategorie i kanały z tagiem:"
+	},
+	"confirm_HideButtons": {
+		"message": "Unwanted Twitch:\nUkryjesz wszystkie przyciski \"X\".\n\nMożesz przełączyć ich widoczność ponownie klikając ikonę 👁 oka."
+	},
+	"alert_StorageQuota": {
+		"message": "Unwanted Twitch:\nCzarna lista i jest pełna i nie będzie mogła być synchronizowana."
+	},
+	"alert_StorageThrottle": {
+		"message": "Unwanted Twitch:\nUsługa synchronizacji jest obecnie niedostępna.\nProszę poczekaj kilka minut, zrestartuj przeglądarkę i spróbuj ponownie."
+	},
+	"alert_StorageIssue": {
+		"message": "Unwanted Twitch:\nUsługa synchronizacji napotkała niespodziewany błąd.\nProszę poczekaj kilka minut, zrestartuj przeglądarkę i spróbuj ponownie."
+	},
+
+	"popup_ManageBlacklist": {
+		"message": "Zarządzaj czarną listą"
+	},
+	"popup_EnableExtension": {
+		"message": "Włącz rozszerzenie"
+	},
+	"popup_DisableExtension": {
+		"message": "Wyłącz rozszerzenie"
+	},
+	"popup_ToggleButtons": {
+		"message": "Pokaż przyciski \"X\""
+	},
+
+	"blacklist_SettingsHeadline": {
+		"message": "Ustawienia"
+	},
+	"blacklist_SettingsHideFollowing": {
+		"message": "Filtruj również na stronie \"Obserwowane\""
+	},
+	"blacklist_SettingsHideReruns": {
+		"message": "Ukrywaj retransmisje"
+	},
+	"blacklist_SettingsSyncStorage": {
+		"message": "Synchronizuj czarną listę w chmurze"
+	},
+	"blacklist_Categories": {
+		"message": "Ukrywane kategorie"
+	},
+	"blacklist_Channels": {
+		"message": "Ukrywane kanały"
+	},
+	"blacklist_Tags": {
+		"message": "Ukrywane tagi"
+	},
+	"blacklist_Titles": {
+		"message": "Ukrywane tytuły"
+	},
+	"blacklist_CategoriesInput": {
+		"message": "Nazwa kategorii do ukrycia"
+	},
+	"blacklist_ChannelsInput": {
+		"message": "Nazwa kanału do ukrycia"
+	},
+	"blacklist_TagsInput": {
+		"message": "Nazwa tagu do ukrycia"
+	},
+	"blacklist_TitlesInput": {
+		"message": "Wzorzec tytułu do ukrycia"
+	},
+	"blacklist_PatternExplainedLabel": {
+		"message": "Wyjaśnienie wspieranych wzorców..."
+	},
+	"blacklist_PatternExplainedText": {
+		"message": "Wspierane są następujące wzorce:\n\nhalf-life 3\n(Wyrażenie musi być identyczne, wielkość liter nie ma znaczenia.)\n\n'Half-Life 3'\n(Fraza musi być identyczna, wielkość liter ma znaczenie.)\n\n~half-life\n(Fraza musi być zawarta, wielkość liter nie ma znaczenia.)\n\n/^half\\-?life [0-9]+/i\n(Fraza musi odpowiadać wyrażeniu regularnemu, wielkość liter nie ma znaczenia.)\n\n/^Half\\-?Life [0-9]+/\n(Fraza musi odpowiadać wyrażeniu regularnemu, wielkość liter ma znaczenie.)"
+	},
+	"blacklist_Empty": {
+		"message": "Brak elementów na czarnej liście."
+	},
+	"blacklist_Add": {
+		"message": "Dodaj"
+	},
+	"blacklist_Remove": {
+		"message": "Usuń"
+	},
+	"blacklist_RemoveAll": {
+		"message": "Wyczyść"
+	},
+	"blacklist_Save": {
+		"message": "Zapisz"
+	},
+	"blacklist_Cancel": {
+		"message": "Anuluj"
+	},
+	"blacklist_Import": {
+		"message": "↳ Importuj"
+	},
+	"blacklist_ImportSuccess": {
+		"message": "Unwanted Twitch:\nWybrany plik został prawidłowo zaimportowany.\nKliknij przycisk [Zapisz] aby zakończyć importowanie."
+	},
+	"blacklist_ImportFailure": {
+		"message": "Unwanted Twitch:\n(Błąd) Wybrany plik nie jest prawidłową czarną listą."
+	},
+	"blacklist_Export": {
+		"message": "↱ Eksportuj"
+	},
+	"blacklist_Processing": {
+		"message": "Ładowanie. Proszę czekać..."
+	}
+}
