@@ -1,0 +1,122 @@
+{
+	"app_Desc": {
+		"message": "Esconder streams, jogos, categorias, canais, e tags indesejados em: twitch.tv"
+	},
+
+	"label_Management": {
+		"message": "Configurar Lista de Bloqueios"
+	},
+	"label_HideCategory": {
+		"message": "Esconder Categoria"
+	},
+	"label_HideChannel": {
+		"message": "Esconder Canal"
+	},
+	"label_HideTag": {
+		"message": "Esconder Tag"
+	},
+	"confirm_HideTag": {
+		"message": "Twitch Indesejado:\nVocê está preste a esconder todas as categorias e canais\ncom a seguinte tag:"
+	},
+	"confirm_HideButtons": {
+		"message": "Twitch Indesejado:\nVocê está preste a esconder todos botôes \"X\".\n\nClique no ícone de olho 👁 para alternar a visibilidade novamente."
+	},
+	"alert_StorageQuota": {
+		"message": "Twitch Indesejado:\nA Lista de Bloqueios está cheia e não pode mais ser sincronizada."
+	},
+	"alert_StorageThrottle": {
+		"message": "Twitch Indesejado:\nO serviço de armazanamento está ocupado no momento.\nPor favor, espere alguns minutos, reinicie seu navegador e tente novamente."
+	},
+	"alert_StorageIssue": {
+		"message": "Twitch Indesejado:\nO serviço de armazanamento encontrou um erro inexperado.\nPor favor, espere alguns minutos, reinicie seu navegador e tente novamente."
+	},
+
+	"popup_ManageBlacklist": {
+		"message": "Configurar Bloqueios"
+	},
+	"popup_EnableExtension": {
+		"message": "Habilitar Extensão"
+	},
+	"popup_DisableExtension": {
+		"message": "Desabilitar Extensão"
+	},
+	"popup_ToggleButtons": {
+		"message": "Mostrar Botões \"X\""
+	},
+
+	"blacklist_SettingsHeadline": {
+		"message": "Configurações"
+	},
+	"blacklist_SettingsHideFollowing": {
+		"message": "Filtrar também na página \"Seguindo\""
+	},
+	"blacklist_SettingsHideReruns": {
+		"message": "Esconder reprises de stream"
+	},
+	"blacklist_SettingsSyncStorage": {
+		"message": "Sincronizar Lista de Bloqueio via nuvem"
+	},
+	"blacklist_Categories": {
+		"message": "Categorias Bloqueadas"
+	},
+	"blacklist_Channels": {
+		"message": "Canais Bloquados"
+	},
+	"blacklist_Tags": {
+		"message": "Tags Bloqueadas"
+	},
+	"blacklist_Titles": {
+		"message": "Títulos Bloqueados"
+	},
+	"blacklist_CategoriesInput": {
+		"message": "Nome da Categoria a ser bloqueada"
+	},
+	"blacklist_ChannelsInput": {
+		"message": "Nome do Canal a ser bloqueado"
+	},
+	"blacklist_TagsInput": {
+		"message": "Nome da Tag a ser bloqueado"
+	},
+	"blacklist_TitlesInput": {
+		"message": "Padrão de Título a ser bloquado"
+	},
+	"blacklist_PatternExplainedLabel": {
+		"message": "Explicação dos padrões suportados..."
+	},
+	"blacklist_PatternExplainedText": {
+		"message": "Os seguintes padrões são suportados:\n\nhalf-life 3\n(O termo deve corresponder precisamente, sem distinção entre maiúsculas ou minúsculas.)\n\n'Half-Life 3'\n(O termo deve corresponder precisamente, maiúsculas e minúsculas.)\n\n~half-life\n(O termo deve corresponder precisamente, sem distinção entre maiúsculas ou minúsculas.)\n\n/^half\\-?life [0-9]+/i\n(O termo deve corresponder precisamente com a expressão regular, sem distinção entre maiúsculas ou minúsculas.)\n\n/^Half\\-?Life [0-9]+/\n(O termo deve corresponder precisamente com a expressão regular, maiúsculas e minúsculas.)"
+	},
+	"blacklist_Empty": {
+		"message": "Lista de Bloqueios vazia."
+	},
+	"blacklist_Add": {
+		"message": "Adicionar"
+	},
+	"blacklist_Remove": {
+		"message": "Remover"
+	},
+	"blacklist_RemoveAll": {
+		"message": "Limpar"
+	},
+	"blacklist_Save": {
+		"message": "Salvar"
+	},
+	"blacklist_Cancel": {
+		"message": "Cancelar"
+	},
+	"blacklist_Import": {
+		"message": "↳ Importar"
+	},
+	"blacklist_ImportSuccess": {
+		"message": "Twitch Indesejado:\nO arquivo selecionado foi importado com sucesso.\nClique no botão [Salvar] para finalizar a importação."
+	},
+	"blacklist_ImportFailure": {
+		"message": "Twitch Indesejado:\n(Erro) O arquive selecionado parece não ser uma exportação válida de lista de bloqueio."
+	},
+	"blacklist_Export": {
+		"message": "↱ Exportar"
+	},
+	"blacklist_Processing": {
+		"message": "Carregando. Por favor, aguarde..."
+	}
+}
