@@ -31,13 +31,17 @@ async function forwardMessageToTabs(request, tabs) {
 		}
 	}
 
+	// only count tabs that received the forwarded message
+	let dispatcherIndex = 0;
+
 	tabsLength = relevantTabs.length;
 	for (let i = 0; i < tabsLength; i++) {
 
-		request.dispatcherIndex = i;
+		request.dispatcherIndex = dispatcherIndex;
 
 		try {
 			await chrome.tabs.sendMessage(relevantTabs[i].id, request);
+			dispatcherIndex++;
 		}
 		catch (error) {
 			console.error(error);

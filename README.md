@@ -44,7 +44,7 @@ Twitch is infamous for changing their website without further notice, which may 
 ## FAQ / Troubleshooting
 
 **There are no X buttons visible anywhere?**
-- After the first install of the extension, restart your browser.
+- After the first install of the extension, restart your browser. Or at least do a hard refresh (`CTRL+R`) on all twitch.tv tabs.
 - Check if you accidently unchecked the `Show "X" Buttons` option. It can be found in the extension popup menu or as clickable 👁 icon on the management button.
 - Make sure the page is supported, see description. The sidebar generally has no "X" button.
 
@@ -66,8 +66,9 @@ Twitch is infamous for changing their website without further notice, which may 
 - The extension needs to "see" the unwanted content on the page to perform filtering.
 
 **Whatever I try to block, the entry is never saved to the blacklist?**
-- Try switching to local storage (instead of cloud storage). This option can be found in the management view (accessible via the extension popup menu or via management button) by unchecking the box at the top right.
+- Make sure you restarted your browser after installing the extension.
 - Avoid having more than one tab of twitch.tv open while adding to or removing from the blacklist.
+- Try switching to local storage (instead of cloud storage). This option can be found in the management view (accessible via the extension popup menu or via management button) by unchecking the box at the top right.
 - Close browser system tabs (browser settings, flags, extensions) before adding to or removing from the blacklist.
 
 **Are you accessing my Twitch profile in any way?**
