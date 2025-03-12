@@ -28,7 +28,7 @@
 - you can still access any blacklisted content via direct link
 
 <b>Note about breaking changes on twitch.tv</b>
-Twitch is infamous for changing their website without further notice, which may break this extension over night. Twitch also serves different canary builds (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, <a href="https://github.com/kwaschny/unwanted-twitch/issues">report the issue</a> and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores. Keep an eye on <a href="https://github.com/kwaschny/unwanted-twitch/commits/master">the GitHub commits</a> or <a href="https://twitter.com/Kwaschny">follow me on Twitter</a> to receive news regarding new versions.
+Twitch is infamous for changing their website without further notice, which may break this extension over night. Twitch also serves different canary builds (previews of potential future versions) to selected/random users for up to 4 weeks, which most likely break parts of the extension. If you notice pages no longer working properly, disable the extension, <a href="https://github.com/kwaschny/unwanted-twitch/issues">report the issue</a> and wait for an update. Note that updates may take a few days to be approved on the corresponding browser stores.
 
 <b>FAQ / Troubleshooting</b>
 Visit the GitHub page for details: <a href="https://github.com/kwaschny/unwanted-twitch/blob/master/README.md">README</a>

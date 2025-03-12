@@ -28,15 +28,14 @@ Wspierane podstrony
 - nadal można odwiedzać zablokowane kanały przez bezpośrednie linki
 
 Uwaga odnośnie zmian na twitch.tv psujących to rozszerzenie
-Twitch słynie ze zmieniania swojej strony bez uprzedzenia, co może psuć działanie rozszerzenia. Twitch również często wprowadza nowe zmiany tylko wybranym/losowym użytkownikom do 4 tygodni wcześniej, co może skutkować popsuciem rozszerzenia. Jeśli zauważysz problem z rozszerzeniem, to wyłącz je, zgłoś problem¹ i poczekaj na aktualizację. Aktualizacje mogą potrzebować kilku dni by zostać zatwierdzone w odpowiednich przeglądarkach. Miej oko na commity na GitHubie² lub obserwuj mnie na Twitterze³ by otrzymywać wiadomości na temat nowych wersji.
+Twitch słynie ze zmieniania swojej strony bez uprzedzenia, co może psuć działanie rozszerzenia. Twitch również często wprowadza nowe zmiany tylko wybranym/losowym użytkownikom do 4 tygodni wcześniej, co może skutkować popsuciem rozszerzenia. Jeśli zauważysz problem z rozszerzeniem, to wyłącz je, zgłoś problem¹ i poczekaj na aktualizację. Aktualizacje mogą potrzebować kilku dni by zostać zatwierdzone w odpowiednich przeglądarkach.
 
 Często zadawane pytania / Rozwiązywanie problemów
 Odwiedź moja stronę na GitHubie po szczegóły: https://github.com/kwaschny/unwanted-twitch/blob/master/README.md
 
 Wkład w rozszerzenie
-Niezależnie od tego czy jesteś zwykłym użytkownikiem czy deweloperem, odwiedź stronę na GitHubie⁴ i zobacz jak możesz pomóc temu projektowi.
+Niezależnie od tego czy jesteś zwykłym użytkownikiem czy deweloperem, odwiedź stronę na GitHubie³ i zobacz jak możesz pomóc temu projektowi.
 
 ¹ https://github.com/kwaschny/unwanted-twitch/issues
 ² https://github.com/kwaschny/unwanted-twitch/commits/master
-³ https://twitter.com/Kwaschny
-⁴ https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md
+³ https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md

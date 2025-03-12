@@ -28,15 +28,14 @@ Unterstütze Seiten
 - Bereiche können weiterhin via Direktlink besucht werden
 
 Hinweis bzgl. Änderungen auf twitch.tv
-Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, bitte das Problem melden¹ und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen. Also entweder auf GitHub vorbeischauen² oder mir auf Twitter folgen³, um über neue Versionen informiert zu bleiben.
+Twitch ist bekannt dafür, Änderungen an der Website ohne weitere Ankündigungen durchzuführen, weswegen diese Erweiterung über Nacht unbrauchbar werden kann. Twitch liefert außerdem unterschiedliche Canary Builds (Vorschau potenziell zukünftiger Versionen) an bestimmte/zufällige Benutzer aus, die meist Teile der Erweiterung unbrauchbar machen. Sollte die Erweiterung nicht mehr funktionieren, bitte das Problem melden¹ und die Erweiterung bis zum nächsten Update deaktivieren. Updates könnten einige Tage benötigen, da diese erst vom jeweiligen Browser Store überprüft werden müssen.
 
 Fragen & Antworten / Fehlerbehebung
 Besuche die GitHub-Seite für weitere Details: https://github.com/kwaschny/unwanted-twitch/blob/master/README.md
 
 Zu diesem Projekt beitragen
-Egal ob du regulärer Nutzer oder selbst Entwickler bist, schau bei GitHub vorbei, um weitere Informationen zu erhalten, wie du dem Projekt helfen kannst⁴.
+Egal ob du regulärer Nutzer oder selbst Entwickler bist, schau bei GitHub vorbei, um weitere Informationen zu erhalten, wie du dem Projekt helfen kannst³.
 
 ¹ https://github.com/kwaschny/unwanted-twitch/issues
 ² https://github.com/kwaschny/unwanted-twitch/commits/master
-³ https://twitter.com/Kwaschny
-⁴ https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md
+³ https://github.com/kwaschny/unwanted-twitch/blob/master/CONTRIBUTING.md

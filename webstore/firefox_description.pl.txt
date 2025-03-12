@@ -28,7 +28,7 @@
 - nadal można odwiedzać zablokowane kanały przez bezpośrednie linki
 
 <b>Uwaga odnośnie zmian na twitch.tv psujących to rozszerzenie</b>
-Twitch słynie ze zmieniania swojej strony bez uprzedzenia, co może psuć działanie rozszerzenia. Twitch również często wprowadza nowe zmiany tylko wybranym/losowym użytkownikom do 4 tygodni wcześniej, co może skutkować popsuciem rozszerzenia. Jeśli zauważysz problem z rozszerzeniem, to wyłącz je, <a href="https://github.com/kwaschny/unwanted-twitch/issues">zgłoś problem</a> i poczekaj na aktualizację. Aktualizacje mogą potrzebować kilku dni by zostać zatwierdzone w odpowiednich przeglądarkach. Miej oko na <a href="https://github.com/kwaschny/unwanted-twitch/commits/master">commity na GitHubie</a> lub <a href="https://twitter.com/Kwaschny">obserwuj mnie na Twitterze</a> by otrzymywać wiadomości na temat nowych wersji.
+Twitch słynie ze zmieniania swojej strony bez uprzedzenia, co może psuć działanie rozszerzenia. Twitch również często wprowadza nowe zmiany tylko wybranym/losowym użytkownikom do 4 tygodni wcześniej, co może skutkować popsuciem rozszerzenia. Jeśli zauważysz problem z rozszerzeniem, to wyłącz je, <a href="https://github.com/kwaschny/unwanted-twitch/issues">zgłoś problem</a> i poczekaj na aktualizację. Aktualizacje mogą potrzebować kilku dni by zostać zatwierdzone w odpowiednich przeglądarkach.
 
 <b>Często zadawane pytania / Rozwiązywanie problemów</b>
 Odwiedź moja stronę na GitHubie po szczegóły: <a href="https://github.com/kwaschny/unwanted-twitch/blob/master/README.md">README</a>
