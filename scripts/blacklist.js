@@ -100,7 +100,7 @@ function itemExists(table, key) {
 	return (presentKeys.indexOf(key) >= 0);
 }
 
-function onAddItem(row) {
+function onAddItem(row, byUser = true) {
 
 	const input = row.querySelector('input');
 	const table = row.parentNode;
@@ -141,10 +141,14 @@ function onAddItem(row) {
 		addItem(table, item);
 		input.value = '';
 
-		flashSaveButton();
+		if (byUser) {
+			flashSaveButton();
+		}
 	}
 
-	input.focus();
+	if (byUser) {
+		input.focus();
+	}
 }
 
 function onRemoveItem() {
@@ -238,6 +242,11 @@ async function onSave() {
 
 	// hide reruns
 	await storageSet({ 'hideReruns': hideRerunsCheckbox.checked });
+
+	// add all "pending" user inputs
+	document.querySelectorAll('button.add').forEach((e) => {
+		onAddItem(e.parentNode.parentNode, false);
+	});
 
 	/* BEGIN: update items */
 
