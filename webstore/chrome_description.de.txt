@@ -1,5 +1,7 @@
 ﻿Ausblenden von Streams, Spielen, Kategorien, Kanälen und Tags auf: twitch.tv
 
+Wichtiger Hinweis: Die Erweiterung verfolgt einen "nach bestem Bemühen"-Ansatz für den Umgang mit den verschiedenen Ansichten auf Twitch und war schon immer ein Wettrüsten. Es ist nicht perfekt und wird es auch nie sein. Wenn du eine stets einwandfrei funktionierende Erweiterung erwartest, brauchst du sie erst gar nicht installieren. Kenne und verstehe die Einschränkungen.
+
 Funktionen
 - Kategorien ausblenden
 - Kanäle ausblenden
@@ -18,11 +20,11 @@ Funktionen
 Unterstütze Seiten
 - Durchsuchen: Kategorien
 - Durchsuchen: Live-Kanäle
-- Kategorie: Live-Kanäle (keine Filterung der Vorschau)
+- Kategorie: Live-Kanäle (keine Filterung der Vorschau-Slider)
 - Kategorie: Videos
 - Kategorie: Clips
 - Startseite/Entdecken (keine Filterung im Karussell)
-- Spiele/IRL/Musik/Creative (keine Filterung bei Esports)
+- Spiele/IRL/Musik/Creative/Esports
 - Du folgst
 - Seitenleiste (nur Filterung, keine Buttons zum Sperren)
 - Bereiche können weiterhin via Direktlink besucht werden
