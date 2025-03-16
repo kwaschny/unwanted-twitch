@@ -237,6 +237,7 @@
 			case '/directory/irl':
 			case '/directory/music':
 			case '/directory/creative':
+			case '/directory/esports':
 				return 'explore';
 
 			case '/directory/following':
@@ -418,7 +419,7 @@
 			// when there are unprocessed items in the directory, assume that the user scrolled down
 			if (nodesLength > 0) {
 
-				logInfo('Found ' + nodesLength + ' unprocessed nodes in the directory of the current page.');
+				logInfo('Found ' + nodesLength + ' unprocessed nodes in the directory of the current page.', nodes);
 				onScroll();
 			}
 
@@ -683,13 +684,13 @@
 			case 'videos':
 			case 'clips':
 
-				selector = '!a[data-a-target="preview-card-image-link"]%, !.switcher-preview-card__wrapper%';
+				selector = '!a[data-a-target="preview-card-image-link"]%';
 
 			break;
 
 			case 'collection':
 
-				selector = '!article[data-a-target^="card-"]%, !.switcher-preview-card__wrapper%';
+				selector = '!article[data-a-target^="card-"]%';
 
 			break;
 
@@ -883,6 +884,12 @@
 			return readCategory(node);
 		}
 
+		// channel
+		if (/^(video\-tower|clips)\-card\-[0-9]+$/.test(target)) {
+
+			return readChannel( node.querySelector('article') );
+		}
+
 		switch (target) {
 
 			// channel
@@ -896,12 +903,6 @@
 			// category
 			case 'tw-box-art-card-link':
 				return readCategory(node);
-		}
-
-		// channel in preview switcher
-		if (node.classList.contains('switcher-preview-card__wrapper')) {
-
-			return readChannel(node, false, true);
 		}
 
 		return logError('Unable to identify item:', node);
@@ -928,7 +929,7 @@
 
 		/* BEGIN: title */
 
-			buffer = parent.querySelector('a[data-a-target="preview-card-title-link"]');
+			buffer = parent.querySelector('a[data-a-target="preview-card-title-link"], h3[title]');
 
 			if (buffer) {
 
@@ -936,24 +937,15 @@
 
 			} else {
 
-				buffer = parent.querySelector('h3[title]');
+				buffer = parent.querySelectorAll('p[title]');
 
-				if (buffer) {
+				if (buffer && (buffer.length >= 2)) {
 
-					result.title = buffer.textContent.trim();
+					result.title = buffer[1].textContent.trim();
 
 				} else {
 
-					buffer = parent.querySelectorAll('p[title]');
-
-					if (buffer && buffer.length >= 2) {
-
-						result.title = buffer[1].textContent.trim();
-
-					} else {
-
-						logVerbose('Unable to determine title of channel.', node);
-					}
+					logVerbose('Unable to determine title of channel.', node);
 				}
 			}
 
@@ -961,29 +953,24 @@
 
 		/* BEGIN: name */
 
-			buffer = parent.querySelector('a[data-a-target="preview-card-channel-link"]');
+			buffer = parent.querySelector('[data-a-target="preview-card-channel-link"] p[title]');
+			if (!buffer) {
+				buffer = parent.querySelector('[data-a-target="preview-card-channel-link"] > div');
+			}
+
+			// collab channel @ videos/clips
+			if (buffer && (buffer.querySelector('p[data-a-target]'))) {
+
+				buffer = buffer.firstChild.firstChild;
+			}
 
 			if (buffer) {
 
-				if (buffer.children.length >= 2) {
-
-					buffer = buffer.querySelector('[data-a-target="preview-card-channel-link"]');
-				}
-
-				result.name = buffer.textContent.trim();
+				result.name = (buffer.firstChild?.textContent ?? buffer.textContent).trim();
 
 			} else {
 
-				buffer = parent.querySelector('p[title]');
-
-				if (buffer) {
-
-					result.name = buffer.textContent.trim();
-
-				} else {
-
-					return logError('Unable to determine name of channel.', node);
-				}
+				return logError('Unable to determine name of channel.', node);
 			}
 
 		/* END: name */
@@ -1198,9 +1185,9 @@
 			// expanded sidebar
 			} else {
 
-				buffer = node.querySelector('[data-a-target="side-nav-title"]');
+				buffer = node.querySelector('[data-a-target="side-nav-title"] p[title], [data-a-target="side-nav-card-metadata"] p[title]');
 
-				if (buffer !== null) {
+				if (buffer) {
 
 					result.name = buffer.textContent;
 
@@ -1439,7 +1426,16 @@
 						)
 					) {
 						// parent node of match
-						topNodes.push(topNode.parentNode);
+						switch (currentPageType) {
+
+							case 'explore':
+								topNodes.push(topNode.parentNode.parentNode);
+							break;
+
+							default:
+								topNodes.push(topNode.parentNode);
+							break;
+						}
 
 					} else if (
 						(aTarget.indexOf('followed-vod') >= 0)
@@ -1451,8 +1447,18 @@
 						(topNode.nodeName === 'ARTICLE') &&
 						(aTarget.indexOf('card-') >= 0)
 					) {
+
 						// parent's parent node of match
-						topNodes.push(topNode.parentNode.parentNode.parentNode);
+						switch (currentPageType) {
+
+							case 'collection':
+								topNodes.push(topNode.parentNode.parentNode.parentNode.parentNode);
+							break;
+
+							default:
+								topNodes.push(topNode.parentNode.parentNode.parentNode);
+							break;
+						}
 					}
 
 					// keep looking
@@ -1697,13 +1703,21 @@
 			});
 
 			const pNode = (tag.node.firstChild || tag.node);
-			pNode.appendChild(hideTagNode);
 
-			// reduce padding
-			// known issue: toggling button rendering at runtime won't fix the padding for already attached buttons
-			if (renderButtons) {
+			// parent node might have been replaced after first discovery
+			if (pNode.querySelector('[data-uttv-tag]') === null) {
 
-				pNode.style.paddingRight = '0';
+				pNode.appendChild(hideTagNode);
+
+				// reduce padding
+				// known issue: toggling button rendering at runtime won't fix the padding for already attached buttons
+				if (renderButtons) {
+
+					pNode.style.paddingRight = '0';
+				}
+
+			} else {
+				logVerbose('Hide buttons already attached to tags.', item);
 			}
 		}
 
@@ -1833,12 +1847,12 @@
 
 			case 'explore':
 
-				areaSelector = '.esports-directory-home-header';
+				areaSelector = '.verticals__header-wrapper';
 				area         = mainNode.querySelector(areaSelector);
 
 				if (area !== null) {
 
-					return buildManagementButton(area, 'uttv-explore');
+					return buildManagementButton(area.firstChild, 'uttv-explore');
 
 				} else {
 
@@ -2077,7 +2091,7 @@
 					case 'channels':
 					case 'game':
 
-						indicator = mainNode.querySelector('div[data-target][style^="order:"], .switcher-preview-card__wrapper');
+						indicator = mainNode.querySelector('div[data-target][style^="order:"], article[data-a-target="shelf-card"]');
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
@@ -2121,7 +2135,7 @@
 
 					case 'videos':
 
-						indicator = mainNode.querySelector('div[data-a-target^="video-tower-card-"], .switcher-preview-card__wrapper');
+						indicator = mainNode.querySelector('div[data-a-target^="video-tower-card-"]');
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
@@ -2165,7 +2179,7 @@
 
 					case 'clips':
 
-						indicator = mainNode.querySelector('div[data-a-target^="clips-card-"], .switcher-preview-card__wrapper');
+						indicator = mainNode.querySelector('div[data-a-target^="clips-card-"]');
 						if (indicator !== null) {
 
 							const placeholderNode = rootNode.querySelector('.tw-placeholder');
@@ -2273,7 +2287,7 @@
 
 					case 'collection':
 
-						indicator = mainNode.querySelector('article[data-a-target^="card-"], .switcher-preview-card__wrapper');
+						indicator = mainNode.querySelector('article[data-a-target^="card-"]');
 						if (indicator !== null) {
 
 							stopPageChangePolling();
