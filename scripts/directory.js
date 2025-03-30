@@ -338,13 +338,13 @@
 	/**
 	 * Attaches an observer to the sidebar of the current page, which will filter its items.
 	 */
-	function observeSidebar() {
+	async function observeSidebar() {
 		logTrace('invoking observeSidebar()');
 
 		const observerCooldown = 500;
 
 		const targetSelector = '[data-a-target^="side-nav-bar"]';
-		const target         = rootNode.querySelector(targetSelector);
+        const target = await waitForElement(targetSelector);
 
 		if (target !== null) {
 

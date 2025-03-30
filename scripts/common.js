@@ -215,6 +215,37 @@ async function storageClear() {
 	return error;
 }
 
+/**
+ * Wait (async) the html element requested by selector
+ */
+function waitForElement(selector) {
+	return new Promise((resolve) => {
+		const element = document.querySelector(selector);
+		if (element) {
+			resolve(element);
+			return element;
+		}
+
+		const observer = new MutationObserver((mutationsList, obs) => {
+			for (const mutation of mutationsList) {
+				if (mutation.type === 'childList') {
+					const targetElement = document.querySelector(selector);
+					if (targetElement) {
+						resolve(targetElement);
+						obs.disconnect();
+						break;
+					}
+				}
+			}
+		});
+
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+	});
+}
+
 function logTrace() {
 
 	if (debug > 0) { return null; }
