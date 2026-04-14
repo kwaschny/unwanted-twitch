@@ -1,0 +1,122 @@
+﻿{
+	"app_Desc": {
+		"message": "Приховати небажані трансляції, ігри, категорії, канали та теги на: twitch.tv"
+	},
+
+	"label_Management": {
+		"message": "Керувати чорним списком"
+	},
+	"label_HideCategory": {
+		"message": "Приховати категорію"
+	},
+	"label_HideChannel": {
+		"message": "Приховати канал"
+	},
+	"label_HideTag": {
+		"message": "Приховати тег"
+	},
+	"confirm_HideTag": {
+		"message": "Unwanted Twitch:\nВи збираєтеся приховати всі категорії та канали\nза допомогою наступного тегу:"
+	},
+	"confirm_HideButtons": {
+		"message": "Unwanted Twitch:\nВи збираєтеся приховати всі \"X\" кнопки.\n\nВи можете знову увімкнути або вимкнути їх відображення, знову натиснувши на піктограму ока 👁."
+	},
+	"alert_StorageQuota": {
+		"message": "Unwanted Twitch:\nЧорний список заповнений і більше не може бути синхронізований."
+	},
+	"alert_StorageThrottle": {
+		"message": "Unwanted Twitch:\nСлужба зберігання даних наразі зайнята.\nБудь ласка, зачекайте кілька хвилин, перезапустіть браузер і спробуйте ще раз."
+	},
+	"alert_StorageIssue": {
+		"message": "Unwanted Twitch:\nУ службі зберігання даних сталася несподівана помилка.\nБудь ласка, зачекайте кілька хвилин, перезапустіть браузер і спробуйте ще раз."
+	},
+
+	"popup_ManageBlacklist": {
+		"message": "Керування чорним списком"
+	},
+	"popup_EnableExtension": {
+		"message": "Увімкнути розширення"
+	},
+	"popup_DisableExtension": {
+		"message": "Вимкнути розширення"
+	},
+	"popup_ToggleButtons": {
+		"message": "Показати \"X\" кнопку"
+	},
+
+	"blacklist_SettingsHeadline": {
+		"message": "Налаштування"
+	},
+	"blacklist_SettingsHideFollowing": {
+		"message": "Також відфільтруйте за \"відстежуваними\" сторінками"
+	},
+	"blacklist_SettingsHideReruns": {
+		"message": "Приховати повтори трансляцій"
+	},
+	"blacklist_SettingsSyncStorage": {
+		"message": "Синхронізувати чорний список через хмару"
+	},
+	"blacklist_Categories": {
+		"message": "Категорії в чорному списку"
+	},
+	"blacklist_Channels": {
+		"message": "Канали в чорному списку"
+	},
+	"blacklist_Tags": {
+		"message": "Теги в чорному списку"
+	},
+	"blacklist_Titles": {
+		"message": "Заголовки в чорному списку"
+	},
+	"blacklist_CategoriesInput": {
+		"message": "Назва категорії для чорного списку"
+	},
+	"blacklist_ChannelsInput": {
+		"message": "Назва каналу для чорного списку"
+	},
+	"blacklist_TagsInput": {
+		"message": "Ім'я тегу для чорного списку"
+	},
+	"blacklist_TitlesInput": {
+		"message": "Шаблон у назві для чорного списку"
+	},
+	"blacklist_PatternExplainedLabel": {
+		"message": "Пояснення підтримуваних шаблонів..."
+	},
+	"blacklist_PatternExplainedText": {
+		"message": "Підтримуються такі шаблони:\n\nhalf-life 3\n(Термін повинен збігатися повністю, без урахування регістру.)\n\n'Half-Life 3'\n(Термін повинен збігатися повністю, з урахуванням регістру.)\n\n~half-life\n(Цей термін має бути вказаний, без урахування регістру.)\n\n/^half\\-?life [0-9]+/i\n(Термін повинен відповідати регулярному виразу, регістр не має значення.)\n\n/^Half\\-?Life [0-9]+/\n(Термін повинен відповідати регулярному виразу; регістр літер має значення.)"
+	},
+	"blacklist_Empty": {
+		"message": "Нічого не внесено до чорного списку."
+	},
+	"blacklist_Add": {
+		"message": "Додати"
+	},
+	"blacklist_Remove": {
+		"message": "Видалити"
+	},
+	"blacklist_RemoveAll": {
+		"message": "Очистити"
+	},
+	"blacklist_Save": {
+		"message": "Зберегти"
+	},
+	"blacklist_Cancel": {
+		"message": "Відміна"
+	},
+	"blacklist_Import": {
+		"message": "↳ Імпортувати"
+	},
+	"blacklist_ImportSuccess": {
+		"message": "Unwanted Twitch:\nВибраний файл було успішно імпортовано.\nНатисність кнопку [Зберегти] щоб завершити імпорт."
+	},
+	"blacklist_ImportFailure": {
+		"message": "Unwanted Twitch:\n(Error) Вибраний файл, схоже, не є дійсним експортом чорного списку."
+	},
+	"blacklist_Export": {
+		"message": "↱ Експортувати"
+	},
+	"blacklist_Processing": {
+		"message": "Завантаження. Будь ласка, зачекайте..."
+	}
+}
